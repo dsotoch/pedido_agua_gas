@@ -1,0 +1,167 @@
+<div class="pt-[40px] pb-[40px] bg-color-fondo-productos flex flex-row  w-full justify-stretch items-center space-x-2 ">
+
+
+    @if ($productos->count() > 0)
+        <div id="contener_producto_item"
+            class="  flex flex-col mx-auto bg-white text-color-text  items-center justify-center rounded-3xl pt-4 pb-16 bg-transparent text-center w-[450px] shadow-sm "
+            data-index="">
+            @foreach ($productos as $index => $item)
+                <div>
+                    <p
+                        class="producto_descripcion text-[18px] w-full
+                    font-semibold mt-5 mb-[11px] leading-9">
+                        {{ $item->descripcion }}</p>
+                    <div class="item-container flex  space-x-2 w-full  mx-auto justify-center"
+                        data-producto-id="{{ $item->id }}">
+                        <p class="hidden precionormal">{{ number_format($item->precio ?? 0, 2, '.', '') }}</p>
+                        <p class="hidden promociones">{{ $item->promociones }}</p>
+                        <!-- Botón de disminución -->
+                        <button
+                            class=" btn-producto-menos border w-[50px] h-[49px] text-center  border-color-text hover:bg-color-text rounded-full  text-color-text hover:border-red-600 hover:text-white">
+                            <i class="fas fa-minus"></i>
+                        </button>
+
+                        <!-- Input de cantidad con flex-grow y max-w-xs -->
+                        <input type="number" name="cantidad" value="0" readonly
+                            class="cantidad flex-grow text-[16px] max-w-[100px] h-[48px] p-2 border border-color-text rounded-xl border-text-color text-center">
+
+                        <!-- Botón de aumento -->
+                        <button
+                            class="btn-producto-mas border w-[50px] h-[49px] text-center border-color-text hover:bg-color-text rounded-full  text-color-text hover:border-red-600 hover:text-white">
+                            <i class="fas fa-plus "></i>
+                        </button>
+                    </div>
+                    <p class=" mb-5 text-[13px] p-[14px] w-full">Precio Unitario: <span
+                            class="text-[13px]  precioprincipal">S/{{ number_format($item->precio ?? 0, 2, '.', '') }}</span>
+                    </p>
+                    @auth
+                        @php
+                            // Buscar el faltante de promociones para este producto, asegurando que coincida con $item->id
+                            $promocion_actual = collect($promociones_faltantes)->firstWhere('producto_id', $item->id);
+
+                            // Obtener el faltante o asignar 0 si no hay promoción para este producto
+                            $faltante = $promocion_actual['faltante'] ?? 0;
+
+                            // Si no falta, asignar el nombre del producto
+                            $producto_gratis = $faltante === 0 ? $item->descripcion : '';
+                            $meta = intval($promocion_actual['meta']) + 1;
+                            $ordinales = [
+                                1 => 'Primero',
+                                2 => 'Segundo',
+                                3 => 'Tercero',
+                                4 => 'Cuarto',
+                                5 => 'Quinto',
+                                6 => 'Sexto',
+                                7 => 'Séptimo',
+                                8 => 'Octavo',
+                                9 => 'Noveno',
+                                10 => 'Décimo',
+                                11 => 'Undécimo',
+                                12 => 'Duodécimo',
+                                13 => 'Decimotercer',
+                                14 => 'Decimocuarto',
+                                15 => 'Decimoquinto',
+                            ];
+                            $ordinal = $ordinales[$meta] ?? "{$meta}°"; // Si no está en el array, usa formato genérico
+
+                        @endphp
+                        <span class="bidones-faltan text-[14px] max-h-[55px] h-[55px] text-color-text">
+                            @if ($faltante > 0)
+                                ¡Te faltan <span class="resaltar-numero font-bold text-[16px]">{{ $faltante }}</span>
+                                {{ Str::plural('bidon', $faltante) }} para tu {{ $ordinal }} GRATIS!
+                            @else
+                                <p class="tex-[14px] pl-2 pr-2 promocion_producto_gratis_valida"
+                                    data-producto-id="{{ $item->id }}"> 🎉 ¡Felicidades! Ya has cumplido la promoción
+                                    para
+                                    Reclamar
+                                    gratis este producto: </p><span class="font-semibold">{{ $producto_gratis }}</span>.
+                            @endif
+                        </span>
+                    @endauth
+                </div>
+                <hr class="w-1/2">
+            @endforeach
+
+            <div id="contenedor-total" class="mt-2 contenedor-total grid content-center justify-items-center ">
+                <input type="text" readonly
+                    class="total text-[18px] border w-[328px] h-[55px] rounded-md focus:outline-none bg-secundario text-white font-bold  text-center pt-[10px] pb-[10px] "
+                    value="Total: S/0.00">
+                <button type="button"
+                    class="btnproductoagregar  font-normal text-[18px]  w-[328px] h-[55px] rounded-md custom-bg-button  text-white mt-2">
+                    Siguiente
+                    <i class=" fas fa-arrow-right-long text-2xl ml-2 "></i></button>
+
+            </div>
+
+
+        </div>
+    @else
+        <p class="text-gray-700 mx-auto font-medium text-md m-2">Sin Productos Registrados.</p>
+    @endif
+
+    <div id="contenedor_form_realizar_pedido" class="hidden justify-center  mx-auto w-full text-[15px] text-color-text">
+        @if ($usuario && $usuario->tipo == 'cliente')
+            <form action="{{ route('pedido.crear', ['slug' => $empresa->dominio]) }}" id="form_realizar_pedido"
+                class=" text-start " method="POST">
+                <div
+                    class="flex space-y-2 flex-col w-[450px] h-[650px] bg-white rounded-[20px] pt-[30px] pb-[60px] pl-[20px] pr-[20px]">
+                    <input type="hidden" id="usuario_id" name="usuario_id" value="{{ $usuario->id }}" required>
+                    <input type="hidden" id="empresa_id" name="empresa_id" value="{{ $empresa->id }}" required>
+
+                    <label for="celular">Celular <span class="text-red-500">*</span></label>
+                    <input type="tel" id="celular" name="celular" value="{{ $usuario->usuario }}" minlength="9"
+                        maxlength="9" required pattern="\d{9}"
+                        title="El número de teléfono debe tener exactamente 9 dígitos"
+                        class=" rounded-[20px]  p-3 border border-color-text">
+                    <label for="nombres">Nombres y Apellidos <span class="text-red-500">*</span></label>
+                    <input type="text" value="{{ $usuario->persona->nombres }}" name="nombres" id="nombres"
+                        class="rounded-[20px]  p-3 border border-color-text" required>
+                    <label for="direccion">Dirección <span class="text-red-500">*</span></label>
+                    <input type="text" value="{{ $usuario->persona->direccion }}" id="direccion" name="direccion"
+                        class="rounded-[20px] p-3  border border-color-text" required>
+                    <label for="referencia">Referencia y Nota para la Entrega <span
+                            class="text-red-500">*</span></label>
+                    <textarea type="text" rows="5" id="referencia" name="referencia" required
+                        class="rounded-[20px] p-3  border border-color-text text-start">{{ $usuario->persona->nota }}
+                    </textarea>
+                    <div class="flex text-[17px]  justify-between pt-4 space-x-2">
+                        <button type="button" id="btn_regresar_a_productos"
+                            class="w-1/5 h-[57px] border border-color-text rounded-[3px]">Atrás</button>
+                        <button type="submit" class="custom-bg-button w-4/5 h-[57px] rounded-[3px] text-white">Realizar
+                            pedido</button>
+                    </div>
+
+                </div>
+            </form>
+        @else
+            <form action="{{ route('pedido.crear', ['slug' => $empresa->dominio]) }}" id="form_realizar_pedido"
+                class="mx-auto">
+                <div
+                    class="flex space-y-2 flex-col w-[450px] h-[650px] bg-white rounded-[20px] pt-[30px] pb-[60px] pl-[20px] pr-[20px]">
+                    <input type="hidden" id="usuario_id" name="usuario_id" value="" required>
+                    <label for="celular">Celular <span class="text-red-500">*</span></label>
+                    <input type="tel" id="celular" placeholder="Ingrese el numero para buscar..." name="celular"
+                        value="" class="rounded-[20px]  p-3 border border-color-text" required>
+                    <label for="nombres">Nombres y Apellidos <span class="text-red-500">*</span></label>
+                    <input type="text" value="" name="nombres" id="nombres"
+                        class="rounded-[20px]  p-3 border border-color-text" required>
+                    <label for="direccion">Dirección <span class="text-red-500">*</span></label>
+                    <input type="text" value="" id="direccion" name="direccion"
+                        class="rounded-[20px] p-3  border border-color-text" required>
+                    <label for="referencia">Referencia y Nota para la Entrega <span
+                            class="text-red-500">*</span></label>
+                    <textarea type="text" rows="5" value="" id="referencia" name="referencia"
+                        class="rounded-[20px] p-3  border border-color-text" required>
+                    </textarea>
+                    <div class="flex text-[17px]  justify-between pt-4 space-x-2">
+                        <button class="w-1/5 h-[57px] border border-color-text rounded-[3px]">Atrás</button>
+                        <button class="custom-bg-button w-4/5 h-[57px] rounded-[3px] text-white">Realizar
+                            pedido</button>
+                    </div>
+
+                </div>
+            </form>
+        @endif
+
+    </div>
+</div>

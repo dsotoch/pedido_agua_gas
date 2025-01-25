@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@layer utilities {
+    .clip-v-shape {
+        clip-path: polygon(50% 100%, 0% 0%, 100% 0%);
+    }
+    .btn-active-mi-cuenta{
+         @apply bg-naranja text-white border border-red-500 ;
+    }
+  }
