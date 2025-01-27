@@ -13,6 +13,7 @@ const contenedor_confeti = document.getElementById('contenedor_confeti');
 // Seleccionamos los elementos
 const copyButton = document.getElementById('copy-button');
 const numberToCopy = document.getElementById('number-to-copy');
+const formAsignarRepartidor = document.getElementById('formAsignarRepartidor');
 
 // Añadimos el evento al botón
 if (copyButton) {
@@ -122,7 +123,7 @@ if (input_celular) {
 
 
 
-// Agregar eventos a todos los botones de disminución
+// Agregar eventos a todos los botones de di[16px]inución
 document.querySelectorAll('.btn-producto-menos').forEach((boton) => {
     boton.addEventListener('click', () => {
         calcularTotalEnProducto(boton, 'resta');
@@ -264,7 +265,6 @@ if (form_realizar_pedido) {
 
         // Agregar los productos al objeto de datos
         data['productos'] = window.idproductos || [];
-        console.log(window.idproductos);
         try {
             // Realizar la solicitud Fetch
             const response = await fetch(form_realizar_pedido.action, {
@@ -283,19 +283,23 @@ if (form_realizar_pedido) {
             }
 
             const respuesta = await response.json();
-            window.idproductos=[];
+            enviarMensaje();
+            window.idproductos = [];
             window.location.href = respuesta.ruta;
 
         } catch (error) {
-            console.error("Error al realizar el pedido:", error);
 
             // Mostrar mensaje de error (usando SweetAlert como ejemplo)
             Swal.fire({
                 title: "Error",
                 text: error.message || "Ha ocurrido un error inesperado.",
                 icon: "error",
-
+                timerProgressBar: true,
+                customClass: {
+                    timerProgressBar: "bg-blue-500 h-2 rounded-lg"
+                }
             });
+
             form_realizar_pedido.classList.remove('opacity-50')
 
         }
@@ -362,56 +366,24 @@ function conectarWebSocket() {
                 default:
                     getMessages(); // Recargar los mensajes cuando se recibe un nuevo evento
                     crearNotificacionWindow(e.message.operacion, e.message.pedido_id);
+                    recargarPedidosAdmin();
                     break;
             }
 
 
         });
-    console.log("Conexion establecida  a websocket." + "Canal" + " " + webSocketChannel);
 }
-// Llamar la función para conectar el WebSocket
-if (dominio.trim().length > 3) {
+
+try {
     conectarWebSocket();
     getRepartidores();
-
-}
-
-// Función para enviar un mensaje
-function enviarMensaje(mensaje, usuarioDestino, pedido) {
-
-    const data = {
-        message: mensaje,
-        receiver_id: usuarioDestino,
-        pedido_id: pedido,
-    };
-
-    fetch(`${dominio}/crearmensaje`, {
-        method: "POST",
-        headers,
-        body: JSON.stringify(data),
-    }).then(response => {
-        // Verificar el código de estado
-        if (response.status !== 200) {
-            // Obtener el mensaje de error del servidor
-            return response.text().then((text) => {
-                throw new Error(text); // Lanza un error con el mensaje del servidor
-            });
-        }
-        return response.json(); // Convertir la respuesta exitosa a JSON
-    })
-        .then(result => {
-
-        })
-        .catch(error => {
-            // mensajeError(error.mensaje); // Mostrar mensaje de error
-            console.log(error);
-        });
+} catch (error) {
 
 }
 // Función para obtener los mensajes
 function getMessages() {
     try {
-        fetch(`${dominio}/mensajes`, {
+        fetch(`/mensajes`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -447,17 +419,17 @@ function setMessages(data) {
     // Agregar los mensajes al contenedor
     data.forEach(message => {
         const messageElement = document.createElement('div');
-        messageElement.classList.add('mensajes_socket', 'bg-tarjetas', 'p-4', 'rounded-lg', 'shadow-sm', 'w-full', 'flex', 'flex-col', 'mb-4');
+        messageElement.classList.add('mensajes_socket', 'bg-white', 'text-base', 'p-4', 'rounded-lg', 'shadow-md', 'w-full', 'flex', 'flex-col', 'mb-4');
 
         // Crear el contenedor del mensaje
         const messageText = document.createElement('p');
-        messageText.classList.add('text-white', 'mb-2', 'text-lg', 'font-normal');
+        messageText.classList.add('text-color-text', 'mb-2', 'text-base', 'font-normal');
         messageText.textContent = message.mensaje; // Contenido del mensaje principal
         messageElement.appendChild(messageText);
 
         // Crear el contenedor del ID del pedido
         const pedidoId = document.createElement('p');
-        pedidoId.classList.add('text-gray-500', 'text-sm');
+        pedidoId.classList.add('text-gray-600', 'text-[16px]', 'mt-2');
         pedidoId.textContent = `Pedido ID: ${message.pedido_id}`; // Asegúrate de que `pedido_id` sea el campo correcto
         messageElement.appendChild(pedidoId);
 
@@ -467,10 +439,12 @@ function setMessages(data) {
         const viewProductButton = document.createElement('button');
         viewProductButton.dataset.id = message.pedido_id;
         viewProductButton.classList.add(
-            'bg-principal',
+            'border',
             'btn_pedido_mensaje',
-            'hover:bg-principalhover',
-            'text-white',
+            'border-color-titulos-entrega',
+            'text-color-titulos-entrega',
+            'font-semibold',
+            'transform', 'transition-transform', 'duration-300', 'ease-in-out', 'hover:scale-110',
             'py-2',
             'px-4',
             'rounded'
@@ -565,7 +539,7 @@ function crearNotificacion() {
         requireInteraction: true, // Mantener la notificación abierta hasta que el usuario la cierre
         vibrate: [200, 100, 200], // Patrón de vibración en dispositivos móviles
         tag: tag, // Identificador único
-        renotify: true, // Mostrar como nueva aunque tenga el mismo tag
+        renotify: true, // Mostrar como nueva aunque tenga el mi[16px]o tag
         onClick: function () {
             window.focus();
             this.close();
@@ -668,8 +642,9 @@ function cerrarmodalPedidoDetalles() {
 }
 
 function getRepartidores() {
-    const url = dominio.replace("/", "") + "/repartidores/";
+    const url = "/repartidores/";
     const selectElement = document.getElementById('selectrepartidores'); // Selecciona el <select> por su ID
+    const select_pedidos_tarjetas = document.getElementById('repartidor');
 
     fetch(url, {
         method: 'GET',
@@ -686,38 +661,38 @@ function getRepartidores() {
             }
             return response.json(); // Convertir la respuesta a JSON
         })
-        .then(result => {
-            const mensaje = Object.values(result); // Convierte las propiedades del objeto en un arreglo
+        .then(data => {
+            const repartidores = data.repartidores;
 
-            // Verifica si el mensaje es válido y contiene datos
-            if (mensaje && Array.isArray(mensaje)) {
-                const opciones = mensaje.map(element => {
-                    // Si "persona" es un arreglo, usa map para iterar y generar los nombres
-                    const nombres = element.persona.map(it => it.nombres).join(', '); // Combina los nombres en una sola cadena
-                    const persona = element.persona.map(it => it.id).join('');
+            // Verifica si 'repartidores' es un arreglo
+            if (repartidores && Array.isArray(repartidores)) {
+                const opciones = repartidores.map(repartidor => {
+                    // Asegúrate de que el objeto 'persona' y 'nombres' existan
+                    const nombres = repartidor.persona ? repartidor.persona.nombres : 'N/A';
+
                     return `
-                        <option value="${persona}">
+                        <option value="${repartidor.id}">
                             ${nombres} 
                         </option>
                     `;
                 }).join(''); // Combina todas las opciones en un solo string
+
                 // Actualiza el contenido del <select>
                 selectElement.innerHTML += opciones;
+                select_pedidos_tarjetas.innerHTML += opciones;
             } else {
                 console.warn('No se encontraron repartidores disponibles.');
             }
         })
         .catch(error => {
             console.error('Error al obtener los repartidores:', error);
-            // Opcional: puedes agregar una opción para informar sobre el error
-            selectElement.innerHTML += `< option value = "" disabled > Error al cargar repartidores</option > `;
         });
 }
 
 
 
 function pedidoasignadoarepartidor(id, tipo) {
-    const url = dominio.replace("/", "") + "/mensajes/" + id;
+    const url = "/mensajes/" + id;
     fetch(url, {
         method: 'GET',
         headers: {
@@ -758,53 +733,50 @@ function llenarPedido(pedido, tipo) {
 
     // Generar contenido dinámico
     contenedor.innerHTML = `
-    <div class="flex items-center justify-between">
-        <h3 class="font-bold text-lg">Pedido #${pedido.id}</h3>
-        <span class="text-sm text-gray-500">${pedido.fecha}</span>
+    <div class="flex text-[16px] items-center justify-between text-color-titulos-entrega">
+        <h3 class="font-bold text-base">Pedido #${pedido.id}</h3>
+        <span class="text-[16px] ">${pedido.fecha}</span>
     </div>
-    <p class="text-sm mt-2">
-        <i class="fa-solid fa-user text-blue-500"></i>
-        ${pedido.cliente?.nombres || "Sin nombre"} ${pedido.cliente?.apellidos || ""}
+    <p class="text-[16px] mt-2 text-color-titulos-entrega">
+        <i class="fa-solid fa-user "></i>
+        ${pedido.nombres || "Sin nombre"}
     </p>
-    <p class="text-sm mt-1">
-        <i class="fa-solid fa-phone text-green-500"></i>
-        ${pedido.cliente?.telefono || "Sin teléfono"}
+    <p class="text-[16px] mt-1">
+        <i class="fa-solid fa-phone text-color-titulos-entrega"></i>
+        ${pedido.celular || "Sin teléfono"}
     </p>
-    <p class="text-sm mt-1">
-        <i class="fa-solid fa-location-dot text-red-500"></i>
-        ${pedido.cliente?.direccion || "Sin dirección"}
+    <p class="text-[16px] mt-1">
+        <i class="fa-solid fa-location-dot text-color-titulos-entrega"></i>
+        ${pedido.direccion || "Sin dirección"}
     </p>
-    <p class="text-sm mt-1">
-        <i class="fa-solid fa-box text-yellow-500"></i>
+    <p class="text-[16px] mt-1">
+        <i class="fa-solid fa-box text-color-titulos-entrega"></i>
         ${pedido.detalles.map(item => `${item.producto?.descripcion || "Nulo"} x ${item.cantidad}`).join(", ")}
     </p>
     <div class="mt-2">
-        <p class="font-semibold">Total: <span class="text-green-600">S/ ${pedido.total}</span></p>
+        <p class="font-semibold">Total: <span class="text-color-titulos-entrega">S/ ${pedido.total}</span></p>
     </div>
     <div class="flex items-center justify-between mt-2">
-        <span class="text-sm ${tipo == 'repartidor' ? 'text-white' : 'text-black'}">Delivery: 
-            <span class="${pedido.estado === 'RECIBIDO' ? 'text-red-600' : 'text-green-600'} font-bold spanestadorepartidor">
-                ${estadoDelivery(pedido.estado, tipo)}
+        <span class="text-[16px] ">Delivery: 
+            <span class=" font-bold spanestadorepartidor">
+                ${pedido.estado}
             </span>
         </span>
-        <span class="text-sm ${tipo == 'repartidor' ? 'text-white' : 'text-black'}">Pagado: 
-            <span class="${pedido.pago ? 'text-green-600' : 'text-red-600'} font-bold spanpagado">
-                ${pedido.pago ? '✅' : '❌'}
-            </span>
-        </span>
-    </div>
-    <p class="text-sm mt-1 metodopedido">
-        <i class="fa-solid fa-wallet text-purple-500"></i>
+       <p class="text-[16px] mt-1 metodopedido font-bold">
+        <i class="fa-solid fa-wallet 
+     text-color-titulos-entrega"></i>
         ${pedido.pago ? `Pagado con ${pedido.metodo}` : "Pendiente de pago"}
     </p>
-    <p class="text-sm mt-1">
-        <i class="fa-solid fa-sticky-note text-gray-500"></i>
+    </div>
+   
+    <p class="text-[16px] mt-1">
+        <i class="fa-solid fa-sticky-note text-color-titulos-entrega"></i>
         Notas del pedido: ${pedido.nota || "Sin notas"}
     </p>
-    <p class="text-sm mt-1">
-        <i class="fas fa-motorcycle text-red-500"></i>
+    <p class="text-[16px] mt-1">
+        <i class="fas fa-motorcycle text-color-titulos-entrega"></i>
         Repartidor: <span class="spanrepartidoradmin">
-            ${pedido.repartidor ? pedido.repartidor.persona.nombres : 'Sin Asignación'}
+            ${pedido.repartidor ? pedido.repartidor?.persona?.nombres : 'Sin Asignación'}
         </span>
     </p>
     <div class="contenedor-de-botones flex space-x-2 p-4 shadow-md rounded-lg items-center justify-center">
@@ -814,18 +786,7 @@ function llenarPedido(pedido, tipo) {
 
 }
 
-function estadoDelivery(estado, tipo) {
-    switch (estado) {
-        case "RECIBIDO":
-            return "Pendiente ❌";
-        case "ENVIADO":
-            return "En camino 🚚";
-        case "ENTREGADO":
-            return "Entregado ✅";
-        default:
-            return "Estado desconocido ⚠️";
-    }
-}
+
 
 function botonesAccion(pedido, tipo) {
     if (tipo === 'repartidor') {
@@ -841,11 +802,11 @@ function botonesAccion(pedido, tipo) {
         }
     } else {
         // Opción para asignar un repartidor
-        if (pedido.estado === 'RECIBIDO') {
+        if (pedido.estado === 'Pendiente') {
             return `
                 <button data-id="${pedido.id}"
             type = "button"
-            class="btnasignarrepartidordetalle p-3 bg-principal hover:bg-principalhover text-xl text-white rounded" >
+            class="btnasignarrepartidordetalle p-3 bg-naranja  text-base hover:border-red-500 border text-white rounded" >
                 Asignar Repartidor
             </button> `;
         }
@@ -877,11 +838,99 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+function modificarDomPedido(repartidor, pedido_id, elemento) {
+    const mi_cuenta_contenedor_pedidos = document.getElementById('mi_cuenta_contenedor_pedidos');
+    if (mi_cuenta_contenedor_pedidos) {
+        switch (elemento) {
+            case 'repartidor':
+                const _contenedor = mi_cuenta_contenedor_pedidos.querySelector('#caja-' + pedido_id);
+                if (_contenedor) {
+                    _contenedor.querySelector('.span_repartidor_nombre').textContent = repartidor;
+                }
+                break;
 
+            default:
+                break;
+        }
+    }
+}
+
+const pedido_id = document.getElementById('pedido_id');
+let spanrepartidor;
+const mi_cuenta_contenedor_pedidos = document.getElementById('mi_cuenta_contenedor_pedidos_super');
+if (mi_cuenta_contenedor_pedidos) {
+    mi_cuenta_contenedor_pedidos.querySelectorAll('.mi_cuenta_pedido').forEach(element => {
+        const botonasignar = element.querySelector('.btnasignarrepartidor');
+        if (botonasignar) {
+            botonasignar.addEventListener('click', () => {
+                spanrepartidor = botonasignar.closest('.mi_cuenta_pedido').querySelector('.span_repartidor_nombre');
+                const idpedido = botonasignar.dataset.id;
+                modalasignarrepartidor.classList.remove('hidden');
+                modalasignarrepartidor.classList.add('flex');
+                pedido_id.value = idpedido;
+
+            });
+        }
+    });
+    if (btncerrarmodalrepartidor) {
+        btncerrarmodalrepartidor.addEventListener('click', () => {
+            modalasignarrepartidor.classList.remove('flex');
+            modalasignarrepartidor.classList.add('hidden');
+        });
+    }
+}
+
+
+if (formAsignarRepartidor) {
+    formAsignarRepartidor.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const dataform = new FormData(formAsignarRepartidor);
+        let data = {};
+        dataform.forEach((value, key) => {
+            data[key] = value;
+        });
+        fetch(formAsignarRepartidor.action, {
+            method: formAsignarRepartidor.method,
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': token,
+            },
+            body: JSON.stringify(data),
+        })
+            .then(response => {
+                if (response.status !== 201) {
+                    return response.text().then((text) => {
+                        throw new Error(text);
+                    });
+                }
+                return response.json();
+            })
+            .then(result => {
+                Swal.fire({
+
+                    title: 'Confirmación',
+                    text: result.mensaje,
+                    icon: 'success',
+                    timerProgressBar: true,
+                    timer: 2000,
+                    showConfirmButton: false,
+                    customClass: {
+                        timerProgressBar: 'bg-green-500'
+                    }
+                })
+                formAsignarRepartidor.reset();
+                spanrepartidor.textContent = result.repartidor;
+
+            })
+            .catch(error => {
+                mensajeError(error.message);
+            });
+    });
+}
 
 function asignarRepartidor(pedidoId, repartidor, spanrepartidor) {
     const data = { pedido_id: pedidoId, repartidor_id: repartidor };
-    fetch(`${dominio} /asignarRepartidor `, {
+    fetch(`/mi-cuenta/asignarRepartidor `, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json', // Define el contenido como JSON
@@ -899,8 +948,20 @@ function asignarRepartidor(pedidoId, repartidor, spanrepartidor) {
         return response.json(); // Convertir la respuesta exitosa a JSON
     })
         .then(result => {
-            mensajeExito(result.mensaje); // Manejo del resultado exitoso
+            Swal.fire({
+
+                title: 'Confirmación',
+                text: result.mensaje,
+                icon: 'success',
+                timerProgressBar: true,
+                timer: 2000,
+                showConfirmButton: false,
+                customClass: {
+                    timerProgressBar: 'bg-green-500'
+                }
+            })
             spanrepartidor.textContent = result.repartidor;
+            modificarDomPedido(result.repartidor, pedidoId,'repartidor');
         })
         .catch(error => {
             mensajeError(error.message); // Mostrar mensaje de error
@@ -947,8 +1008,36 @@ if (pedidoAsignado) {
 
 }
 
+function llenarNuevoPedidoDom() {
+    const contenedor = document.createElement('div');
+    contenedor.classList.add('p-[15px]', 'mi_cuenta_pedido', 'w-[363px]', 'max-w-[363px]');
+
+    const sub2 = document.createElement('div');
+    sub2.classList.add(
+        'flex-1',
+        'h-full',
+        'w-[333px]',
+        'max-w-[333px]',
+        'p-[20px]',
+        'bg-color-tarjetas',
+        'rounded-3xl',
+        'text-color-titulos-entrega',
+        'font-sans',
+        'text-base'
+    );
+
+
+    // Añade sub2 como hijo de contenedor
+    contenedor.appendChild(sub2);
+
+    // Ahora puedes agregar el contenedor al DOM, por ejemplo:
+    document.body.appendChild(contenedor);
+
+
+}
+
 function actualizarEstadoMensaje(id) {
-    fetch(`${dominio} /actualizar/${id} `, {
+    fetch(`/actualizar/${id} `, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json', // Define el contenido como JSON

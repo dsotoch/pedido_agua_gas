@@ -31,58 +31,46 @@ class ControllerMensajes extends Controller
         }
     }
 
-    public function mensajeAsignado(string $nombre_empresa,string $id)
+    public function mensajeAsignado(string $id)
 
     {
         try {
             if (Auth::check()) {
-                $pedido = Pedido::with(['cliente', 'detalles.producto', 'repartidor', 'empresa'])
-                ->where('id', $id)
-                ->firstOrFail();
-
+                $pedido = Pedido::with(['detalles.producto', 'repartidor','repartidor.persona' ,'empresa'])
+                    ->where('id', $id)
+                    ->firstOrFail();
             } else {
                 $pedido = collect(); // Devuelve una colección vacía si no está autenticado
             }
             return response()->json($pedido);
         } catch (\Throwable $th) {
-            return response()->json($th->getMessage(),500);
+            return response()->json($th->getMessage(), 500);
         }
     }
 
 
 
-    public function crearmensaje(Request $request)
+    public function crearmensaje($message, $receiver_id, $pedido_id)
     {
-        $validated = $request->validate([
-            'message' => 'required|string',
-            'receiver_id' => 'required|integer|exists:users,id',
-            'pedido_id' => 'required|integer|exists:pedidos,id',
-        ]);
 
         try {
             // Crear el mensaje en la base de datos
             Mensajes::create([
-                'user_id' => $validated['receiver_id'],
-                'pedido_id' => $validated['pedido_id'],
-                'mensaje' => $validated['message'],
+                'user_id' => $receiver_id,
+                'pedido_id' => $pedido_id,
+                'mensaje' => $message,
             ]);
-            $mensaje = ['operacion' => 'nuevopedido', 'mensaje' => 'Nuevo Pedido para la Empresa.', 'pedido_id' => $validated['pedido_id']];
+            $mensaje = ['operacion' => 'nuevopedido', 'mensaje' => 'Nuevo Pedido para la Empresa.', 'pedido_id' => $pedido_id];
 
-            SendMessage::dispatch($mensaje, $validated['receiver_id']);
+            SendMessage::dispatch($mensaje, $receiver_id);
 
-            return response()->json([
-                'success' => true,
-                'mensaje' => "Mensaje creado y trabajo distribuido.",
-            ]);
+            return;
         } catch (\Throwable  $e) {
-            return response()->json([
-                'success' => false,
-                'mensaje' => $e->getMessage(),
-            ], 500);
+            return;
         }
     }
 
-    public function actualizarEstado(string $nombre_empresa,string $id)
+    public function actualizarEstado(string $id)
     {
         try {
             $mensaje = Mensajes::where('pedido_id', $id)->first();

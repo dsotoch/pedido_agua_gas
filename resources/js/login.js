@@ -16,9 +16,13 @@ const form_login_distribuidora=document.getElementById('form_login_distribuidora
 if (form_login_distribuidora) {
     form_login_distribuidora.addEventListener('submit', async (e) => {
         e.preventDefault();
+        contenedor_login_distribuidora.classList.add('after:content-[""]', 'after:absolute', 'after:inset-0', 'after:bg-white', 'after:bg-opacity-70', 'after:cursor-not-allowed', 'after:z-10');
         let respuesta = await SolicitudFecthFormularios_POST(form_login_distribuidora, 'login');
         if (respuesta) {
             window.location.reload();
+        }else{
+            contenedor_login_distribuidora.classList.remove('after:content-[""]', 'after:absolute', 'after:inset-0', 'after:bg-white', 'after:bg-opacity-70', 'after:cursor-not-allowed', 'after:z-10');
+
         }
     });
 }
@@ -107,9 +111,14 @@ if (boton_regresar_a_login) {
 if (formulario_login_pagina_principal) {
     formulario_login_pagina_principal.addEventListener('submit', async (e) => {
         e.preventDefault();
+        contenedor_login.classList.add('after:content-[""]', 'after:absolute', 'after:inset-0', 'after:bg-white', 'after:bg-opacity-70', 'after:cursor-not-allowed', 'after:z-10');
+
         let respuesta = await SolicitudFecthFormularios_POST(formulario_login_pagina_principal, 'login');
         if (respuesta) {
             window.location.href = '/mi-cuenta'
+        }else{
+            contenedor_login.classList.remove('after:content-[""]', 'after:absolute', 'after:inset-0', 'after:bg-white', 'after:bg-opacity-70', 'after:cursor-not-allowed', 'after:z-10');
+
         }
     });
 }

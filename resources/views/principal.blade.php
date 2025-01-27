@@ -6,7 +6,7 @@
                 <a href="/"><img src="{{ asset('imagenes/entrega.png') }}" alt=""
                         class="object-contain  ml-auto  w-[255px] h-[68px] "></a>
             </div>
-            <div class="flex md:w-3/5 w-1/2 justify-end items-center space-x-4 md:translate-x-20 translate-x-4">
+            <div class="flex  md:w-3/5 w-1/2 justify-end items-center space-x-4 md:translate-x-20 translate-x-4">
                 <!-- Enlace de distribuidor -->
                 <a href="#distribuidor"
                     class="text-[16px] hidden md:block relative after:content-[''] after:absolute after:left-0 after:-bottom-4 

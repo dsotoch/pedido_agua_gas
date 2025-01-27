@@ -4,8 +4,9 @@
         <div class="pl-[10px] flex">
 
             <div class="max-w-[450px] w-[450px] mr-2">
-                <input class="placeholder-gray-500 rounded-3xl w-full bg-transparent border-color-text border p-3"
-                    type="search" autocomplete="off" name="first_name" value="" placeholder="Buscar por nombres..."
+                <input id="cliente_input_buscar"
+                    class="placeholder-gray-500 rounded-3xl w-full bg-transparent border-color-text border p-3" type="search"
+                    autocomplete="off" name="first_name" value="" placeholder="Buscar por nombres..."
                     aria-label="Buscar por nombre">
             </div>
             <button type="button" class="bg-naranja text-white w-[48px] h-[50px] rounded-xl" disabled>
@@ -14,11 +15,11 @@
 
 
         </div>
-        <div class="mt-8 ml-8 grid md:grid-cols-3 grid-cols-1">
-            @if ($empresa->usuarios && $empresa->usuarios->isNotEmpty())
-                @foreach ($empresa->usuarios as $user)
+        <div id="cliente_contenedor_cliente" class="  mt-8 ml-8 grid md:grid-cols-3 grid-cols-1">
+            @if ($clientes && $clientes->isNotEmpty())
+                @foreach ($clientes as $user)
                     @if ($user->persona)
-                        <div class="w-[368px] max-w[368px]  text-base text-color-titulos-entrega">
+                        <div class="cliente_clientes w-[368px] max-w[368px]  text-base text-color-titulos-entrega">
                             <div
                                 class="space-y-2 cml-[20px] pb-[27px] grid  w-[338px] max-w[338px]  rounded-[20px] bg-white pl-[20px] pt-[27px]">
                                 <div class="a a-ab79122 elementor-widget elementor-widget-jet-listing-dynamic-field"
@@ -44,7 +45,7 @@
                                                     d="M190.5 66.9l22.2-22.2c9.4-9.4 24.6-9.4 33.9 0L441 239c9.4 9.4 9.4 24.6 0 33.9L246.6 467.3c-9.4 9.4-24.6 9.4-33.9 0l-22.2-22.2c-9.5-9.5-9.3-25 .4-34.3L311.4 296H24c-13.3 0-24-10.7-24-24v-32c0-13.3 10.7-24 24-24h287.4L190.9 101.2c-9.8-9.3-10-24.8-.4-34.3z">
                                                 </path>
                                             </svg></div>
-                                        <div class="jet-listing-dynamic-field__content">{{ $user->usuario }}</div>
+                                        <div class="">{{ $user->usuario }}</div>
                                     </div>
                                 </div>
                                 <div class="a a-3d2b4ea elementor-widget elementor-widget-jet-listing-dynamic-field"
@@ -57,7 +58,7 @@
                                                     d="M313.6 304c-28.7 0-42.5 16-89.6 16-47.1 0-60.8-16-89.6-16C60.2 304 0 364.2 0 438.4V464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48v-25.6c0-74.2-60.2-134.4-134.4-134.4zM400 464H48v-25.6c0-47.6 38.8-86.4 86.4-86.4 14.6 0 38.3 16 89.6 16 51.7 0 74.9-16 89.6-16 47.6 0 86.4 38.8 86.4 86.4V464zM224 288c79.5 0 144-64.5 144-144S303.5 0 224 0 80 64.5 80 144s64.5 144 144 144zm0-240c52.9 0 96 43.1 96 96s-43.1 96-96 96-96-43.1-96-96 43.1-96 96-96z">
                                                 </path>
                                             </svg></div>
-                                        <div class="jet-listing-dynamic-field__content">{{ $user->persona->nombres }}
+                                        <div class="cliente_nombres">{{ $user->persona->nombres }}
                                         </div>
                                     </div>
                                 </div>
@@ -113,7 +114,8 @@
                                                     d="M172.268 501.67C26.97 291.031 0 269.413 0 192 0 85.961 85.961 0 192 0s192 85.961 192 192c0 77.413-26.97 99.031-172.268 309.67-9.535 13.774-29.93 13.773-39.464 0zM192 272c44.183 0 80-35.817 80-80s-35.817-80-80-80-80 35.817-80 80 35.817 80 80 80z">
                                                 </path>
                                             </svg></div>
-                                        <div class="jet-listing-dynamic-field__content">{{$user->persona->direccion}}</div>
+                                        <div class="jet-listing-dynamic-field__content">{{ $user->persona->direccion }}
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="a a-ce0c3b1 elementor-widget elementor-widget-jet-listing-dynamic-field"
@@ -127,7 +129,7 @@
                                                     d="M112 316.94v156.69l22.02 33.02c4.75 7.12 15.22 7.12 19.97 0L176 473.63V316.94c-10.39 1.92-21.06 3.06-32 3.06s-21.61-1.14-32-3.06zM144 0C64.47 0 0 64.47 0 144s64.47 144 144 144 144-64.47 144-144S223.53 0 144 0zm0 76c-37.5 0-68 30.5-68 68 0 6.62-5.38 12-12 12s-12-5.38-12-12c0-50.73 41.28-92 92-92 6.62 0 12 5.38 12 12s-5.38 12-12 12z">
                                                 </path>
                                             </svg></div>
-                                        <div class="jet-listing-dynamic-field__content">{{$user->persona->nota}}</div>
+                                        <div class="jet-listing-dynamic-field__content">{{ $user->persona->nota }}</div>
                                     </div>
                                 </div>
                             </div>
@@ -141,7 +143,7 @@
                 </p>
             @endif
         </div>
-
+        <div class="w-full  justify-center mt-8 ml-8 hidden" id="cliente_mensaje_no_resultados"> <p class="text-base text-color-titulos-entrega">No Se Encontraron Resultados.</p></div>
 
 
     </div>

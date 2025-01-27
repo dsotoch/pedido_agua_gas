@@ -1,7 +1,7 @@
     <div class="flex bg-white justify-between items-center content-end  w-full">
         <!-- Imagen al inicio -->
         <div class="grid justify-start w-1/2 ">
-            <img src="{{ asset('storage/' . $empresa->logo) }}" alt="Logo" class="w-[421px] h-[68px] object-contain">
+            <img src="{{ asset('storage/'.$empresa->logo) }}" alt="Logo" class="w-[421px] h-[68px] object-contain">
         </div>
 
         <!-- Botón al final -->

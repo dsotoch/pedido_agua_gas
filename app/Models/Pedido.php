@@ -52,4 +52,9 @@ class Pedido extends Model
     {
         return $this->hasMany(entregaPromociones::class);
     }
+
+    public function usuario()
+    {
+        return $this->belongsTo(User::class,'cliente_id');
+    }
 }

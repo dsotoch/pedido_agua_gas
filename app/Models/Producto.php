@@ -17,6 +17,16 @@ class Producto extends Model
         'empresa_id',
         'comercializable'
     ];
+    public function scopeFilter($query, $filters)
+    {
+        // Filtrado por comercializable
+        if (isset($filters['comercializable'])) {
+            $query->where('comercializable', true);
+        }
+
+        return $query;
+    }
+
 
     public function clientepedido()
     {
@@ -27,9 +37,9 @@ class Producto extends Model
         return $this->hasOne(PromocionesUnitario::class);
     }
 
-    public function entregaPromociones(){
+    public function entregaPromociones()
+    {
         return $this->hasOne(Producto::class);
-
     }
     /**
      * Relación con el modelo Promociones

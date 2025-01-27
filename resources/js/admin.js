@@ -1,109 +1,13 @@
-
-const divclientesadmin = document.getElementById('divclientesadmin');
+import Swal from "sweetalert2";
 const token = document.querySelector('meta[name="token"]').getAttribute('content');
-const paneladministrador = document.getElementById('paneladministrador');
-const btnregresaradmin = document.getElementById('btnregresaradmin');
-const botondashboardclientepanel = document.getElementById('botondashboardclientepanel');
-const btnproductosadmin = document.getElementById('btnproductosadmin');
-const btnreportesadmin = document.getElementById('btnreportesadmin');
-const btnclientesadmin = document.getElementById('btnclientesadmin');
-const btnpedidosadmin = document.getElementById('btnpedidosadmin');
-const divpedidosadmin = document.getElementById('divpedidosadmin');
-var botonseleccionado = btnpedidosadmin;
-const divproductosadmin = document.getElementById('divproductosadmin');
-const cantidadclientesadmin = document.getElementById('cantidadclientesadmin');
-const divclientesadminfull = document.getElementById('divclientesadminfull');
-const btnusuariosadmin = document.getElementById('btnusuariosadmin');
 const modalnuevousuario = document.getElementById('modalnuevousuario');
 const btnnuevousuario = document.getElementById('btnnuevousuario');
 const closemodalusuario = document.getElementById('closemodalusuario');
 const nuevousuarioadmin = document.getElementById('nuevousuarioadmin');
-const divusuariosadmin = document.getElementById('divusuariosadmin');
-const modalasignarrepartidor = document.getElementById('modalasignarrepartidor');
 const dominio = window.location.pathname;
-const divpedidos = document.querySelectorAll('.pedidosadministrador');
-const btncerrarmodalrepartidor = document.getElementById('btncerrarmodalrepartidor');
-const formAsignarRepartidor = document.getElementById('formAsignarRepartidor');
-const pedido_id = document.getElementById('pedido_id');
-const divreportesadmin = document.getElementById('divreportesadmin');
-
-let spanrepartidor;
-if (formAsignarRepartidor) {
-    formAsignarRepartidor.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const dataform = new FormData(formAsignarRepartidor);
-        let data = {};
-        dataform.forEach((value, key) => {
-            data[key] = value;
-        });
-        fetch(formAsignarRepartidor.action, {
-            method: formAsignarRepartidor.method,
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': token,
-            },
-            body: JSON.stringify(data),
-        })
-            .then(response => {
-                if (response.status !== 201) {
-                    return response.text().then((text) => {
-                        throw new Error(text);
-                    });
-                }
-                return response.json();
-            })
-            .then(result => {
-                mensajeExito(result.mensaje);
-                formAsignarRepartidor.reset();
-                spanrepartidor.innerHTML = result.repartidor;
-
-            })
-            .catch(error => {
-                mensajeError(error.message);
-            });
-    });
-}
-if (btncerrarmodalrepartidor) {
-    btncerrarmodalrepartidor.addEventListener('click', () => {
-        modalasignarrepartidor.classList.remove('flex');
-        modalasignarrepartidor.classList.add('hidden');
-        paneladministrador.classList.remove('bg-black', 'bg-opacity-30');
-        divpedidos.forEach(element => {
-            element.classList.remove('bg-black', 'bg-opacity-30');
-            element.querySelectorAll('button').forEach(element => {
-                element.disabled = false;
-            });
-        });
 
 
-    });
-}
-if (divpedidos) {
-    divpedidos.forEach(element => {
-        const botonasignar = element.querySelector('.btnasignarrepartidor');
-        if (botonasignar) {
-            botonasignar.addEventListener('click', () => {
-                const idpedido = botonasignar.dataset.id;
-                modalasignarrepartidor.classList.remove('hidden');
-                modalasignarrepartidor.classList.add('flex');
-                paneladministrador.classList.add('bg-black', 'bg-opacity-30');
-                divpedidos.forEach(element => {
-                    element.classList.add('bg-black', 'bg-opacity-30');
-                    element.querySelectorAll('button').forEach(element => {
-                        element.disabled = true;
-                    });
 
-                });
-                pedido_id.value = idpedido;
-                spanrepartidor = element.querySelector('.spanrepartidor');
-                modalUsuario.scrollTo({
-                    top: 0,
-                    behavior: 'smooth' // Opcional: desplazamiento suave
-                });
-            });
-        }
-    });
-}
 
 if (nuevousuarioadmin) {
     nuevousuarioadmin.addEventListener('submit', (event) => {
@@ -136,6 +40,19 @@ if (nuevousuarioadmin) {
             .then(result => {
                 mensajeExito(result.mensaje);
                 nuevousuarioadmin.reset();
+                Swal.fire({
+                    title: 'Confirmación',
+                    text: result.mensaje,
+                    icon: 'success',
+                    timer: 2000,
+                    showConfirmButton: false,
+                    timerProgressBar: true,
+                    customClass: {
+                        timerProgressBar: 'bg-green-500',
+
+                    }
+
+                })
 
             })
             .catch(error => {
@@ -144,7 +61,6 @@ if (nuevousuarioadmin) {
     })
 }
 // Obtén todos los botones de estado
-const btnsEstadoUsuarios = document.querySelectorAll('.btnestadosusuarios');
 const formcambiarestado = document.querySelectorAll('.formcambiarestado');
 // Itera sobre todos los botones y agrega el evento de clic
 formcambiarestado.forEach(btn => {
@@ -152,6 +68,7 @@ formcambiarestado.forEach(btn => {
         event.preventDefault();
         const boton = event.target;
         const disparador = boton.querySelector("button[type='submit']");
+        const estado = disparador.closest('.usuariosadmin').querySelector('.usuario_estado');
         fetch(boton.action, {
             method: "PUT",
             headers: {
@@ -168,14 +85,25 @@ formcambiarestado.forEach(btn => {
                 return response.json();
             })
             .then(result => {
-                mensajeExito(result.mensaje);
-
+                Swal.fire({
+                    title: 'Confirmación',
+                    text: result.mensaje,
+                    icon: 'success',
+                    showConfirmButton: false,
+                    timerProgressBar: true,
+                    timer: 2000,
+                    customClass: {
+                        timerProgressBar: 'bg-green-500'
+                    }
+                })
                 // Cambiar el estado del botón en función del estado actualizado
                 if (result.nuevo_estado) {
+                    estado.textContent = 'Activo';
                     disparador.classList.remove('bg-red-500');
                     disparador.classList.add('bg-green-500');
                     disparador.innerHTML = '<i class="fas fa-ban"></i> Inhabilitar';
                 } else {
+                    estado.textContent = 'Inactivo';
                     disparador.classList.remove('bg-green-500');
                     disparador.classList.add('bg-red-500');
                     disparador.innerHTML = '<i class="fas fa-check-circle "></i> Habilitar';
@@ -202,199 +130,6 @@ function cerrarModalusuario() {
     modalnuevousuario.classList.remove('flex');
     modalnuevousuario.classList.add('hidden');
 }
-if (btnregresaradmin) {
-    btnregresaradmin.addEventListener('click', () => {
-        modalUsuario.classList.add('md:w-1/2');
-        paneladministrador.classList.add('hidden');
-        botondashboardclientepanel.classList.remove('hidden');
-        divusuariosadmin.classList.add('hidden');
-
-    });
-}
-if (btnpedidosadmin) {
-    btnpedidosadmin.addEventListener('click', () => {
-        botonseleccionado = btnpedidosadmin;
-        cambiarcolorbotones();
-        divpedidosadmin.classList.remove('hidden');
-        divproductosadmin.classList.add('hidden');
-        divclientesadminfull.classList.add('hidden');
-        divusuariosadmin.classList.add('hidden');
-        divreportesadmin.classList.add('hidden');
-
-    });
-}
-if (btnproductosadmin) {
-    btnproductosadmin.addEventListener('click', () => {
-        botonseleccionado = btnproductosadmin;
-        cambiarcolorbotones();
-        divpedidosadmin.classList.add('hidden');
-        divproductosadmin.classList.remove('hidden');
-        divclientesadminfull.classList.add('hidden');
-        divusuariosadmin.classList.add('hidden');
-        divreportesadmin.classList.add('hidden');
-
-    });
-}
-if (btnclientesadmin) {
-    btnclientesadmin.addEventListener('click', () => {
-        botonseleccionado = btnclientesadmin;
-        cambiarcolorbotones();
-        divpedidosadmin.classList.add('hidden');
-        divproductosadmin.classList.add('hidden');
-        divclientesadminfull.classList.remove('hidden');
-        divusuariosadmin.classList.add('hidden');
-        divreportesadmin.classList.add('hidden');
-
-        traerClientesporempresa();
-    });
-}
-if (btnusuariosadmin) {
-    btnusuariosadmin.addEventListener('click', () => {
-        botonseleccionado = btnusuariosadmin;
-        cambiarcolorbotones();
-        divpedidosadmin.classList.add('hidden');
-        divproductosadmin.classList.add('hidden');
-        divclientesadminfull.classList.add('hidden');
-        divusuariosadmin.classList.remove('hidden');
-        divreportesadmin.classList.add('hidden');
-
-    });
-}
-if (btnreportesadmin) {
-    btnreportesadmin.addEventListener('click', () => {
-        botonseleccionado = btnreportesadmin;
-        cambiarcolorbotones();
-        divpedidosadmin.classList.add('hidden');
-        divproductosadmin.classList.add('hidden');
-        divclientesadminfull.classList.add('hidden');
-        divusuariosadmin.classList.add('hidden');
-        divreportesadmin.classList.remove('hidden');
-    });
-}
-const form_clientes = document.getElementById('formclientes');
-
-function traerClientesporempresa() {
-    fetch(form_clientes.action, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    })
-        .then(response => {
-            if (response.status !== 200) {
-                return response.text().then((text) => {
-                    throw new Error(text);
-                });
-            }
-            return response.json();
-        })
-        .then(result => {
-            divclientesadmin.innerHTML = '';
-            let cnt = 0;
-
-            result.mensaje.forEach(element => {
-                if (element.cliente) {
-                    // Si el cliente existe, accede a sus propiedades
-                    const nombres = element.cliente.nombres || 'Sin nombre';
-                    const apellidos = element.cliente.apellidos || 'Sin apellidos';
-                    const telefono = element.cliente.telefono || 'Sin teléfono';
-                    const direccion = element.cliente.direccion || 'Sin dirección';
-
-                    // Llamar a la función para agregar datos al DOM
-                    agregarClienteDOM(`${nombres} ${apellidos}`, telefono, direccion);
-                    cnt++;
-                } else {
-                    // Manejar casos donde el cliente es null
-                    console.log('Cliente no asociado:', element.usuario);
-                }
-            });
-
-            cantidadclientesadmin.innerHTML = cnt;
-        })
-        .catch(error => {
-            mensajeError(error.mensaje);
-        });
-}
-function agregarClienteDOM(nombre, telefono, ubicacion) {
-    // Crear un nuevo elemento div
-    const newelemento = document.createElement('div');
-
-    // Agregar clases necesarias
-    newelemento.classList.add('bg-tarjetas', 'text-white', 'shadow-md', 'rounded-lg', 'p-6', 'flex', 'flex-col', 'items-start', 'clientesadmin');
-
-    // Definir el contenido HTML
-    newelemento.innerHTML = `
-        <!-- Icono y Nombre -->
-        <div class="flex items-center space-x-4 mb-4 ">
-            <i class="fas fa-user-circle text-3xl text-principal "></i>
-            <h2 class=" font-medium ">${nombre}</h2>
-        </div>
-        <!-- Detalles del cliente -->
-        <div class="text-sm space-y-2 mb-4">
-            <p><i class="fas fa-phone text-yellow-500 m-2"></i> ${telefono}</p>
-            <p><i class="fas fa-map-marker-alt text-red-500 m-2"></i> ${ubicacion}</p>
-        </div>
-    `;
-
-
-    // Agregar el nuevo elemento al contenedor
-    divclientesadmin.append(newelemento);
-}
-
-
-function cambiarcolorbotones() {
-    switch (botonseleccionado) {
-        case btnproductosadmin:
-            btnproductosadmin.classList.add('bg-blue-600', 'text-white');
-            btnpedidosadmin.classList.remove('bg-blue-600', 'text-white');
-            btnreportesadmin.classList.remove('bg-blue-600', 'text-white');
-            btnclientesadmin.classList.remove('bg-blue-600', 'text-white');
-            btnusuariosadmin.classList.remove('bg-blue-600', 'text-white');
-
-            break;
-        case btnclientesadmin:
-            btnclientesadmin.classList.add('bg-blue-600', 'text-white');
-            btnpedidosadmin.classList.remove('bg-blue-600', 'text-white');
-            btnreportesadmin.classList.remove('bg-blue-600', 'text-white');
-            btnproductosadmin.classList.remove('bg-blue-600', 'text-white');
-            btnusuariosadmin.classList.remove('bg-blue-600', 'text-white');
-
-            break;
-        case btnreportesadmin:
-            btnreportesadmin.classList.add('bg-blue-600', 'text-white');
-            btnpedidosadmin.classList.remove('bg-blue-600', 'text-white');
-            btnproductosadmin.classList.remove('bg-blue-600', 'text-white');
-            btnclientesadmin.classList.remove('bg-blue-600', 'text-white');
-            btnusuariosadmin.classList.remove('bg-blue-600', 'text-white');
-
-            break;
-        case btnusuariosadmin:
-            btnusuariosadmin.classList.add('bg-blue-600', 'text-white');
-            btnpedidosadmin.classList.remove('bg-blue-600', 'text-white');
-            btnproductosadmin.classList.remove('bg-blue-600', 'text-white');
-            btnclientesadmin.classList.remove('bg-blue-600', 'text-white');
-            btnreportesadmin.classList.remove('bg-blue-600', 'text-white');
-            break;
-        default:
-            btnpedidosadmin.classList.add('bg-blue-600', 'text-white');
-            btnproductosadmin.classList.remove('bg-blue-600', 'text-white');
-            btnreportesadmin.classList.remove('bg-blue-600', 'text-white');
-            btnclientesadmin.classList.remove('bg-blue-600', 'text-white');
-            btnusuariosadmin.classList.remove('bg-blue-600', 'text-white');
-
-            break;
-    }
-}
-if (botondashboardclientepanel) {
-    botondashboardclientepanel.addEventListener('click', () => {
-        botondashboardclientepanel.classList.add('hidden');
-        modalUsuario.classList.remove('md:w-1/2');
-        paneladministrador.classList.remove('hidden');
-    });
-}
-
-
-
 
 
 

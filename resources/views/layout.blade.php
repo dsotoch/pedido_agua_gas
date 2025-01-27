@@ -48,7 +48,7 @@
     <div id="messagesModal" class="hidden fixed inset-0 bg-black bg-opacity-50  justify-center items-center z-50">
         <div class="bg-white p-6 rounded-lg md:w-1/2 w-full max-h-full overflow-y-auto relative">
             <button id="closeModalmensajes" class="absolute top-2 right-2 text-red-500 text-3xl">&times;</button>
-            <h2 class="text-xl font-medium mb-4">Mensajes Entrantes</h2>
+            <h2 class="text-xl font-semibold font-cabin text-color-titulos-entrega mb-4">Mensajes Entrantes</h2>
             <div id="messagesContainer" class="space-y-2">
                 <!-- Aquí se mostrarán los mensajes -->
             </div>
@@ -68,9 +68,9 @@
     </div>
     <div id="modalmensajespedidodetalle"
         class="shadow-2xl shadow-principal hidden  w-full fixed inset-0 z-50  justify-center items-center overflow-y-auto">
-        <div class="bg-tarjetas p-6 rounded-lg md:w-1/2 w-full max-h-full overflow-y-auto relative">
+        <div class="bg-gradient-to-tr from-color-text to-color-titulos-entrega  p-6 rounded-lg md:w-1/2 w-full max-h-full overflow-y-auto relative">
             <button id="closeModalmensajesdetalle" class="absolute top-2 right-2 text-red-500 text-3xl">&times;</button>
-            <h2 class="text-xl font-medium mb-4 text-white">Detalles del Pedido </h2>
+            <h2 class="text-xl font-cabin font-medium mb-4 text-white">Detalles del Pedido </h2>
             <div id="pedidoAsignadoDetalle"
                 class="pedido bg-white text-gray-800 shadow-md rounded-lg p-4 border border-gray-200">
 

@@ -47,19 +47,20 @@ class ControllerPedido extends Controller
         try {
             // Buscar el pedido y el repartidor
             $pedido = Pedido::findOrFail($validated['pedido_id']);
-            $repartidor = Persona::findOrFail($validated['repartidor_id']);
+            $repartidor = User::findOrFail($validated['repartidor_id']);
 
             // Actualizar el pedido con el ID del repartidor
             $pedido->update([
-                'repartidor_id' => $repartidor->user_id,
+                'repartidor_id' => $repartidor->id,
             ]);
             $mensaje = ['operacion' => 'asignacion', 'mensaje' => 'Pedido Asignado.', 'pedido_id' => $validated['pedido_id']];
 
-            SendMessage::dispatch($mensaje, $repartidor->user_id);
+            SendMessage::dispatch($mensaje, $repartidor->id);
+            
             // Respuesta exitosa
             return response()->json([
                 'mensaje' => 'Pedido asignado correctamente.',
-                'repartidor' => $repartidor->nombres,
+                'repartidor' => $repartidor->persona->nombres,
             ], 201);
         } catch (\Exception $e) {
             // Manejo de errores
@@ -329,13 +330,25 @@ class ControllerPedido extends Controller
 
                 // Actualizar el total del pedido
                 $pedido->update(['total' => $totalPedido]);
+
+                $empresa = Empresa::find($request->empresa_id);
+                // Crear una instancia del otro controlador
+                $controlador_mensaje = new ControllerMensajes();
+                // Filtrar los usuarios relacionados con la empresa y verificar si el usuario es tipo 'admin'
+                // Filtrar los usuarios relacionados con la empresa que tengan el rol de 'admin'
+                $admin = $empresa->usuarios
+                    ->filter(function ($usuario) {
+                        return $usuario->tipo === 'admin'; // Asumiendo que el rol se encuentra en la tabla `users`
+                    })
+                    ->first(); // Obtener el primer usuario que cumpla la condiciónner el primer usuario que cumpla la condición
+                // Llamar al método que necesitas
+                $controlador_mensaje->crearmensaje('Nuevo Pedido para la empresa.', $admin->id, $pedido->id);
             }
 
 
             // Confirmar la transacción
             DB::commit();
 
-            $empresa = Empresa::find($request->empresa_id);
 
             return response()->json([
                 'ruta' => route('pedido.confirmacion', ['slug' => $empresa->dominio, 'id' => $pedido->id]),

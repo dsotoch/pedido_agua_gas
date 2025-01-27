@@ -18,6 +18,21 @@ use Illuminate\Support\Facades\DB;
 
 class ControllerEmpresa extends Controller
 {
+    
+    public function index_usuarios()
+    {
+        $usuario = Auth::user();
+        $usuario = User::find($usuario->id);
+        $empresa = $usuario->empresas()->first();
+        $usuarios = $empresa->usuarios()->with('persona')->get(); // Cargar 'persona' para los usuarios de la empresa
+        return view('usuarios', compact('usuario', 'usuarios', 'empresa'));
+    }
+    public function index_mis_datos()
+    {
+        $usuario = Auth::user();
+        $pedidos = $usuario->pedido;
+        return view('mis_datos', compact('usuario', 'pedidos'));
+    }
     public function index_distribuidora($slug)
     {
         // Buscar la empresa por dominio
@@ -37,7 +52,7 @@ class ControllerEmpresa extends Controller
         $imagenes = json_decode($empresa->imagenes, true);
 
         //Promociones del cliente actual
-        $compras_del_cliente = $usuario?$usuario->clientepedido: collect();
+        $compras_del_cliente = $usuario ? $usuario->clientepedido : collect();
         $compras_filtradas = collect();
         if ($compras_del_cliente) {
             // Obtener IDs de productos con promociones (asegúrate de que 'unitarios' sea una relación cargada)
@@ -243,29 +258,50 @@ class ControllerEmpresa extends Controller
     {
         $usuario_auth = Auth::user();
 
-        // Cargar al usuario autenticado con la relación empresa y productos
-        $usuario = User::with(['empresas', 'empresas.productos'])->find($usuario_auth->id);
+        // Cargar al usuario autenticado con la relación empresa y sus pedidos
+        $usuario = User::with(['empresas.pedidos'])->find($usuario_auth->id);
 
-        // Obtener la empresa con usuarios filtrados por activos y su relación con persona
-        $empresa = Empresa::with(['usuarios' => function ($query) {
-            $query->where('tipo', 'cliente');
-        }, 'usuarios.persona'])
-            ->where('id', $usuario->empresa_id)
-            ->first();
+        // Obtener la primera empresa asociada al usuario autenticado
+        $empresa = $usuario->empresas()->with('pedidos')->first();
 
-        return view('clientes', compact('usuario', 'empresa'));
+        if (!$empresa) {
+            return response()->json(['error' => 'No hay empresas asociadas al usuario.'], 404);
+        }
+
+        // Obtener los clientes únicos que han hecho pedidos a la empresa
+        $clientes = User::whereIn('id', $empresa->pedidos->pluck('cliente_id'))->get();
+
+        return view('clientes', compact('usuario', 'empresa', 'clientes'));
     }
 
     public function index_pagos_del_dia()
     {
         $usuario_auth = Auth::user();
         $usuario = User::with('empresas', 'empresas.productos')->where('id', $usuario_auth->id)->first();
-        $empresa = $usuario->empresa;
-        $pagosdeldia = Pedido::where('empresa_id', $empresa->id)
+        $empresa = $usuario->empresas()->first();
+        $pagosdeldia = Pedido::with(['detalles', 'detalles.producto'])->where('empresa_id', $empresa->id)
             ->where('pago', true)
             ->whereDate('fecha', Carbon::now('America/Lima')->toDateString())
             ->get();
 
+        // Filtrar y agrupar productos comercializables
+        $productosVendidos = $pagosdeldia->flatMap(function ($pedido) {
+            // Aplanar los detalles de los pedidos
+            return $pedido->detalles->filter(function ($detalle) {
+                // Filtrar los productos comercializables
+                return $detalle->producto->comercializable ?? false;
+            })->map(function ($detalle) {
+                // Retornar descripción y cantidad del producto
+                return [
+                    'descripcion' => $detalle->producto->descripcion,
+                    'cantidad' => $detalle->cantidad,
+                ];
+            });
+        })->groupBy('descripcion') // Agrupar por descripción
+            ->map(function ($group) {
+                // Sumar las cantidades de productos en cada grupo
+                return $group->sum('cantidad');
+            });
         // Agrupa los pedidos por método de pago y calcula la suma del total por método
         $desglosepagosdeldia = $pagosdeldia->groupBy('metodo')->map(function ($pedidos, $metodo) {
             return [
@@ -277,7 +313,7 @@ class ControllerEmpresa extends Controller
         // Si quieres, puedes convertir el resultado a un array para usarlo en la vista
         $desglosepagosdeldia = $desglosepagosdeldia->values()->toArray();
 
-        return view('pagos', compact('desglosepagosdeldia', 'usuario', 'empresa'));
+        return view('pagos', compact('desglosepagosdeldia', 'pagosdeldia', 'usuario', 'empresa', 'productosVendidos'));
     }
 
 

@@ -46,6 +46,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Pedido::class, 'repartidor_id');
     }
+    public function pedido_usuario()
+    {
+        return $this->hasOne(Pedido::class);
+    }
     public function Cliente()
     {
         return $this->hasOne(Cliente::class);

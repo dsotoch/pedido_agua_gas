@@ -12,9 +12,9 @@
                 </svg></div>
             <p class="font-cabin text-[20px] leading-[30px] mt-1 text-wrap max-w-[202px]">
                 {{ $usuario ? $usuario->persona->nombres : 'Sandra Maribel' }}</p>
-            <p class="hidden" id="tipo_usuario">{{ $usuario->tipo }}</p>
+            <p class="hidden" id="tipo_usuario">{{ $usuario ? $usuario->tipo : '' }}</p>
             <div class="grid font-sans text-[14px] leading-[14px] space-y-3 mt-4 mb-6">
-                <a @if ($usuario && $usuario->tipo === 'admin' && $usuario->empresas()->exists()) href="{{ route('index.negocio', ['slug' => $usuario->empresas()->first()->dominio]) }}">Pedir</a>
+                <a @if (($usuario && $usuario->tipo === 'admin') || ($usuario->tipo === 'repartidor' && $usuario->empresas()->exists())) href="{{ route('index.negocio', ['slug' => $usuario->empresas()->first()->dominio]) }}">Pedir</a>
             @else
                 <a href="{{ route('index.negocio', ['slug' => $pedidos->count() > 0 ? $pedido->empresa()->orderBy('created_at', 'desc')->first()->dominio : '#']) }}">Pedir</a> @endif
                     <a href="{{ route('index') }}">Distribuidoras</a>
@@ -47,27 +47,34 @@
                             <i class="fa-solid fa-box"></i>&nbsp;&nbsp;Productos
                         </a>
                     </div>
-
+                    <div
+                        class="{{ request()->routeIs('empresa.usuarios') ? 'btn-active-mi-cuenta' : '' }} border border-transparent p-3 rounded-md hover:bg-naranja hover:border-red-500">
+                        <a class="" href="{{ route('empresa.usuarios') }}" id="btn_boton_usuarios">
+                            <i class="fa-solid fa-user-gear"></i>&nbsp;&nbsp;Usuarios
+                        </a>
+                    </div>
                     <div class="border border-transparent p-3 rounded-md hover:bg-naranja hover:border-red-500"><a
                             class="" href="https://entrega.pe/mi-cuenta/reportes/" id="btn_boton_reportes"><i
                                 class="fa-solid fa-chart-line"></i>&nbsp;&nbsp;Reportes</a></div>
                 @endif
                 @if ($usuario->tipo == 'cliente')
                     <div
-                        class="btn-active-mi-cuenta border border-transparent p-3 rounded-md hover:bg-naranja hover:border-red-500">
-                        <a class="" href="https://entrega.pe/mi-cuenta/tus-pedidos/" id="btn_boton_pedidos"><i
+                        class=" border {{ request()->routeIs('usuario.index') ? 'btn-active-mi-cuenta' : '' }} border-transparent p-3 rounded-md hover:bg-naranja hover:border-red-500">
+                        <a class="" href="{{ route('usuario.index') }}" id="btn_boton_pedidos"><i
                                 class="fa-solid fa-cart-shopping"></i>&nbsp;&nbsp;Mis pedidos</a>
                     </div>
-                    <div class="border border-transparent p-3 rounded-md hover:bg-naranja hover:border-red-500"><a
-                            class="" href="https://entrega.pe/mi-cuenta/tus-pedidos/" id="btn_boton_datos"><i
+                    <div
+                        class="border border-transparent p-3 {{ request()->routeIs('empresa.datos') ? 'btn-active-mi-cuenta' : '' }} rounded-md hover:bg-naranja hover:border-red-500">
+                        <a class="" href="{{ route('empresa.datos') }}" id="btn_boton_datos"><i
                                 class="fa-solid fa-user-gear"></i>
-                            &nbsp;&nbsp;Mis Datos</a></div>
+                            &nbsp;&nbsp;Mis Datos</a>
+                    </div>
                 @endif
             </div>
 
         </div>
         <!----Cajas ---->
-        <div class="w-full ml-[202px] pt-[40px] pl-[20px] pr-[20px] ">
+        <div class="w-full ml-[202px] pt-[40px] pl-[20px] pr-[20px] min-h-screen">
             @yield('logica')
         </div>
 

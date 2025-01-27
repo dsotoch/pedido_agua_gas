@@ -40,6 +40,8 @@ Route::controller(ControllerUsuario::class)->group(function () {
     Route::post('/login', 'login')->name('usuario.login');
     Route::get('/logout', 'logout')->name('usuario.logout');
     Route::get('/buscar-usuario/{telefono}', 'buscarUsuario')->name('usuario.buscar');
+    Route::put('/update/{id}', 'update')->name('usuario.update');
+
 });
 
 Route::controller(ControllerProducto::class)->group(function () {
@@ -55,17 +57,19 @@ Route::prefix('{slug}')->controller(ControllerPedido::class)->group(function () 
     Route::get('/pedido_confirmado/{id}', 'vista_pedido_confirmado')->name("pedido.confirmacion");
 });
 
-Route::prefix('{nombre_empresa}')->controller(ControllerMensajes::class)->group(function () {
-    Route::post('/crearmensaje', 'crearmensaje')->name('mensaje.crear');
-    Route::get('/mensajes', 'mensajes')->name('mensaje.all');
-    Route::get('/mensajes/{id}', 'mensajeAsignado')->name('mensaje.asignado');
-    Route::put('/actualizar/{id}', 'actualizarEstado')->name('mensaje.estado');
+Route::controller(ControllerMensajes::class)->group(function () {
+    Route::get('mensajes', 'mensajes')->name('mensaje.all');
+    Route::get('mensajes/{id}', 'mensajeAsignado')->name('mensaje.asignado');
+    Route::put('actualizar/{id}', 'actualizarEstado')->name('mensaje.estado');
 });
 
 Route::prefix('mi-cuenta')->controller(ControllerEmpresa::class)->group(function () {
     Route::get('pagos-de-hoy', 'index_pagos_del_dia')->name('empresa.index_pagos');
     Route::get('clientes', 'index_clientes')->name('empresa.clientes');
     Route::get('productos', 'index_productos')->name('empresa.productos');
+    Route::get('datos', 'index_mis_datos')->name('empresa.datos');
+    Route::get('usuarios', 'index_usuarios')->name('empresa.usuarios');
+
 });
 
 
