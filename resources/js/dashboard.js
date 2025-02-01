@@ -1,7 +1,17 @@
 const mi_cuenta_input_buscar = document.getElementById('mi_cuenta_input_buscar');
 const mi_cuenta_contenedor_pedidos = document.getElementById('mi_cuenta_contenedor_pedidos_super');
 const mensajeSinResultados = document.getElementById('mi_cuenta_mensaje_no_resultados');
+const id_usuario_autenticado = document.getElementById('id_usuario_autenticado');
+const modal_usuario_no_autenticado = document.getElementById('modal_usuario_no_autenticado');
+const ruta_actual = document.getElementById('ruta_actual');
+const select_direccion = document.getElementById('select_direccion');
+const direccion = document.getElementById('direccion');
 
+if (select_direccion) {
+    select_direccion.addEventListener('change', () => {
+        direccion.value=select_direccion.value;
+    });
+}
 if (mi_cuenta_input_buscar) {
     mi_cuenta_input_buscar.addEventListener('keyup', () => {
         const cliente_a_filtrar = mi_cuenta_input_buscar.value.trim(); // Obtiene el valor seleccionado
@@ -44,3 +54,16 @@ if (mi_cuenta_input_buscar) {
 
     });
 }
+if (window.location.pathname.trim() != '/') {
+    verificar_login();
+}
+
+function verificar_login() {
+    if (!id_usuario_autenticado.textContent.trim()) {
+        modal_usuario_no_autenticado.classList.remove('hidden');
+        modal_usuario_no_autenticado.classList.add('flex');
+    }
+}
+
+
+

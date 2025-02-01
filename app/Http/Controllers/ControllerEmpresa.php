@@ -7,18 +7,23 @@ use App\Http\Requests\RequestEmpresa;
 use App\Models\empresa;
 use App\Models\Pedido;
 use App\Models\Persona;
-use App\Models\Promociones;
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class ControllerEmpresa extends Controller
 {
-    
+
+    public function index_reportes()
+    {
+        $usuario = Auth::user();
+        $usuario = User::find($usuario->id);
+        $empresa = $usuario->empresas()->first();
+        $pedidos = $empresa->pedidos()->with('usuario','repartidor','repartidor.persona','entregaPromociones')->get();
+        return view('reportes', compact('usuario', 'empresa', 'pedidos'));
+    }
     public function index_usuarios()
     {
         $usuario = Auth::user();
@@ -30,8 +35,9 @@ class ControllerEmpresa extends Controller
     public function index_mis_datos()
     {
         $usuario = Auth::user();
-        $pedidos = $usuario->pedido;
-        return view('mis_datos', compact('usuario', 'pedidos'));
+        $pedido = Pedido::where('cliente_id', $usuario->id)->latest()->first();
+
+        return view('mis_datos', compact('usuario', 'pedido'));
     }
     public function index_distribuidora($slug)
     {
@@ -82,149 +88,6 @@ class ControllerEmpresa extends Controller
             });
         }
 
-
-
-        /*   $cliente = null;
-        $pedidos = collect(); // Usar una colección vacía por defecto
-        $productos = collect();
-        $usuarios = collect();
-        $repartidores = collect();
-        $perepartidor = collect();
-        $pedidosrepartidor = collect();
-        $pedidosdeldia = collect();
-        $repartidoresConPedidos = collect();
-        $desglosepagosdeldia = collect();
-        $pedidospendientedepago = collect();
-        $total_diario = 0.00;
-        if ($usuario) {
-            $cliente = $usuario;
-            if ($cliente->tipo === "cliente") {
-                // Manejar relaciones nulas usando el operador seguro ?->
-                $cliente_usuario = $cliente->Cliente;
-                if ($cliente_usuario) {
-                    // Ordenar los pedidos directamente en el query builder
-                    $pedidos = $cliente_usuario->pedido()
-                        ->orderByRaw("
-                            CASE 
-                                WHEN estado = 'RECIBIDO' THEN 0
-                                WHEN estado = 'ENTREGADO' THEN 2
-                                ELSE 1
-                            END
-                        ") // Ordenar por prioridad de estado
-                        ->orderByDesc('fecha') // Ordenar por fecha en orden descendente
-                        ->paginate(20); // Aplicar paginación
-                }
-
-
-
-                $productos = $empresa->productos()->with('promociones', 'unitarios')->get();
-            } else {
-                $pedidosdeldia = Pedido::with('repartidor', 'repartidor.persona')->where('empresa_id', $empresa->id)
-                    ->whereDate('fecha', Carbon::now('America/Lima')->toDateString())
-                    ->get();
-                $total_diario = Pedido::where('empresa_id', $empresa->id)
-                    ->whereDate('fecha', Carbon::now('America/Lima')->toDateString())
-                    ->sum('total');
-                $resultado = User::with(['pedido' => function ($query) {
-                    $query->whereDate('fecha', Carbon::now('America/Lima')->toDateString());
-                }, 'persona'])
-                    ->where('empresa_id', $empresa->id)
-                    ->where('tipo', 'repartidor')
-                    ->get();
-                // Procesar los datos para obtener solo el nombre del repartidor y la cantidad de pedidos
-                $repartidoresConPedidos = $resultado->map(function ($repartidor) {
-                    return [
-                        'repartidor' => $repartidor->persona->map(function ($persona) {
-                            return $persona->nombres ?? 'Sin Nombre';
-                        })->implode(', '),
-                        'cantidad_asignados' => $repartidor->pedido->count(),
-                        'pedidos' => $repartidor->pedido,
-
-                    ];
-                })->filter(function ($repartidor) {
-                    // Filtrar solo los repartidores con al menos un pedido asignado
-                    return $repartidor['cantidad_asignados'] >= 0;
-                })->values();
-
-                $pagosdeldia = Pedido::where('empresa_id', $empresa->id)
-                    ->where('pago', true)
-                    ->whereDate('fecha', Carbon::now('America/Lima')->toDateString())
-                    ->get();
-
-                // Agrupa los pedidos por método de pago y calcula la suma del total por método
-                $desglosepagosdeldia = $pagosdeldia->groupBy('metodo')->map(function ($pedidos, $metodo) {
-                    return [
-                        'metodo' => $metodo,
-                        'total' => $pedidos->sum('total'),
-                    ];
-                });
-
-                // Si quieres, puedes convertir el resultado a un array para usarlo en la vista
-                $desglosepagosdeldia = $desglosepagosdeldia->values()->toArray();
-
-                $pedidospendientedepago = Pedido::where('empresa_id', $empresa->id)
-                    ->where('metodo', 'account')
-                    ->get();
-                $pedidosrepartidor = $empresa->pedidos()
-                    ->where('repartidor_id', $usuario->id) // Filtra los pedidos del repartidor actual
-                    ->orderByRaw("
-                    CASE 
-                        WHEN estado = 'RECIBIDO' THEN 0
-                        WHEN estado = 'ENTREGADO' THEN 2
-                        ELSE 1
-                    END
-                ") // Ordenar por prioridad del estado
-                    ->orderByDesc('fecha') // Ordenar por fecha en orden descendente
-                    ->paginate(20);
-
-                $pedidos = $empresa->pedidos()
-                    ->orderByRaw("
-                    CASE 
-                        WHEN estado = 'RECIBIDO' THEN 0
-                        WHEN estado = 'ENTREGADO' THEN 2
-                        ELSE 1
-                    END
-                ") // Ordenar por prioridad de estado
-                    ->orderByDesc('fecha') // Ordenar por fecha en orden descendente
-                    ->paginate(20); // Aplicar paginación
-
-                $repartidores = $empresa->usuarios?->filter(function ($user) {
-                    return $user->persona && $user->tipo === 'repartidor';
-                }) ?? collect();
-                // Manejar relaciones de la empresa asociada al usuario
-                $empresa = $usuario->empresa ?? $empresa;
-                $productos = $empresa->productos()->with('promociones', 'unitarios')->get();
-                $usuarios = $empresa->usuarios?->filter(function ($usuario) {
-                    return $usuario->tipo !== 'cliente';
-                }) ?? collect();
-            }
-           
-            $imagen = $empresa->imagenes;
-            $imagenes = json_decode($imagen, true);
-        } else {
-            $colorsjson = $empresa->configuraciones; // Obtén colores en formato ['primary' => '#3498db', ...]
-            $colors = json_decode($colorsjson, true);
-            $imagen = $empresa->imagenes;
-            $imagenes = json_decode($imagen, true);
-            // Si no hay usuario autenticado, cargar datos de la empresa
-            $productos = $empresa->productos ?? collect();
-            $usuarios = $empresa->usuarios?->filter(function ($usuario) {
-                return $usuario->tipo !== 'cliente';
-            }) ?? collect();
-            $pedidos = $empresa->pedidos()
-                ->orderByRaw("
-                            CASE 
-                                WHEN estado = 'RECIBIDO' THEN 0
-                                WHEN estado = 'ENTREGADO' THEN 2
-                                ELSE 1
-                            END
-                        ") // Ordenar por prioridad de estado
-                ->orderByDesc('fecha') // Ordenar por fecha en orden descendente
-                ->paginate(20); // Aplicar paginación
-            $repartidores = $empresa->usuarios?->filter(function ($user) {
-                return $user->persona && $user->tipo === 'repartidor';
-            }) ?? collect();
-        }*/
 
         // Retornar la vista con los datos
         return view('negocio', compact(

@@ -2,19 +2,20 @@
 import Swal from "sweetalert2"
 import Push from "push.js";
 import confetti from "canvas-confetti";
+import { agregarPedido } from "./nueva_tarjeta";
+import { mostrarNotificacion } from "./notificaciones";
 const token = document.querySelector('meta[name="token"]').getAttribute('content');
 const btn_siguiente_pedido = document.querySelector('.btnproductoagregar');
 const contenedor_form_realizar_pedido = document.getElementById('contenedor_form_realizar_pedido');
 const form_realizar_pedido = document.getElementById('form_realizar_pedido');
 const input_celular = document.getElementById('celular');
 const btn_regresar_a_productos = document.getElementById('btn_regresar_a_productos');
-const dominio = '';
 const contenedor_confeti = document.getElementById('contenedor_confeti');
 // Seleccionamos los elementos
 const copyButton = document.getElementById('copy-button');
 const numberToCopy = document.getElementById('number-to-copy');
 const formAsignarRepartidor = document.getElementById('formAsignarRepartidor');
-
+const modal_editar_pedido = document.getElementById('modal_editar_pedido');
 // Añadimos el evento al botón
 if (copyButton) {
     copyButton.addEventListener('click', (event) => {
@@ -48,74 +49,77 @@ if (btn_regresar_a_productos) {
     });
 }
 
+ async function buscar_datos_cliente(valor) {
+    let usuario_id = form_realizar_pedido.querySelector("#usuario_id");
+    let nombres = form_realizar_pedido.querySelector("#nombres");
+    let direccion = form_realizar_pedido.querySelector("#direccion");
+    let referencia = form_realizar_pedido.querySelector("#referencia");
+    try {
+        const response = await fetch(`/buscar-usuario/${valor}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.ok) {
+            const data = await response.json(); // Parsear la respuesta JSON
+            // Asumimos que data tiene un campo 'mensaje'
+            usuario_id.value = data.mensaje.id;
+            nombres.value = data.mensaje.persona.nombres;
+            direccion.value = data.mensaje.persona.direccion;
+            referencia.value = data.mensaje.persona.nota;
+            return true;
+
+
+        } else {
+            const errorData = await response.json();
+            Swal.fire({
+                title: 'Error!',
+                text: errorData.mensaje || 'Error desconocido',
+                icon: 'error',
+                showConfirmButton: false, // Oculta el botón de confirmación
+                timer: 3000, // Duración de la alerta en milisegundos (3 segundos)
+                timerProgressBar: true,// Muestra una barra de progreso del tiempo
+                customClass: {
+                    timerProgressBar: 'custom-bg-button' // Clase CSS personalizada
+                }
+            });
+            return false;
+
+
+        }
+    } catch (error) {
+        Swal.fire({
+            title: 'Error!',
+            text: 'Hubo un problema con la solicitud: ' + error.message,
+            icon: 'error',
+            showConfirmButton: false, // Oculta el botón de confirmación
+            timer: 3000, // Duración de la alerta en milisegundos (3 segundos)
+            timerProgressBar: true, // Muestra una barra de progreso del tiempo
+            customClass: {
+                timerProgressBar: 'custom-bg-button' // Clase CSS personalizada
+            }
+        });
+        return false;
+
+
+
+    }
+}
+
 if (input_celular) {
-    input_celular.addEventListener('keyup', async (e) => {
+    input_celular.addEventListener('keyup', async(e) => {
         const valor = e.target.value.trim(); // Limpiar espacios en blanco
-        let usuario_id = form_realizar_pedido.querySelector("#usuario_id");
-
-        .3
-        let nombres = form_realizar_pedido.querySelector("#nombres");
-        let direccion = form_realizar_pedido.querySelector("#direccion");
-        let referencia = form_realizar_pedido.querySelector("#referencia");
-
         if (valor.length === 9) { // Validar la longitud del valor del input
             input_celular.disabled = true;
+            const encontrado = await buscar_datos_cliente(valor);
 
-            try {
-                const response = await fetch(`/buscar-usuario/${valor}`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
+            input_celular.disabled = false; // Habilitar después de la búsqueda
+            input_celular.focus();
 
-                if (response.ok) {
-                    const data = await response.json(); // Parsear la respuesta JSON
-                    // Asumimos que data tiene un campo 'mensaje'
-                    usuario_id.value = data.mensaje.id;
-                    nombres.value = data.mensaje.usuario;
-                    direccion.value = data.mensaje.persona.direccion;
-                    referencia.value = data.mensaje.persona.nota;
-                    input_celular.disabled = false;
-                    input_celular.focus();
-
-                } else {
-                    const errorData = await response.json();
-                    Swal.fire({
-                        title: 'Error!',
-                        text: errorData.mensaje || 'Error desconocido',
-                        icon: 'error',
-                        showConfirmButton: false, // Oculta el botón de confirmación
-                        timer: 3000, // Duración de la alerta en milisegundos (3 segundos)
-                        timerProgressBar: true,// Muestra una barra de progreso del tiempo
-                        customClass: {
-                            timerProgressBar: 'custom-bg-button' // Clase CSS personalizada
-                        }
-                    });
-                    input_celular.disabled = false;
-                    form_realizar_pedido.reset();
-
-                    input_celular.focus();
-
-
-                }
-            } catch (error) {
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'Hubo un problema con la solicitud: ' + error.message,
-                    icon: 'error',
-                    showConfirmButton: false, // Oculta el botón de confirmación
-                    timer: 3000, // Duración de la alerta en milisegundos (3 segundos)
-                    timerProgressBar: true, // Muestra una barra de progreso del tiempo
-                    customClass: {
-                        timerProgressBar: 'custom-bg-button' // Clase CSS personalizada
-                    }
-                });
-                input_celular.disabled = false;
-                form_realizar_pedido.reset();
-                input_celular.focus();
-
-
+            if (!encontrado) {
+                form_realizar_pedido.reset(); // Borrar formulario solo si no se encontró el usuario
             }
         }
     });
@@ -250,6 +254,18 @@ if (btn_siguiente_pedido) {
     });
 }
 
+//Fomrmulario realizar pedido distribuidora
+const btn_atras_distribuidora = document.getElementById('btn_atras_distribuidora');
+const contener_producto_item = document.getElementById('contener_producto_item');
+if (btn_atras_distribuidora) {
+    btn_atras_distribuidora.addEventListener('click', () => {
+        contenedor_form_realizar_pedido.classList.add('hidden');
+        contener_producto_item.classList.remove('hidden');
+        contener_producto_item.classList.add('flex');
+
+    });
+}
+
 if (form_realizar_pedido) {
     form_realizar_pedido.addEventListener('submit', async (event) => {
         event.preventDefault();
@@ -283,7 +299,6 @@ if (form_realizar_pedido) {
             }
 
             const respuesta = await response.json();
-            enviarMensaje();
             window.idproductos = [];
             window.location.href = respuesta.ruta;
 
@@ -320,24 +335,7 @@ function mensajeError(texto) {
         confirmButtonText: 'Aceptar'
     })
 }
-//Mensaje de Exito
-function mensajeExito(texto) {
-    Swal.fire({
-        title: 'Confirmación!',
-        text: texto,
-        icon: 'success',
-        confirmButtonText: 'Aceptar'
-    })
-}
-//Mensaje de Exito
-function mensajeExitoPedido(titulo, texto) {
-    Swal.fire({
-        title: titulo,
-        text: texto,
-        icon: 'success',
-        confirmButtonText: 'Aceptar'
-    })
-}
+
 
 //WEBSOCKET
 
@@ -356,17 +354,27 @@ function conectarWebSocket() {
         .listen('MensajeEntendido', async (e) => {
             switch (e.message.operacion) {
                 case 'confirmacion':
-                    crearNotificacionWindow(e.message.operacion, e.message.pedido_id);
+                    mostrarNotificacion("Tu Pedido esta en Camino", `¡Hola Estimado Usuario(a)! El repartidor ha tomado tu pedido #${e.message.pedido_id}, y está en camino para entregártelo. ¡Prepárate para recibirlo pronto!`, 'Nuevo-Pedido-Camino');
+                    actualizar_Estado_delivery_panel_cliente(e.message.pedido_id, e.message.estado);
                     break;
                 case 'asignacion':
-                    crearNotificacionWindow(e.message.operacion, e.message.pedido_id);
+                    mostrarNotificacion("Nuevo Pedido Asignado", `¡Repartidor! La Distribuidora te ha asignado el Pedido #${e.message.pedido_id}, revísalo en este momento`, 'Nuevo-Pedido-Asignado');
                     pedidoasignadoarepartidor(e.message.pedido_id, 'repartidor');
-
+                    agregarPedido(e.message.pedido, "repartidor");
+                    break;
+                case 'finalizado':
+                    actualizarEstadoYPagoPanelAdministrador(e.message.pedido_id, e.message.estado);
+                    break;
+                case 'anulacion':
+                    actualizarEstadoYPagoPanelAdministrador(e.message.pedido_id, e.message.estado);
                     break;
                 default:
-                    getMessages(); // Recargar los mensajes cuando se recibe un nuevo evento
-                    crearNotificacionWindow(e.message.operacion, e.message.pedido_id);
-                    recargarPedidosAdmin();
+                    if (window.location.pathname != '/mi-cuenta') {
+                        getMessages(); // Recargar los mensajes cuando se recibe un nuevo evento
+
+                    }
+                    mostrarNotificacion("Nuevo Pedido ", ` ¡Administrador! La Distribuidora tiene un nuevo Pedido #${e.message.pedido_id}, revísalo en este momento`, 'Nuevo-Pedido');
+                    agregarPedido(e.message.pedido, "admin");
                     break;
             }
 
@@ -454,7 +462,7 @@ function setMessages(data) {
         buttonContainer.addEventListener('click', () => {
             messageElement.remove();
             actualizarEstadoMensaje(message.pedido_id);
-            pedidoasignadoarepartidor(message.pedido_id);
+            pedidoasignadoarepartidor(message.pedido_id, 'repartidor');
         });
         // Agregar el botón al mensaje
         messageElement.appendChild(buttonContainer);
@@ -488,125 +496,34 @@ document.getElementById('closeModalmensajes').addEventListener('click', closeMod
 
 //FIN WENSCOKET MENSAJES
 
-// Registro de notificaciones activas
-const notificacionesActivas = new Map();
 
-function crearNotificacionWindow(operacion, pedido_id) {
-    if (!('Notification' in window)) {
-        alert("Este navegador no soporta las notificaciones.");
+const cantidad_pedidos = document.querySelector('.cantidad_pedidos');
+
+function actualizarEstadoYPagoPanelAdministrador(pedidoId, estado) {
+    // Seleccionar los elementos del DOM correspondientes al pedido
+    const pedidoCaja = mi_cuenta_contenedor_pedidos.querySelector(`#caja-${pedidoId}`);
+    if (!pedidoCaja) {
+        console.error(`Pedido con ID ${pedidoId} no encontrado.`);
         return;
     }
-
-    // Verificar y solicitar permisos si es necesario
-    if (Notification.permission !== 'granted') {
-        Notification.requestPermission().then(respuesta => {
-            if (respuesta === 'denied') {
-                mensajeError("Has bloqueado las notificaciones. Por favor, habilítalas en la configuración del navegador.");
-                return;
-            }
-        });
-    }
-
-    // Crear notificación según la operación
-
-    switch (operacion) {
-        case 'confirmacion':
-            crearNotificacionRepartidor(pedido_id);
-
-            break;
-        case 'asignacion':
-            crearNotificacionRepartidorAsignacion(pedido_id);
-
-            break;
-        default:
-            crearNotificacion();
-
-            break;
-    }
+    pedidoCaja.remove();
+    cantidad_pedidos.textContent = parseInt(cantidad_pedidos.textContent) - 1;
 }
 
-function crearNotificacion() {
-    const tag = "pedido-notificacion";
-
-    // Evitar duplicidad comprobando el tag
-    if (notificacionesActivas.has(tag)) {
-        return;
-    }
-
-    const notificacion = Push.create("Nuevo Pedido", {
-        body: "Administrador, ha llegado un nuevo pedido para la empresa. ¡Revísalo ahora!", // Texto de la notificación
-        icon: "https://th.bing.com/th/id/R.34060d9efd4c69e41d3bd43661e3c6e0?rik=2c0ktKDtZCElOw&pid=ImgRaw&r=0", // URL del ícono
-        requireInteraction: true, // Mantener la notificación abierta hasta que el usuario la cierre
-        vibrate: [200, 100, 200], // Patrón de vibración en dispositivos móviles
-        tag: tag, // Identificador único
-        renotify: true, // Mostrar como nueva aunque tenga el mi[16px]o tag
-        onClick: function () {
-            window.focus();
-            this.close();
-        },
-        onClose: function () {
-            notificacionesActivas.delete(tag); // Eliminar del registro cuando se cierre
-        }
-    });
-
-    // Registrar la notificación activa
-    notificacionesActivas.set(tag, notificacion);
+function actualizar_Estado_delivery_panel_administrador($pedido_id, $estado) {
+    const estado_pedido_span = mi_cuenta_contenedor_pedidos.querySelector("#caja-" + $pedido_id).querySelector('.estado_pedido_span');
+    estado_pedido_span.innerHTML = $estado == 'En Camino'
+        ? $estado + " <span class='text-2xl'>🚚</span>"
+        : $estado;
 }
 
-function crearNotificacionRepartidor(pedido_id) {
-    const tag = `pedido-recibido-${pedido_id}`; // Un tag único por pedido
-
-    // Evitar duplicidad comprobando el tag
-    if (notificacionesActivas.has(tag)) {
-        return;
-    }
-
-    const notificacion = Push.create("Tu pedido está en camino", {
-        body: `El repartidor ha tomado tu pedido #${pedido_id} y está en camino para entregártelo. ¡Prepárate para recibirlo pronto!`,
-        icon: "https://th.bing.com/th/id/R.34060d9efd4c69e41d3bd43661e3c6e0?rik=2c0ktKDtZCElOw&pid=ImgRaw&r=0", // Icono de notificación
-        requireInteraction: true,
-        vibrate: [200, 100, 200],
-        tag: tag, // Identificador único
-        renotify: true,
-        onClick: function () {
-            window.focus();
-            this.close();
-        },
-        onClose: function () {
-            notificacionesActivas.delete(tag); // Eliminar del registro cuando se cierre
-        }
-    });
-
-    // Registrar la notificación activa
-    notificacionesActivas.set(tag, notificacion);
+function actualizar_Estado_delivery_panel_cliente($pedido_id, $estado) {
+    const estado_pedido_span = mi_cuenta_contenedor_pedidos.querySelector("#caja-" + $pedido_id).querySelector('.estado_pedido_span');
+    estado_pedido_span.innerHTML = $estado == 'En Camino'
+        ? $estado + " <span class='text-2xl'>🚚</span>"
+        : $estado;
 }
-function crearNotificacionRepartidorAsignacion(pedido_id) {
-    const tag = `pedido-asignado-${pedido_id}`; // Un tag único por pedido
 
-    // Evitar duplicidad comprobando el tag
-    if (notificacionesActivas.has(tag)) {
-        return;
-    }
-
-    const notificacion = Push.create("Nuevo Pedido Asignado", {
-        body: `Repartidor, se te ha asignado el pedido #${pedido_id}. Por favor, revísalo y prepárate para realizar la entrega.`,
-        icon: "https://th.bing.com/th/id/R.34060d9efd4c69e41d3bd43661e3c6e0?rik=2c0ktKDtZCElOw&pid=ImgRaw&r=0", // Icono de notificación
-        requireInteraction: true,
-        vibrate: [200, 100, 200],
-        tag: tag, // Identificador único
-        renotify: true,
-        onClick: function () {
-            window.focus();
-            this.close();
-        },
-        onClose: function () {
-            notificacionesActivas.delete(tag); // Eliminar del registro cuando se cierre
-        }
-    });
-
-    // Registrar la notificación activa
-    notificacionesActivas.set(tag, notificacion);
-}
 
 const modalmensajespedidoasignado = document.getElementById('modalmensajespedidoasignado');
 const closeModalmensajesAsignacion = document.getElementById('closeModalmensajesAsignacion');
@@ -622,11 +539,7 @@ if (closeModalmensajesdetalle) {
         cerrarmodalPedidoDetalles();
     });
 }
-function abrirmodalPedidoAsignado() {
-    modalmensajespedidoasignado.classList.remove('hidden');
-    modalmensajespedidoasignado.classList.add('flex');
 
-}
 function cerrarmodalPedidoAsignado() {
     modalmensajespedidoasignado.classList.remove('flex');
     modalmensajespedidoasignado.classList.add('hidden');
@@ -685,7 +598,6 @@ function getRepartidores() {
             }
         })
         .catch(error => {
-            console.error('Error al obtener los repartidores:', error);
         });
 }
 
@@ -710,8 +622,7 @@ function pedidoasignadoarepartidor(id, tipo) {
     })
         .then(result => {
             if (tipo == 'repartidor') {
-                abrirmodalPedidoAsignado();
-                llenarPedido(result, 'repartidor');
+                return;
             } else {
                 abrirmodalPedidoDetalles();
                 llenarPedido(result, 'admin');
@@ -856,31 +767,127 @@ function modificarDomPedido(repartidor, pedido_id, elemento) {
 }
 
 const pedido_id = document.getElementById('pedido_id');
+const id_pedido_modal_editar = document.getElementById('id_pedido_modal_editar');
+const field_cliente = document.getElementById('field_cliente');
+const field_Celular = document.getElementById('field_Celular');
+const field_direccion = document.getElementById('field_direccion');
+const field_referencia = document.getElementById('field_referencia');
+const estado_pedido = document.getElementById('estado_pedido');
+const estado_pago = document.getElementById('estado_pago');
+const medio_pago = document.getElementById('medio_pago');
+const notas = document.getElementById('notas');
+const modal_editar_pedido_id = document.getElementById('modal_editar_pedido_id');
+const form_editar_pedido_repartidor = document.getElementById('form_editar_pedido_repartidor');
 let spanrepartidor;
 const mi_cuenta_contenedor_pedidos = document.getElementById('mi_cuenta_contenedor_pedidos_super');
-if (mi_cuenta_contenedor_pedidos) {
-    mi_cuenta_contenedor_pedidos.querySelectorAll('.mi_cuenta_pedido').forEach(element => {
-        const botonasignar = element.querySelector('.btnasignarrepartidor');
-        if (botonasignar) {
-            botonasignar.addEventListener('click', () => {
-                spanrepartidor = botonasignar.closest('.mi_cuenta_pedido').querySelector('.span_repartidor_nombre');
-                const idpedido = botonasignar.dataset.id;
-                modalasignarrepartidor.classList.remove('hidden');
-                modalasignarrepartidor.classList.add('flex');
-                pedido_id.value = idpedido;
 
-            });
+
+if (mi_cuenta_contenedor_pedidos) {
+    mi_cuenta_contenedor_pedidos.addEventListener('click', function (event) {
+        const botonasignar = event.target.closest('.btnasignarrepartidor');
+        const btn_editar_pedido = event.target.closest('.btn_editar_pedido');
+
+        if (botonasignar) {
+            const pedido = botonasignar.closest('.mi_cuenta_pedido');
+            spanrepartidor = pedido.querySelector('.span_repartidor_nombre');
+            const idpedido = botonasignar.dataset.id;
+
+            modalasignarrepartidor.classList.remove('hidden');
+            modalasignarrepartidor.classList.add('flex');
+            pedido_id.value = idpedido;
+        }
+
+        if (btn_editar_pedido) {
+            const idpedido = btn_editar_pedido.dataset.id;
+
+            modal_editar_pedido.classList.remove('hidden');
+            modal_editar_pedido.classList.add('flex');
+            id_pedido_modal_editar.value = idpedido;
+            modal_editar_pedido_id.textContent = idpedido;
+            obtenerDatosPedido(idpedido);
         }
     });
-    if (btncerrarmodalrepartidor) {
-        btncerrarmodalrepartidor.addEventListener('click', () => {
-            modalasignarrepartidor.classList.remove('flex');
-            modalasignarrepartidor.classList.add('hidden');
+}
+
+async function obtenerDatosPedido(idPedido) {
+    try {
+        // Realizar la solicitud al servidor
+        const response = await fetch(`/pedido/${idPedido}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
         });
+
+        // Verificar si la respuesta es correcta
+        if (!response.ok) {
+            throw new Error(`Error al obtener el pedido: ${response.statusText}`);
+        }
+
+        // Parsear la respuesta como JSON
+        const data = await response.json();
+
+        // Llenar los campos del formulario con los datos obtenidos
+        field_cliente.value = data.mensaje.nombres || '';
+        field_Celular.value = data.mensaje.celular || '';
+        field_direccion.value = data.mensaje.direccion || '';
+        field_referencia.value = data.mensaje.nota || '';
+        estado_pedido.value = data.mensaje.estado || 'Pendiente';
+        estado_pago.value = data.mensaje.pago ? 'Pagado' : 'Pendiente de pago';
+        medio_pago.value = data.mensaje.metodo;
+
+        notas.value = data.mensaje.nota_interna || '';
+    } catch (error) {
+        console.error('Error:', error.message);
     }
 }
 
+if (form_editar_pedido_repartidor) {
+    form_editar_pedido_repartidor.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formdata = new FormData(form_editar_pedido_repartidor);
+        let data = {};
+        formdata.forEach((element, key) => {
+            data[key] = element;
+        });
+        try {
+            const response = await fetch(form_editar_pedido_repartidor.action, {
+                method: 'PUT', // Especifica el método HTTP
+                headers: {
+                    "Content-Type": "application/json", // Especifica el tipo de contenido
+                    'X-CSRF-TOKEN': token // Token CSRF
+                },
+                body: JSON.stringify(data)
 
+            });
+            // Verificar si la respuesta es correcta
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.log(errorData);
+                throw new Error(`Error al obtener el pedido: ${response.statusText}`);
+            }
+            // Parsear la respuesta como JSON
+            const result = await response.json();
+            Swal.fire({
+
+                title: 'Confirmación',
+                text: result.mensaje,
+                icon: 'success',
+                timerProgressBar: true,
+                timer: 2000,
+                showConfirmButton: false,
+                customClass: {
+                    timerProgressBar: 'bg-green-500'
+                }
+            })
+            setTimeout(() => {
+                window.location.reload();
+            }, 3000); // delay es el tiempo en milisegundos
+        } catch (error) {
+            mensajeError(error);
+        }
+    });
+}
 if (formAsignarRepartidor) {
     formAsignarRepartidor.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -961,7 +968,7 @@ function asignarRepartidor(pedidoId, repartidor, spanrepartidor) {
                 }
             })
             spanrepartidor.textContent = result.repartidor;
-            modificarDomPedido(result.repartidor, pedidoId,'repartidor');
+            modificarDomPedido(result.repartidor, pedidoId, 'repartidor');
         })
         .catch(error => {
             mensajeError(error.message); // Mostrar mensaje de error
@@ -969,72 +976,7 @@ function asignarRepartidor(pedidoId, repartidor, spanrepartidor) {
         });
 }
 
-const pedidoAsignado = document.getElementById('pedidoAsignado');
-if (pedidoAsignado) {
 
-    pedidoAsignado.addEventListener('click', (event) => {
-        const boton = event.target.closest('.btnaceptarrepartidordirecto');
-        const id = boton.dataset.id;
-        boton.disabled = true;
-        fetch(`${dominio} /cambiarestadopago/${id} `, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json', // Define el contenido como JSON
-                'X-CSRF-TOKEN': token,
-            },
-        }).then(response => {
-            // Verificar el código de estado
-            if (response.status !== 200) {
-                // Obtener el mensaje de error del servidor
-                return response.text().then((text) => {
-                    throw new Error(text); // Lanza un error con el mensaje del servidor
-                });
-            }
-            return response.json(); // Convertir la respuesta exitosa a JSON
-        })
-            .then(result => {
-                mensajeExito(result.mensaje); // Manejo del resultado exitoso
-                cerrarmodalPedidoAsignado();
-            })
-            .catch(error => {
-                mensajeError(error.message); // Mostrar mensaje de error
-                boton.disabled = false;
-
-            });
-
-
-
-    });
-
-}
-
-function llenarNuevoPedidoDom() {
-    const contenedor = document.createElement('div');
-    contenedor.classList.add('p-[15px]', 'mi_cuenta_pedido', 'w-[363px]', 'max-w-[363px]');
-
-    const sub2 = document.createElement('div');
-    sub2.classList.add(
-        'flex-1',
-        'h-full',
-        'w-[333px]',
-        'max-w-[333px]',
-        'p-[20px]',
-        'bg-color-tarjetas',
-        'rounded-3xl',
-        'text-color-titulos-entrega',
-        'font-sans',
-        'text-base'
-    );
-
-
-    // Añade sub2 como hijo de contenedor
-    contenedor.appendChild(sub2);
-
-    // Ahora puedes agregar el contenedor al DOM, por ejemplo:
-    document.body.appendChild(contenedor);
-
-
-}
 
 function actualizarEstadoMensaje(id) {
     fetch(`/actualizar/${id} `, {

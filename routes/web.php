@@ -38,10 +38,10 @@ Route::controller(ControllerUsuario::class)->group(function () {
     Route::get('/repartidores', 'getRepartidores')->name('usuario.repartidores');
     Route::get('/mi-cuenta', 'index')->name('usuario.index');
     Route::post('/login', 'login')->name('usuario.login');
+    Route::post('/login-no-aut', 'login_no_aut')->name('usuario.login-no-aut');
     Route::get('/logout', 'logout')->name('usuario.logout');
     Route::get('/buscar-usuario/{telefono}', 'buscarUsuario')->name('usuario.buscar');
     Route::put('/update/{id}', 'update')->name('usuario.update');
-
 });
 
 Route::controller(ControllerProducto::class)->group(function () {
@@ -50,11 +50,17 @@ Route::controller(ControllerProducto::class)->group(function () {
 });
 Route::prefix('{slug}')->controller(ControllerPedido::class)->group(function () {
     Route::post('/crearpedido', 'store')->name('pedido.crear');
-    Route::post('/asignarRepartidor', 'asignar')->name('pedido.asignarrepartidor');
-    Route::put('/cambiarestadopago', 'cambiarestadopago')->name('pedido.cambiarestadopago');
     Route::put('/cancelarpedido', 'cancelarPedido')->name('pedido.cancelarPedido');
-    Route::put('/cambiarestadopago/{id}', 'pedidorecibidorepartidor')->name('pedido.recibididorepartidor');
     Route::get('/pedido_confirmado/{id}', 'vista_pedido_confirmado')->name("pedido.confirmacion");
+});
+Route::controller(ControllerPedido::class)->group(function () {
+    Route::put('cambiarestadopago/{id}', 'pedidorecibidorepartidor')->name('pedido.recibididorepartidor');
+    Route::post('asignarRepartidor', 'asignar')->name('pedido.asignarrepartidor');
+    Route::put('cambiarestadopago', 'cambiarestadopago')->name('pedido.cambiarestadopago');
+    Route::put('anular', 'anular')->name('pedido.anular');
+    Route::put('editar', 'editar')->name('pedido.editar');
+    Route::get('pedido/{id}','buscar_pedido')->name('pedido.buscar');
+
 });
 
 Route::controller(ControllerMensajes::class)->group(function () {
@@ -69,6 +75,7 @@ Route::prefix('mi-cuenta')->controller(ControllerEmpresa::class)->group(function
     Route::get('productos', 'index_productos')->name('empresa.productos');
     Route::get('datos', 'index_mis_datos')->name('empresa.datos');
     Route::get('usuarios', 'index_usuarios')->name('empresa.usuarios');
+    Route::get('reportes', 'index_reportes')->name('empresa.reportes');
 
 });
 

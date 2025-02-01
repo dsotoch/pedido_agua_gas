@@ -16,7 +16,7 @@
             <div class="grid font-sans text-[14px] leading-[14px] space-y-3 mt-4 mb-6">
                 <a @if (($usuario && $usuario->tipo === 'admin') || ($usuario->tipo === 'repartidor' && $usuario->empresas()->exists())) href="{{ route('index.negocio', ['slug' => $usuario->empresas()->first()->dominio]) }}">Pedir</a>
             @else
-                <a href="{{ route('index.negocio', ['slug' => $pedidos->count() > 0 ? $pedido->empresa()->orderBy('created_at', 'desc')->first()->dominio : '#']) }}">Pedir</a> @endif
+            <a href="{{ route('index.negocio', ['slug' => $pedido && !empty($pedido->empresa->dominio) ? $pedido->empresa->dominio : 'default-slug']) }}">Pedir</a> @endif
                     <a href="{{ route('index') }}">Distribuidoras</a>
                 <a href="{{ route('usuario.logout') }}">Cerrar sesión</a>
             </div>
@@ -53,9 +53,11 @@
                             <i class="fa-solid fa-user-gear"></i>&nbsp;&nbsp;Usuarios
                         </a>
                     </div>
-                    <div class="border border-transparent p-3 rounded-md hover:bg-naranja hover:border-red-500"><a
-                            class="" href="https://entrega.pe/mi-cuenta/reportes/" id="btn_boton_reportes"><i
-                                class="fa-solid fa-chart-line"></i>&nbsp;&nbsp;Reportes</a></div>
+                    <div
+                        class="{{ request()->routeIs('empresa.reportes') ? 'btn-active-mi-cuenta' : '' }}  border border-transparent p-3 rounded-md hover:bg-naranja hover:border-red-500">
+                        <a class="" href="{{ route('empresa.reportes') }}" id="btn_boton_reportes"><i
+                                class="fa-solid fa-chart-line"></i>&nbsp;&nbsp;Reportes</a>
+                    </div>
                 @endif
                 @if ($usuario->tipo == 'cliente')
                     <div
@@ -68,6 +70,14 @@
                         <a class="" href="{{ route('empresa.datos') }}" id="btn_boton_datos"><i
                                 class="fa-solid fa-user-gear"></i>
                             &nbsp;&nbsp;Mis Datos</a>
+                    </div>
+                @endif
+                @if ($usuario->tipo == 'repartidor')
+                    <div
+                        class=" {{ request()->routeIs('usuario.index') ? 'btn-active-mi-cuenta' : '' }} border border-transparent p-3 rounded-md hover:bg-naranja hover:border-red-500">
+                        <a class="" href="{{ route('usuario.index') }}" id="btn_boton_dashboard"><i
+                                class="fa-solid fa-gauge"></i>&nbsp;&nbsp;Dashboard</a>
+
                     </div>
                 @endif
             </div>

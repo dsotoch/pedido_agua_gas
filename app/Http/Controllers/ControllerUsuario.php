@@ -33,10 +33,12 @@ class ControllerUsuario extends Controller
         $pedidos = $usuario->tipo === 'admin'
             ? Pedido::with('detalles', 'empresa', 'repartidor', 'repartidor.persona', 'entregaPromociones')
             ->where('empresa_id', $empresa->id ?? 0)
+            ->where('estado', '!=', 'Entregado')
+            ->where('estado', '!=', 'Anulado')
             ->orderByRaw("
                 CASE 
-                    WHEN estado = 'finalizado' THEN 1
-                    WHEN estado = 'pendiente' THEN 2
+                    WHEN estado = 'En Camino' THEN 2
+                    WHEN estado = 'Pendiente' THEN 1
                     ELSE 3
                 END
             ")
@@ -45,7 +47,8 @@ class ControllerUsuario extends Controller
             : ($usuario->tipo === 'repartidor'
                 ? Pedido::with('detalles', 'empresa', 'usuario', 'entregaPromociones')
                 ->where('repartidor_id', $usuario->id)
-                ->where('estado','!=','Entregado')
+                ->where('estado', '!=', 'Entregado')
+                ->where('estado', '!=', 'Anulado')
                 ->orderByRaw("
                     CASE 
                         WHEN estado = 'Pendiente' THEN 1
@@ -55,20 +58,21 @@ class ControllerUsuario extends Controller
                 ")
                 ->orderByDesc('fecha')
                 ->get()
-                : Pedido::with('detalles', 'empresa', 'usuario', 'entregaPromociones')
+            : Pedido::with('detalles', 'empresa', 'usuario', 'entregaPromociones')
                 ->where('cliente_id', $usuario->id)
                 ->orderByRaw("
                     CASE 
-                        WHEN estado = 'finalizado' THEN 1
-                        WHEN estado = 'pendiente' THEN 2
+                        WHEN estado = 'Pendiente' THEN 1
+                        WHEN estado = 'En Camino' THEN 2
                         ELSE 3
                     END
                 ")
                 ->orderByDesc('fecha')
                 ->get()
             );
+            $pedido = Pedido::where('cliente_id', $usuario->id)->latest()->first();
 
-        return view('micuenta', compact('pedidos', 'empresa', 'usuario'));
+        return view('micuenta', compact('pedido','pedidos', 'empresa', 'usuario'));
     }
 
 
@@ -80,6 +84,7 @@ class ControllerUsuario extends Controller
             'nombre' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:persona,correo,' . $id,
             'direccion' => 'nullable|string|max:255',
+            'direccion2'=>'nullable|string|max:255',
             'nota' => 'nullable|string|max:500',
             'password' => 'nullable|string|min:8',
         ]);
@@ -98,6 +103,7 @@ class ControllerUsuario extends Controller
         $persona->correo = $request->input('email');
         $persona->direccion = $request->input('direccion');
         $persona->nota = $request->input('nota');
+        $persona->direccion2 =$request->input('direccion2');
 
         // Actualizar la contraseña solo si se proporciona
         if ($request->filled('password')) {
@@ -152,6 +158,37 @@ class ControllerUsuario extends Controller
             'mensaje' => 'Las credenciales no coinciden con nuestros registros.',
         ], 404);
     }
+    public function login_no_aut(Request $request)
+    {
+        // Validar los datos de entrada
+        $request->validate([
+            'telefono' => 'required|string',
+            'password' => 'required|string',
+        ]);
+
+        // Credenciales para autenticar
+        $credentials = [
+            'usuario' => $request->telefono,
+            'password' => $request->password,
+        ];
+
+        // Intentar autenticación
+        if (Auth::attempt($credentials)) {
+            // Regenerar sesión para proteger contra ataques de fijación de sesión
+            $request->session()->regenerate();
+            $usuario = User::findOr(Auth::user()->id);
+            
+            return  response()->json([
+                'mensaje' => 'Usuario Logueado Correctamente.',
+                'cliente_id'=>$usuario->usuario
+            ], 200);
+        }
+
+        // Si falla la autenticación, redirigir de vuelta con un mensaje de error
+        return response()->json([
+            'mensaje' => 'Las credenciales no coinciden con nuestros registros.',
+        ], 404);
+    }
 
     public function logout(Request $request)
     {
@@ -177,9 +214,13 @@ class ControllerUsuario extends Controller
             }
 
             $repartidores = $empresa->usuarios()
-                ->with('persona')
                 ->where('tipo', 'repartidor')
+                ->whereHas('persona', function ($query) {
+                    $query->where('estado', true);
+                })
+                ->with('persona') // Opcional si quieres cargar la relación
                 ->get();
+
 
             return response()->json(['repartidores' => $repartidores], 200);
         } catch (\Throwable $th) {

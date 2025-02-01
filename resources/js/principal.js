@@ -143,22 +143,5 @@ document.addEventListener('DOMContentLoaded', () => {
         divbars.classList.remove('hidden');
         divbars.classList.add('flex');
     }
-    //Mensaje de Error
-    function mensajeError(texto) {
-        Swal.fire({
-            title: 'Ocurrio un Error!',
-            text: texto,
-            icon: 'error',
-            confirmButtonText: 'Aceptar'
-        })
-    }
-    //Mensaje de Exito
-    function mensajeExito(texto) {
-        Swal.fire({
-            title: 'Confirmación!',
-            text: texto,
-            icon: 'success',
-            confirmButtonText: 'Aceptar'
-        })
-    }
+    
 });

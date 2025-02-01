@@ -388,7 +388,7 @@
                                         </path>
                                     </svg></div>
                                 <div class="text-wrap">
-                                    <p class="repartidor">Actualizado por Sandra Maribel Salas Tuanama</p>
+                                    <p class="repartidor">Actualizado por {{$pedido->actor}}</p>
                                 </div>
                             </div>
                         </div>

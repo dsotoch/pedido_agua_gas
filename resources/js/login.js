@@ -1,4 +1,4 @@
-
+import Swal from "sweetalert2";
 const botonregistrarsepanelcliente = document.getElementById('botonregistrarsepanelcliente');
 const formLogindiv = document.getElementById('formLogindiv');
 const contenedor_login = document.getElementById('contenedor_login');
@@ -8,9 +8,155 @@ const formulario_login_pagina_principal = document.getElementById('formulario_lo
 const token = document.querySelector('meta[name="token"]').getAttribute('content');
 const contenedor_registrarse = document.getElementById('contenedor_registrarse');
 const form_registrar_usuario = document.getElementById('form_registrar_usuario');
-const contenedor_login_distribuidora =document.getElementById('contenedor_login_distribuidora');
-const form_login_distribuidora=document.getElementById('form_login_distribuidora');
+const contenedor_login_distribuidora = document.getElementById('contenedor_login_distribuidora');
+const form_login_distribuidora = document.getElementById('form_login_distribuidora');
+const no_au_btn_login = document.getElementById('no_au_btn_login');
+const no_au_btn_register = document.getElementById('no_au_btn_register');
+const contenedor_login_no_aut = document.getElementById('contenedor_login_no_aut');
+const formulario_login_no_aut = document.getElementById('formulario_login_no_aut');
+const contenedor_registrarse_no_aut = document.getElementById('contenedor_registrarse_no_aut');
+const boton_regresar_a_login_no_au = document.getElementById('boton_regresar_a_login_no_au');
+const botonregistrarsepanelcliente_no_au = document.getElementById('botonregistrarsepanelcliente_no_au');
+const form_registrar_usuario_no_aut = document.getElementById('form_registrar_usuario_no_aut');
+//EL cliente no esta autenticado
+if (form_registrar_usuario_no_aut) {
+    form_registrar_usuario_no_aut.addEventListener('submit', async (event) => {
+        event.preventDefault(); // Evita el envío automático del formulario
+        contenedor_login_no_aut.classList.add('after:content-[""]', 'after:absolute', 'after:inset-0', 'after:bg-white', 'after:bg-opacity-70', 'after:cursor-not-allowed', 'after:z-10');
 
+        const data = new FormData(form_registrar_usuario_no_aut);
+        let datos = {};
+
+        // Corrección en el recorrido de FormData
+        data.forEach((value, key) => {
+            datos[key] = value;
+        });
+
+        try {
+            const response = await fetch(form_registrar_usuario_no_aut.getAttribute('action'), {
+                method: form_registrar_usuario_no_aut.method,
+                headers: {
+                    'Content-Type': 'application/json', // Define el contenido como JSON
+                    'X-CSRF-TOKEN': token, // Asegúrate de que 'token' está definido
+                },
+                body: JSON.stringify(datos)
+            });
+
+            const respuesta = await response.json();
+
+            if (response.status != 201) {
+                throw new Error("Ocurrió un error: " + JSON.stringify(respuesta));
+            }
+            Swal.fire({
+                title: 'Confirmación',
+                text: 'Te has registrado correctamente. Ahora inicia sesion con tus credenciales',
+                icon: 'success',
+                timer: 3000,
+                timerProgressBar: true,
+                showConfirmButton: false,
+                customClass: {
+                    timerProgressBar: 'bg-green-500'
+                }
+
+            })
+            contenedor_login_no_aut.classList.remove('after:content-[""]', 'after:absolute', 'after:inset-0', 'after:bg-white', 'after:bg-opacity-70', 'after:cursor-not-allowed', 'after:z-10');
+            form_registrar_usuario_no_aut.reset();
+            regresar_a_login_no_au();
+
+        } catch (error) {
+            Swal.fire({
+                title: 'Ocurrio un error',
+                text: error,
+                icon: 'error',
+                timer: 3000,
+                timerProgressBar: true,
+                showConfirmButton: false,
+                customClass: {
+                    timerProgressBar: 'bg-red-500'
+                }
+
+            })
+            contenedor_login_no_aut.classList.remove('after:content-[""]', 'after:absolute', 'after:inset-0', 'after:bg-white', 'after:bg-opacity-70', 'after:cursor-not-allowed', 'after:z-10');
+
+        }
+    });
+}
+if (formulario_login_no_aut) {
+    formulario_login_no_aut.addEventListener('submit', async (event) => {
+        event.preventDefault(); // Evita el envío automático del formulario
+        contenedor_login_no_aut.classList.add('after:content-[""]', 'after:absolute', 'after:inset-0', 'after:bg-white', 'after:bg-opacity-70', 'after:cursor-not-allowed', 'after:z-10');
+
+        const data = new FormData(formulario_login_no_aut);
+        let datos = {};
+
+        // Corrección en el recorrido de FormData
+        data.forEach((value, key) => {
+            datos[key] = value;
+        });
+
+        try {
+            const response = await fetch(formulario_login_no_aut.getAttribute('action'), {
+                method: formulario_login_no_aut.method,
+                headers: {
+                    'Content-Type': 'application/json', // Define el contenido como JSON
+                    'X-CSRF-TOKEN': token, // Asegúrate de que 'token' está definido
+                },
+                body: JSON.stringify(datos)
+            });
+
+            const respuesta = await response.json();
+
+            if (!response.ok) {
+                throw new Error("Ocurrió un error: " + JSON.stringify(respuesta));
+            }
+            window.location.reload();
+
+        } catch (error) {
+            mensajeError(error); // Asegúrate de que mensajeError está definido
+            contenedor_login_no_aut.classList.remove('after:content-[""]', 'after:absolute', 'after:inset-0', 'after:bg-white', 'after:bg-opacity-70', 'after:cursor-not-allowed', 'after:z-10');
+
+        }
+    });
+}
+
+if (no_au_btn_login) {
+    no_au_btn_login.addEventListener('click', () => {
+        contenedor_login_no_aut.classList.remove('hidden');
+        contenedor_login_no_aut.classList.add('flex');
+
+    });
+}
+if (no_au_btn_register) {
+    no_au_btn_register.addEventListener('click', () => {
+        contenedor_login_no_aut.classList.remove('hidden');
+        contenedor_login_no_aut.classList.add('flex');
+        contenedor_registrarse_no_aut.classList.remove('hidden');
+        contenedor_registrarse_no_aut.classList.add('flex');
+        formulario_login_no_aut.classList.add('hidden');
+
+    });
+}
+function regresar_a_login_no_au() {
+    contenedor_registrarse_no_aut.classList.remove('flex');
+    contenedor_registrarse_no_aut.classList.add('hidden');
+    formulario_login_no_aut.classList.remove('hidden');
+}
+if (boton_regresar_a_login_no_au) {
+    boton_regresar_a_login_no_au.addEventListener('click', () => {
+        regresar_a_login_no_au();
+
+    });
+}
+
+if (botonregistrarsepanelcliente_no_au) {
+    botonregistrarsepanelcliente_no_au.addEventListener('click', () => {
+        contenedor_registrarse_no_aut.classList.remove('hidden');
+        contenedor_registrarse_no_aut.classList.add('flex');
+
+        formulario_login_no_aut.classList.add('hidden');
+
+    });
+}
 
 //Iniciar sesion Distribuidora
 if (form_login_distribuidora) {
@@ -20,7 +166,7 @@ if (form_login_distribuidora) {
         let respuesta = await SolicitudFecthFormularios_POST(form_login_distribuidora, 'login');
         if (respuesta) {
             window.location.reload();
-        }else{
+        } else {
             contenedor_login_distribuidora.classList.remove('after:content-[""]', 'after:absolute', 'after:inset-0', 'after:bg-white', 'after:bg-opacity-70', 'after:cursor-not-allowed', 'after:z-10');
 
         }
@@ -116,7 +262,7 @@ if (formulario_login_pagina_principal) {
         let respuesta = await SolicitudFecthFormularios_POST(formulario_login_pagina_principal, 'login');
         if (respuesta) {
             window.location.href = '/mi-cuenta'
-        }else{
+        } else {
             contenedor_login.classList.remove('after:content-[""]', 'after:absolute', 'after:inset-0', 'after:bg-white', 'after:bg-opacity-70', 'after:cursor-not-allowed', 'after:z-10');
 
         }

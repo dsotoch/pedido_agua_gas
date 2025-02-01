@@ -22,7 +22,9 @@ class Pedido extends Model
         'repartidor_id',
         'nombres',
         'direccion',
-        'celular'
+        'celular',
+        'nota_interna',
+        'actor'
     ];
 
 

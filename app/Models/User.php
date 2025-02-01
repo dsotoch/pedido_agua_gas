@@ -44,7 +44,7 @@ class User extends Authenticatable
 
     public function pedido()
     {
-        return $this->hasMany(Pedido::class, 'repartidor_id');
+        return $this->hasOne(Pedido::class, 'repartidor_id');
     }
     public function pedido_usuario()
     {

@@ -8,6 +8,7 @@ use App\Models\ClientePedidoProductos;
 use App\Models\Detalles;
 use App\Models\empresa;
 use App\Models\EntregaPromociones;
+use App\Models\Mensajes;
 use App\Models\Pedido;
 use App\Models\Persona;
 use App\Models\Producto;
@@ -15,15 +16,70 @@ use App\Models\PromocionesUnitario;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
-use function PHPUnit\Framework\isEmpty;
 
 class ControllerPedido extends Controller
 {
+    public function editar(Request $request)
+    {
 
+        if (!Auth::check()) {
+            abort(403, 'Usuario no Autenticado');
+        }
+
+        try {
+            $usuario = Auth::user();
+            $admin = User::find($usuario->id);
+            // Validar los datos del formulario
+            $request->validate([
+                'id_pedido' => 'required|integer|exists:pedidos,id', // Asegura que el ID del pedido exista
+                'field_cliente' => 'required|string|max:255',
+                'field_Celular' => 'required|digits_between:6,15',
+                'field_direccion' => 'required|string|max:255',
+                'field_referencia' => 'nullable|string|max:255',
+                'estado_pedido' => 'required|in:Pendiente,En Camino,Entregado,Anulado',
+                'estado_pago' => 'required|in:Pendiente de pago,Pagado,Deuda pendiente',
+                'medio_pago' => 'nullable|in:efectivo,yape,account',
+                'notas' => 'nullable|string|max:500',
+            ]);
+
+            // Buscar el pedido por ID
+            $pedido = Pedido::findOrFail($request->id_pedido);
+
+            // Actualizar los datos del pedido
+            $pedido->nombres = $request->field_cliente;
+            $pedido->celular = $request->field_Celular;
+            $pedido->direccion = $request->field_direccion;
+            $pedido->nota = $request->field_referencia;
+            $pedido->estado = $request->estado_pedido;
+            $pedido->pago = $request->estado_pago == 'Pagado' && $request->medio_pago != 'account' ? true : false;
+            $pedido->metodo = $request->medio_pago;
+            $pedido->nota_interna = $request->notas;
+            $pedido->actor = $admin->persona->nombres;
+            // Guardar los cambios
+            $pedido->save();
+
+            // Retornar una respuesta (puede ser un redirect o JSON según necesites)
+            return response()->json([
+                'mensaje' => 'Pedido actualizado correctamente.',
+                'pedido' => $pedido,
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json(['mensaje' => $th->getMessage()], 500);
+        }
+    }
+
+    public function buscar_pedido($id)
+    {
+        try {
+            $pedido = Pedido::findOr($id);
+            return response()->json(['mensaje' => $pedido], 200);
+        } catch (\Throwable $th) {
+            return response()->json($th->getMessage(), 500);
+        }
+    }
 
     public function vista_pedido_confirmado(string $slug, string $id)
     {
@@ -53,10 +109,12 @@ class ControllerPedido extends Controller
             $pedido->update([
                 'repartidor_id' => $repartidor->id,
             ]);
-            $mensaje = ['operacion' => 'asignacion', 'mensaje' => 'Pedido Asignado.', 'pedido_id' => $validated['pedido_id']];
+            $pedido_completo = Pedido::with('detalles', 'detalles.producto', 'entregaPromociones')->find($pedido->id);
+
+            $mensaje = ['operacion' => 'asignacion', 'mensaje' => 'Pedido Asignado.', 'pedido_id' => $validated['pedido_id'], 'pedido' => $pedido_completo];
 
             SendMessage::dispatch($mensaje, $repartidor->id);
-            
+
             // Respuesta exitosa
             return response()->json([
                 'mensaje' => 'Pedido asignado correctamente.',
@@ -71,46 +129,111 @@ class ControllerPedido extends Controller
         }
     }
 
-    public function pedidorecibidorepartidor(string $nombre_empresa, string $id)
+    public function pedidorecibidorepartidor($id)
     {
-        $pedido = Pedido::find($id);
-        if ($pedido) {
-            $pedido->update([
-                "estado" => 'ENVIADO'
-            ]);
-            $mensaje = ['operacion' => 'confirmacion', 'mensaje' => 'Tu pedido ha sido tomado por el repartidor y está en camino.', 'pedido_id' => $pedido->id];
-            SendMessage::dispatch($mensaje, $pedido->cliente->id);
-            return response()->json(["mensaje" => "Pedido Confirmado."], 200);
-        } else {
-            return response()->json(["mensaje" => "Pedido No Encontrado."], 404);
+        try {
+            $pedido = Pedido::find($id);
+            if ($pedido) {
+                $pedido->update([
+                    "estado" => 'En Camino'
+                ]);
+                $mensaje = ['operacion' => 'confirmacion', 'mensaje' => 'Tu pedido ha sido tomado por el repartidor y está en camino.', 'pedido_id' => $pedido->id, 'estado' => $pedido->estado];
+                SendMessage::dispatch($mensaje, $pedido->usuario->id);
+
+                return response()->json(["mensaje" => "Pedido Confirmado.", 'estado' => $pedido->estado], 200);
+            } else {
+                return response()->json(["mensaje" => "Pedido No Encontrado."], 404);
+            }
+        } catch (\Throwable $th) {
+            return response()->json(["mensaje" => $th->getMessage()], 500);
         }
     }
 
+    public function anular(Request $request)
+    {
+        if (!Auth::check()) {
+            abort(403, 'Usuario no Autenticado.');
+        }
+        $user_actual = User::with('persona')->where('id', Auth::user()->id)->first();
+        try {
+            $pedido = Pedido::find($request->id_pedido);
+            $pedido->update([
+                'estado' => 'Anulado',
+                'nota_interna' => $request->notas,
+                'actor' => $user_actual->persona->nombres
+            ]);
+            $mensaje = ['operacion' => 'anulacion', 'mensaje' => 'El pedido ha sido anulado.', 'pedido_id' => $pedido->id, 'estado' => $pedido->estado];
+            $admin = $pedido->empresa->usuarios()->where('tipo', 'admin')->first();
+            SendMessage::dispatch($mensaje, $admin->id);
+            return response()->json(['mensaje' => 'El pedido #' . $request->id_pedido . ' se anulo Correctamente', 'pedido_id' => $pedido->id], 200);
+        } catch (\Throwable $th) {
+            return response()->json(['mensaje' => $th->getMessage()], 500);
+        }
+    }
     public function cambiarestadopago(Request $request)
     {
-        $pedido = Pedido::find($request->id_pedido);
-        if ($pedido) {
-            try {
-                $metodo = $request->paymentMethod;
-                $pago = in_array($metodo, ['yape', 'efectivo', 'account']);
 
-                DB::transaction(function () use ($pedido, $metodo, $pago) {
+        if (!Auth::check()) {
+            abort(403, 'Usuario no Autenticado.');
+        }
+        $user_actual = User::with('persona')->where('id', Auth::user()->id)->first();
+        // Buscar el pedido
+
+        $pedido = Pedido::find($request->id_pedido);
+        $empresa = empresa::where('id', $pedido->empresa_id)->first();
+
+        if ($pedido) {
+            // Obtener el administrador de la empresa relacionada con el pedido
+            $admin = $empresa->usuarios()->where('tipo', 'admin')->first();
+
+            try {
+                $metodo = $request->paymentMethod; // Método de pago enviado en el request
+                $pago = in_array($metodo, ['yape', 'efectivo']); // Validar métodos permitidos
+                $notas = $request->notas;
+                // Actualizar el pedido dentro de una transacción
+                DB::transaction(function () use ($pedido, $metodo, $pago, $notas, $user_actual) {
                     $pedido->update([
-                        'estado' => 'ENTREGADO',
+                        'estado' => 'Entregado',
                         'pago' => $pago,
-                        'metodo' => $metodo
+                        'metodo' => $metodo,
+                        'nota_interna' => $notas,
+                        'actor' => $user_actual->persona->nombres
+
                     ]);
                 });
 
-                $detalles = ["pago" => $pago, "metodo" => $metodo];
-                return response()->json(["mensaje" => "Pedido Modificado Correctamente.", "detalles" => $detalles], 200);
+
+
+                $mensaje = [
+                    'operacion' => 'finalizado',
+                    'mensaje' => 'El proceso del pedido ha finalizado correctamente.',
+                    'pedido_id' => $pedido->id,
+                    'estado' => $pedido->estado,
+                    'metodo' => $pedido->metodo,
+                ];
+
+                // Enviar notificación al administrador
+                SendMessage::dispatch($mensaje, $admin->id);
+
+                return response()->json([
+                    "mensaje" => "El pedido ha sido modificado correctamente.",
+                    'pedido_id' => $pedido->id,
+                    'nuevo_metodo' => $pedido->metodo
+                ], 200);
             } catch (\Exception $th) {
-                return response()->json(["mensaje" => $th->getMessage()], 500);
+                // Manejar errores y devolver un mensaje de error
+                return response()->json([
+                    "mensaje" => "Ha ocurrido un error: " . $th->getMessage(),
+                ], 500);
             }
         } else {
-            return response()->json(["mensaje" => "Pedido No Encontrado."], 404);
+            // Manejar el caso donde no se encuentre el pedido
+            return response()->json([
+                "mensaje" => "El pedido no ha sido encontrado.",
+            ], 404);
         }
     }
+
 
     public function cancelarPedido(Request $request)
     {
@@ -342,7 +465,9 @@ class ControllerPedido extends Controller
                     })
                     ->first(); // Obtener el primer usuario que cumpla la condiciónner el primer usuario que cumpla la condición
                 // Llamar al método que necesitas
-                $controlador_mensaje->crearmensaje('Nuevo Pedido para la empresa.', $admin->id, $pedido->id);
+
+                $pedido_completo = Pedido::with('detalles', 'detalles.producto', 'entregaPromociones')->find($pedido->id);
+                $controlador_mensaje->crearmensaje('Nuevo Pedido para la empresa.', $admin->id, $pedido->id, $pedido_completo);
             }
 
 

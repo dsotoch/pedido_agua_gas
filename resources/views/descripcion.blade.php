@@ -776,52 +776,7 @@
 
                             </div>
                         @endforeach
-                        <!-- Modal Pago Pedido Repartidor-->
-                        <div id="paymentModal"
-                            class="hidden fixed inset-0 bg-black bg-opacity-50  items-center justify-center z-50">
-                            <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
-                                <h2 class="text-xl font-semibold text-center mb-4">Método de pago utilizado por el
-                                    cliente</h2>
-                                <form id="form_metodo_pago_repartidor" method="post"
-                                    action="{{ route('pedido.cambiarestadopago', ['nombre_empresa' => $empresa->dominio]) }}">
-                                    <!-- Opciones de pago -->
-                                    <div class="mb-4">
-                                        <label class="flex items-center space-x-2">
-                                            <input type="radio" name="paymentMethod" value="yape"
-                                                class="text-blue-500 focus:ring-blue-500">
-                                            <span>Pago con Yape</span>
-                                        </label>
-                                    </div>
-                                    <div class="mb-4">
-                                        <label class="flex items-center space-x-2">
-                                            <input type="radio" name="paymentMethod" value="efectivo"
-                                                class="text-blue-500 focus:ring-blue-500" checked>
-                                            <span>Pago en Efectivo</span>
-                                        </label>
-                                    </div>
-                                    <div class="mb-4">
-                                        <label class="flex items-center space-x-2">
-                                            <input type="radio" name="paymentMethod" value="account"
-                                                class="text-blue-500 focus:ring-blue-500">
-                                            <span>A Cuenta</span>
-                                        </label>
-                                    </div>
-
-                                    <!-- Botones -->
-                                    <div class="flex justify-end mt-6 space-x-1">
-                                        <button type="submit"
-                                            class="px-4 py-2 bg-principal text-white rounded hover:bg-principalhover transition">
-                                            Aceptar
-                                        </button>
-                                        <button type="button"
-                                            class="px-4 py-2 bg-secundario text-white rounded hover:bg-secundariohover transition"
-                                            onclick="document.getElementById('paymentModal').classList.remove('flex');;document.getElementById('paymentModal').classList.add('hidden')">
-                                            Cancelar
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
+                        
                         <div id="pagination-wrapper-repartidor" class="mt-2 p-4 flex justify-center">
                             {{ $pedidosrepartidor->links() }}
                         </div>

@@ -19,7 +19,8 @@ class Persona extends Model
         'correo',
         'direccion',
         'nota',
-        'user_id'
+        'user_id',
+        'direccion2'
     ];
 
     public function usuario(){

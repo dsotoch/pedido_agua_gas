@@ -36,7 +36,7 @@ class ControllerMensajes extends Controller
     {
         try {
             if (Auth::check()) {
-                $pedido = Pedido::with(['detalles.producto', 'repartidor','repartidor.persona' ,'empresa'])
+                $pedido = Pedido::with(['detalles.producto', 'repartidor', 'repartidor.persona', 'empresa'])
                     ->where('id', $id)
                     ->firstOrFail();
             } else {
@@ -50,7 +50,7 @@ class ControllerMensajes extends Controller
 
 
 
-    public function crearmensaje($message, $receiver_id, $pedido_id)
+    public function crearmensaje($message, $receiver_id, $pedido_id, $pedido)
     {
 
         try {
@@ -60,7 +60,7 @@ class ControllerMensajes extends Controller
                 'pedido_id' => $pedido_id,
                 'mensaje' => $message,
             ]);
-            $mensaje = ['operacion' => 'nuevopedido', 'mensaje' => 'Nuevo Pedido para la Empresa.', 'pedido_id' => $pedido_id];
+            $mensaje = ['operacion' => 'nuevopedido', 'mensaje' => 'Nuevo Pedido para la Empresa.', 'pedido_id' => $pedido_id, 'pedido' => $pedido];
 
             SendMessage::dispatch($mensaje, $receiver_id);
 

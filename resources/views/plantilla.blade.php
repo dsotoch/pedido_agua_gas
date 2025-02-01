@@ -181,7 +181,7 @@
 
             <div
                 class="producto-item  flex flex-col mx-auto bg-white text-color-text  items-center justify-center rounded-3xl pt-4 pb-16 bg-transparent text-center w-[450px] shadow-sm 
-                    data-index="">
+                    ">
                 <div class="flex">
                     <button class="p-4 text-xl w-2/6 hover:text-principal" id="btnatrasproducto"><i
                             class="fa-solid fa-backward "></i></button>

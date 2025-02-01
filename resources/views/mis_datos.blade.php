@@ -48,6 +48,14 @@
                     class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
             </div>
 
+             <!-- Dirección2 -->
+             <div class="mb-4">
+                <label for="direccion2" class="block text-gray-700 text-sm font-bold mb-2">Dirección 2:</label>
+                <input type="text" name="direccion2" id="direccion2"
+                    value="{{ old('direccion', $usuario->persona->direccion2) }}"
+                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            </div>
+
             <!-- Nota -->
             <div class="mb-4">
                 <label for="nota" class="block text-gray-700 text-sm font-bold mb-2">Nota:</label>

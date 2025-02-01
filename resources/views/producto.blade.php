@@ -68,7 +68,7 @@
                         <span class="bidones-faltan text-[14px] max-h-[55px] h-[55px] text-color-text">
                             @if ($faltante > 0)
                                 ¡Te faltan <span class="resaltar-numero font-bold text-[16px]">{{ $faltante }}</span>
-                                {{ Str::plural('bidon', $faltante) }} para tu {{ $ordinal }} GRATIS!
+                                bidón(es) para tu {{ $ordinal }} GRATIS!
                             @else
                                 <p class="tex-[14px] pl-2 pr-2 promocion_producto_gratis_valida"
                                     data-producto-id="{{ $item->id }}"> 🎉 ¡Felicidades! Ya has cumplido la promoción
@@ -108,6 +108,28 @@
                     <input type="hidden" id="usuario_id" name="usuario_id" value="{{ $usuario->id }}" required>
                     <input type="hidden" id="empresa_id" name="empresa_id" value="{{ $empresa->id }}" required>
 
+                    <div class="mb-4">
+                        <label for="select_direccion" class="block text-lg font-semibold text-color-titulos-entrega">Selecciona tu dirección</label>
+                        
+                        <div class="relative mt-2">
+                            <select name="select_direccion" id="select_direccion"
+                                class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-gray-700">
+                                <option disabled selected>📍 Elige una dirección para tu pedido</option>
+                                @if (!empty($usuario->persona->direccion))
+                                    <option value="{{ $usuario->persona->direccion }}">🏠 {{ $usuario->persona->direccion }}</option>
+                                @endif
+                                @if (!empty($usuario->persona->direccion2))
+                                    <option value="{{ $usuario->persona->direccion2 }}">🏢 {{ $usuario->persona->direccion2 }}</option>
+                                @endif
+                            </select>
+                    
+                            <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                                <i class="fas fa-map-marker-alt text-gray-400"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+
                     <label for="celular">Celular <span class="text-red-500">*</span></label>
                     <input type="tel" id="celular" name="celular" value="{{ $usuario->usuario }}" minlength="9"
                         maxlength="9" required pattern="\d{9}"
@@ -140,8 +162,8 @@
                     class="flex space-y-2 flex-col w-[450px] h-[650px] bg-white rounded-[20px] pt-[30px] pb-[60px] pl-[20px] pr-[20px]">
                     <input type="hidden" id="usuario_id" name="usuario_id" value="" required>
                     <label for="celular">Celular <span class="text-red-500">*</span></label>
-                    <input type="tel" id="celular" placeholder="Ingrese el numero para buscar..." name="celular"
-                        value="" class="rounded-[20px]  p-3 border border-color-text" required>
+                    <input type="tel" id="celular" placeholder="Ingrese el numero para buscar..."
+                        name="celular" value="" class="rounded-[20px]  p-3 border border-color-text" required>
                     <label for="nombres">Nombres y Apellidos <span class="text-red-500">*</span></label>
                     <input type="text" value="" name="nombres" id="nombres"
                         class="rounded-[20px]  p-3 border border-color-text" required>
@@ -154,8 +176,10 @@
                         class="rounded-[20px] p-3  border border-color-text" required>
                     </textarea>
                     <div class="flex text-[17px]  justify-between pt-4 space-x-2">
-                        <button class="w-1/5 h-[57px] border border-color-text rounded-[3px]">Atrás</button>
-                        <button class="custom-bg-button w-4/5 h-[57px] rounded-[3px] text-white">Realizar
+                        <button type="button" id="btn_atras_distribuidora"
+                            class="w-1/5 h-[57px] border border-color-text rounded-[3px]">Atrás</button>
+                        <button type="submit"
+                            class="custom-bg-button w-4/5 h-[57px] rounded-[3px] text-white">Realizar
                             pedido</button>
                     </div>
 

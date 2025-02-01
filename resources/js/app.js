@@ -13,4 +13,5 @@ import './dashboard';
 import './productos';
 import './pagos';
 import './clientes';
+import './reportes';
 
