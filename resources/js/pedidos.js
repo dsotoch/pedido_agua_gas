@@ -49,7 +49,7 @@ if (btn_regresar_a_productos) {
     });
 }
 
- async function buscar_datos_cliente(valor) {
+async function buscar_datos_cliente(valor) {
     let usuario_id = form_realizar_pedido.querySelector("#usuario_id");
     let nombres = form_realizar_pedido.querySelector("#nombres");
     let direccion = form_realizar_pedido.querySelector("#direccion");
@@ -109,7 +109,7 @@ if (btn_regresar_a_productos) {
 }
 
 if (input_celular) {
-    input_celular.addEventListener('keyup', async(e) => {
+    input_celular.addEventListener('keyup', async (e) => {
         const valor = e.target.value.trim(); // Limpiar espacios en blanco
         if (valor.length === 9) { // Validar la longitud del valor del input
             input_celular.disabled = true;
@@ -283,8 +283,8 @@ if (form_realizar_pedido) {
         data['productos'] = window.idproductos || [];
         try {
             // Realizar la solicitud Fetch
-            const response = await fetch(form_realizar_pedido.action, {
-                method: form_realizar_pedido.method,
+            const response = await fetch(form_realizar_pedido.getAttribute('action'), {
+                method: 'POST',
                 headers: {
                     "Content-Type": "application/json",
                     "X-CSRF-TOKEN": token,
@@ -303,15 +303,16 @@ if (form_realizar_pedido) {
             window.location.href = respuesta.ruta;
 
         } catch (error) {
-
             // Mostrar mensaje de error (usando SweetAlert como ejemplo)
             Swal.fire({
                 title: "Error",
-                text: error.message || "Ha ocurrido un error inesperado.",
+                text: error.message,
                 icon: "error",
                 timerProgressBar: true,
+                timer: 3000,
+                showConfirmButton: false,
                 customClass: {
-                    timerProgressBar: "bg-blue-500 h-2 rounded-lg"
+                    timerProgressBar: "bg-red-500 h-2 rounded-lg"
                 }
             });
 
@@ -353,6 +354,9 @@ function conectarWebSocket() {
     window.Echo.private(webSocketChannel)
         .listen('MensajeEntendido', async (e) => {
             switch (e.message.operacion) {
+                case 'pedido_tomado':
+                    actualizar_Estado_delivery_panel_cliente(e.message.pedido_id, e.message.estado);
+                    break;
                 case 'confirmacion':
                     mostrarNotificacion("Tu Pedido esta en Camino", `¡Hola Estimado Usuario(a)! El repartidor ha tomado tu pedido #${e.message.pedido_id}, y está en camino para entregártelo. ¡Prepárate para recibirlo pronto!`, 'Nuevo-Pedido-Camino');
                     actualizar_Estado_delivery_panel_cliente(e.message.pedido_id, e.message.estado);
@@ -510,12 +514,6 @@ function actualizarEstadoYPagoPanelAdministrador(pedidoId, estado) {
     cantidad_pedidos.textContent = parseInt(cantidad_pedidos.textContent) - 1;
 }
 
-function actualizar_Estado_delivery_panel_administrador($pedido_id, $estado) {
-    const estado_pedido_span = mi_cuenta_contenedor_pedidos.querySelector("#caja-" + $pedido_id).querySelector('.estado_pedido_span');
-    estado_pedido_span.innerHTML = $estado == 'En Camino'
-        ? $estado + " <span class='text-2xl'>🚚</span>"
-        : $estado;
-}
 
 function actualizar_Estado_delivery_panel_cliente($pedido_id, $estado) {
     const estado_pedido_span = mi_cuenta_contenedor_pedidos.querySelector("#caja-" + $pedido_id).querySelector('.estado_pedido_span');

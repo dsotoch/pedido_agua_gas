@@ -23,14 +23,19 @@ class empresa extends Model
         'facebook',
         'telefono',
         'servicios',
-        'configuraciones'
+        'configuraciones',
+        'logo_vertical'
     ];
 
+    public function cupones()
+    {
+        return $this->belongsTo(cupones::class, 'empresa_id');
+    }
     public function productos()
     {
         return $this->hasMany(Producto::class);
     }
-   
+
     public function pedidos()
     {
         return $this->hasMany(Pedido::class);

@@ -19,13 +19,13 @@ if (mi_cuenta_input_buscar) {
         if (mi_cuenta_contenedor_pedidos) {
 
             // Mostrar todos los elementos antes de filtrar
-            mi_cuenta_contenedor_pedidos.querySelector('#mi_cuenta_contenedor_pedidos').querySelectorAll('.flex-1').forEach(element => {
+            mi_cuenta_contenedor_pedidos.querySelector('#mi_cuenta_contenedor_pedidos').querySelectorAll('.mi_cuenta_pedido').forEach(element => {
 
                 element.classList.remove('hidden'); // Quita la clase 'hidden' de todos los elementos
             });
 
             // Aplicar el filtro basado en la selección
-            mi_cuenta_contenedor_pedidos.querySelectorAll('.flex-1').forEach(element => {
+            mi_cuenta_contenedor_pedidos.querySelectorAll('.mi_cuenta_pedido').forEach(element => {
                 const cliente = element.querySelector('.mi_cuenta_cliente');
 
                 if (cliente) {

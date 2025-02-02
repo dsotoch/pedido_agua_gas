@@ -138,7 +138,13 @@ class ControllerPedido extends Controller
                     "estado" => 'En Camino'
                 ]);
                 $mensaje = ['operacion' => 'confirmacion', 'mensaje' => 'Tu pedido ha sido tomado por el repartidor y está en camino.', 'pedido_id' => $pedido->id, 'estado' => $pedido->estado];
-                SendMessage::dispatch($mensaje, $pedido->usuario->id);
+                $mensaje2 = ['operacion' => 'pedido_tomado', 'mensaje' => '', 'pedido_id' => $pedido->id, 'estado' => $pedido->estado];
+
+                $cliente = $pedido->usuario->id;
+                $admin = $pedido->empresa->usuarios()->where('tipo', 'admin')->first();
+                SendMessage::dispatch($mensaje, $cliente);
+                SendMessage::dispatch($mensaje2, $admin->id);
+
 
                 return response()->json(["mensaje" => "Pedido Confirmado.", 'estado' => $pedido->estado], 200);
             } else {
@@ -323,19 +329,25 @@ class ControllerPedido extends Controller
         DB::beginTransaction();
         try {
 
-
-            // Validar el usuario
-            $usuario = User::find($request->usuario_id);
-            if (!$usuario) {
-                return response()->json(['mensaje' => 'Usuario no encontrado.'], 401);
+            $usuario = Auth::user();
+            // Validar el usuario                
+            if (User::findOr($usuario->id)->tipo == "cliente") {
+                $usuario = User::find($request->usuario_id);
+                if (!$usuario) {
+                    return response()->json(['mensaje' => 'Usuario no encontrado.'], 401);
+                }
             }
-
             $totalPedido = 0.00;
             $pedido = null;
+            $empresa = collect();
             // Validar y procesar productos o promociones
             $productos = $request->productos ?? [];
             if (empty($productos)) {
+                if (User::findOr($usuario->id)->tipo != "cliente") {
+                    return response()->json(['mensaje' => 'Sin productos enviados para procesar.'], 403);
+                }
                 $pedido = $this->sinProductos($request, $usuario);
+                $empresa = Empresa::find($request->empresa_id);
             } else {
                 $pedido = Pedido::create([
                     'cliente_id' => $usuario->id,
@@ -356,7 +368,7 @@ class ControllerPedido extends Controller
                 }
 
                 // Calcular precios y procesar productos
-                $preciosYDetalles = $productos->map(function ($productoData) use ($pedido, $usuario, $request, &$totalPedido) {
+                $preciosYDetalles = $productos->map(function ($productoData) use ($pedido, &$totalPedido) {
                     $producto = Producto::find($productoData['id']);
                     if (!$producto) {
                         throw new \Exception("Producto no encontrado.");
@@ -397,64 +409,63 @@ class ControllerPedido extends Controller
 
                 $productosEmpresaIds = $empresa->productos->pluck('id');
 
-                // Filtrar promociones activas excluyendo los productos procesados
-                $existe_entrega = EntregaPromociones::whereIn('producto_id', $productosEmpresaIds)
-                    ->where('user_id', $usuario->id)
-                    ->whereNotIn('producto_id', $productos->pluck('id'))
-                    ->where('estado', false)
-                    ->update(['estado' => true, 'pedido_id' => $pedido->id]);
+                if ($usuario->tipo == 'cliente') {
+                    // Filtrar promociones activas excluyendo los productos procesados
+                    $existe_entrega = EntregaPromociones::whereIn('producto_id', $productosEmpresaIds)
+                        ->where('user_id', $usuario->id)
+                        ->whereNotIn('producto_id', $productos->pluck('id'))
+                        ->where('estado', false)
+                        ->update(['estado' => true, 'pedido_id' => $pedido->id]);
+                    // Procesar promociones unitarias y actualizar cantidades
+                    $productos->each(function ($productoData) use ($usuario, $pedido, $empresa) {
+                        $producto = Producto::find($productoData['id']);
+                        if (!$producto || $productoData['cantidad'] <= 0) {
+                            throw new \Exception("Producto inválido o cantidad incorrecta.");
+                        }
 
-                // Procesar promociones unitarias y actualizar cantidades
-                $productos->each(function ($productoData) use ($usuario, $pedido, $empresa) {
-                    $producto = Producto::find($productoData['id']);
-                    if (!$producto || $productoData['cantidad'] <= 0) {
-                        throw new \Exception("Producto inválido o cantidad incorrecta.");
-                    }
-
-                    $promocionUnitaria = PromocionesUnitario::where('producto_id', $producto->id)->first();
-
-                    // Buscar o crear registro de cantidad de pedidos del cliente
-                    $cantidadPedidos = ClientePedidoProductos::firstOrNew(
-                        ['cliente_id' => $usuario->id, 'producto_id' => $producto->id]
-                    );
-
-                    $nuevaCantidad = ($cantidadPedidos->exists ? $cantidadPedidos->cantidad : 0) + $productoData['cantidad'];
+                        $promocionUnitaria = PromocionesUnitario::where('producto_id', $producto->id)->first();
 
 
-                    // Verificar si cumple con la promoción unitaria
-                    if ($promocionUnitaria && $nuevaCantidad >= $promocionUnitaria->cantidad) {
-                        $entregaPromocion = EntregaPromociones::firstOrNew(
-                            [
-                                'user_id' => $usuario->id,
-                                'producto_id' => $producto->id,
-                                'estado' => false,
-                            ]
+
+                        // Buscar o crear registro de cantidad de pedidos del cliente
+                        $cantidadPedidos = ClientePedidoProductos::firstOrNew(
+                            ['cliente_id' => $usuario->id, 'producto_id' => $producto->id]
                         );
 
-                        if (!$entregaPromocion->exists) {
-                            // Crear entrega de promoción
-                            $entregaPromocion->fill([
-                                'pedido_id' => $pedido->id,
-                                'cantidad' => 1,
-                                'producto' => $promocionUnitaria->producto_gratis,
-                            ]);
-                            $entregaPromocion->save();
-                            // Reducir cantidad utilizada en la promoción
-                            $cantidadPedidos->decrement('cantidad', $promocionUnitaria->cantidad);
-                        } else {
-                            // Solo actualizar el estado si ya existía
-                            $entregaPromocion->update(['estado' => true]);
+                        $nuevaCantidad = ($cantidadPedidos->exists ? $cantidadPedidos->cantidad : 0) + $productoData['cantidad'];
+
+
+                        // Verificar si cumple con la promoción unitaria
+                        if ($promocionUnitaria && $nuevaCantidad >= $promocionUnitaria->cantidad) {
+                            $entregaPromocion = EntregaPromociones::firstOrNew(
+                                [
+                                    'user_id' => $usuario->id,
+                                    'producto_id' => $producto->id,
+                                    'estado' => false,
+                                ]
+                            );
+
+                            if (!$entregaPromocion->exists) {
+                                // Crear entrega de promoción
+                                $entregaPromocion->fill([
+                                    'pedido_id' => $pedido->id,
+                                    'cantidad' => 1,
+                                    'producto' => $promocionUnitaria->producto_gratis,
+                                ]);
+                                $entregaPromocion->save();
+                                // Reducir cantidad utilizada en la promoción
+                                $cantidadPedidos->decrement('cantidad', $promocionUnitaria->cantidad);
+                            } else {
+                                // Solo actualizar el estado si ya existía
+                                $entregaPromocion->update(['estado' => true]);
+                            }
                         }
-                    }
-                    $cantidadPedidos->cantidad = $nuevaCantidad;
-                    $cantidadPedidos->save();
-                });
-
-
+                        $cantidadPedidos->cantidad = $nuevaCantidad;
+                        $cantidadPedidos->save();
+                    });
+                }
                 // Actualizar el total del pedido
                 $pedido->update(['total' => $totalPedido]);
-
-                $empresa = Empresa::find($request->empresa_id);
                 // Crear una instancia del otro controlador
                 $controlador_mensaje = new ControllerMensajes();
                 // Filtrar los usuarios relacionados con la empresa y verificar si el usuario es tipo 'admin'
@@ -481,7 +492,7 @@ class ControllerPedido extends Controller
         } catch (\Throwable $e) {
             DB::rollBack();
             return response()->json([
-                'mensaje' => 'Ocurrió un error inesperado.',
+                'mensaje' => 'Ocurrio un error inesperado.',
                 'error' => $e->getMessage() . $e->getLine(),
             ], 500);
         }

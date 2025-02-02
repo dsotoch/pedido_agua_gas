@@ -39,7 +39,7 @@ class Producto extends Model
 
     public function entregaPromociones()
     {
-        return $this->hasOne(Producto::class);
+        return $this->hasMany(EntregaPromociones::class);
     }
     /**
      * Relación con el modelo Promociones

@@ -5,7 +5,7 @@
         <div id="contener_producto_item"
             class="  flex flex-col mx-auto bg-white text-color-text  items-center justify-center rounded-3xl pt-4 pb-16 bg-transparent text-center w-[450px] shadow-sm "
             data-index="">
-            @foreach ($productos as $index => $item)
+            @foreach ($productos as $item)
                 <div>
                     <p
                         class="producto_descripcion text-[18px] w-full
@@ -35,49 +35,60 @@
                             class="text-[13px]  precioprincipal">S/{{ number_format($item->precio ?? 0, 2, '.', '') }}</span>
                     </p>
                     @auth
-                        @php
-                            // Buscar el faltante de promociones para este producto, asegurando que coincida con $item->id
-                            $promocion_actual = collect($promociones_faltantes)->firstWhere('producto_id', $item->id);
+                        @if ($promocion_actual = $promociones_faltantes->where('producto_id', $item->id)->first())
+                            @php
+                                $faltante = $promocion_actual['faltante'] ?? 0;
+                                $meta = intval($promocion_actual['meta']) + 1;
+                                $ordinales = [
+                                    1 => 'Primero',
+                                    2 => 'Segundo',
+                                    3 => 'Tercero',
+                                    4 => 'Cuarto',
+                                    5 => 'Quinto',
+                                    6 => 'Sexto',
+                                    7 => 'Séptimo',
+                                    8 => 'Octavo',
+                                    9 => 'Noveno',
+                                    10 => 'Décimo',
+                                    11 => 'Undécimo',
+                                    12 => 'Duodécimo',
+                                    13 => 'Decimotercer',
+                                    14 => 'Decimocuarto',
+                                    15 => 'Decimoquinto',
+                                ];
+                                $ordinal = $ordinales[$meta] ?? "{$meta}°"; // Si no está en el array, usa formato genérico
+                                // Filtrar las promociones con estado false
+                                $promociones_inactivas = collect($item->entregaPromociones)
+                                    ->filter(function ($promocion) {
+                                        return $promocion->estado == 0; // Asegúrate de que el campo sea 'estado'
+                                    })
+                                    ->first();
+                                // Si no falta, asignar el nombre del producto
+                                $producto_gratis = $faltante === 0 ? $promociones_inactivas->producto : '';
+                            @endphp
 
-                            // Obtener el faltante o asignar 0 si no hay promoción para este producto
-                            $faltante = $promocion_actual['faltante'] ?? 0;
-
-                            // Si no falta, asignar el nombre del producto
-                            $producto_gratis = $faltante === 0 ? $item->descripcion : '';
-                            $meta = intval($promocion_actual['meta']) + 1;
-                            $ordinales = [
-                                1 => 'Primero',
-                                2 => 'Segundo',
-                                3 => 'Tercero',
-                                4 => 'Cuarto',
-                                5 => 'Quinto',
-                                6 => 'Sexto',
-                                7 => 'Séptimo',
-                                8 => 'Octavo',
-                                9 => 'Noveno',
-                                10 => 'Décimo',
-                                11 => 'Undécimo',
-                                12 => 'Duodécimo',
-                                13 => 'Decimotercer',
-                                14 => 'Decimocuarto',
-                                15 => 'Decimoquinto',
-                            ];
-                            $ordinal = $ordinales[$meta] ?? "{$meta}°"; // Si no está en el array, usa formato genérico
-
-                        @endphp
-                        <span class="bidones-faltan text-[14px] max-h-[55px] h-[55px] text-color-text">
-                            @if ($faltante > 0)
-                                ¡Te faltan <span class="resaltar-numero font-bold text-[16px]">{{ $faltante }}</span>
-                                bidón(es) para tu {{ $ordinal }} GRATIS!
-                            @else
-                                <p class="tex-[14px] pl-2 pr-2 promocion_producto_gratis_valida"
-                                    data-producto-id="{{ $item->id }}"> 🎉 ¡Felicidades! Ya has cumplido la promoción
-                                    para
-                                    Reclamar
-                                    gratis este producto: </p><span class="font-semibold">{{ $producto_gratis }}</span>.
+                            @if ($usuario->tipo == 'cliente')
+                                <span class="bidones-faltan text-[14px] max-h-[55px] h-[55px] text-color-text">
+                                    @if ($faltante > 0)
+                                        ¡Te faltan <span
+                                            class="resaltar-numero font-bold text-[16px]">{{ $faltante }}</span>
+                                        bidón(es) para tu {{ $ordinal }} GRATIS!
+                                    @else
+                                        <p class="tex-[14px] pl-2 pr-2 promocion_producto_gratis_valida"
+                                            data-producto-id="{{ $item->id }}"> 🎉 ¡Felicidades! Ya has cumplido la
+                                            promoción
+                                            para reclamar gratis este producto:
+                                        </p>
+                                        <span class="font-semibold">{{ $producto_gratis }}</span>.
+                                    @endif
+                                </span>
                             @endif
-                        </span>
+                        @endif
+
+
+
                     @endauth
+
                 </div>
                 <hr class="w-1/2">
             @endforeach
@@ -109,26 +120,31 @@
                     <input type="hidden" id="empresa_id" name="empresa_id" value="{{ $empresa->id }}" required>
 
                     <div class="mb-4">
-                        <label for="select_direccion" class="block text-lg font-semibold text-color-titulos-entrega">Selecciona tu dirección</label>
-                        
+                        <label for="select_direccion"
+                            class="block text-lg font-semibold text-color-titulos-entrega">Selecciona tu
+                            dirección
+                        </label>
+
                         <div class="relative mt-2">
                             <select name="select_direccion" id="select_direccion"
                                 class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-gray-700">
                                 <option disabled selected>📍 Elige una dirección para tu pedido</option>
                                 @if (!empty($usuario->persona->direccion))
-                                    <option value="{{ $usuario->persona->direccion }}">🏠 {{ $usuario->persona->direccion }}</option>
+                                    <option value="{{ $usuario->persona->direccion }}">🏠
+                                        {{ $usuario->persona->direccion }}</option>
                                 @endif
                                 @if (!empty($usuario->persona->direccion2))
-                                    <option value="{{ $usuario->persona->direccion2 }}">🏢 {{ $usuario->persona->direccion2 }}</option>
+                                    <option value="{{ $usuario->persona->direccion2 }}">🏢
+                                        {{ $usuario->persona->direccion2 }}</option>
                                 @endif
                             </select>
-                    
+
                             <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
                                 <i class="fas fa-map-marker-alt text-gray-400"></i>
                             </div>
                         </div>
                     </div>
-                    
+
 
                     <label for="celular">Celular <span class="text-red-500">*</span></label>
                     <input type="tel" id="celular" name="celular" value="{{ $usuario->usuario }}" minlength="9"
@@ -156,23 +172,25 @@
                 </div>
             </form>
         @else
-            <form action="{{ route('pedido.crear', ['slug' => $empresa->dominio]) }}" id="form_realizar_pedido"
+            <form action="{{ route('pedido.crear', ['slug' => $empresa->dominio]) }}" method="POST" id="form_realizar_pedido"
                 class="mx-auto">
                 <div
                     class="flex space-y-2 flex-col w-[450px] h-[650px] bg-white rounded-[20px] pt-[30px] pb-[60px] pl-[20px] pr-[20px]">
-                    <input type="hidden" id="usuario_id" name="usuario_id" value="" required>
+                    <input type="hidden" id="usuario_id" name="usuario_id" value="{{ $usuario ? $usuario->id :'' }}" required>
+                    <input type="hidden" id="empresa_id" name="empresa_id" value="{{ $empresa->id }}" required>
+
                     <label for="celular">Celular <span class="text-red-500">*</span></label>
                     <input type="tel" id="celular" placeholder="Ingrese el numero para buscar..."
-                        name="celular" value="" class="rounded-[20px]  p-3 border border-color-text" required>
+                        name="celular" class="rounded-[20px]  p-3 border border-color-text" required>
                     <label for="nombres">Nombres y Apellidos <span class="text-red-500">*</span></label>
-                    <input type="text" value="" name="nombres" id="nombres"
+                    <input type="text" name="nombres" id="nombres"
                         class="rounded-[20px]  p-3 border border-color-text" required>
                     <label for="direccion">Dirección <span class="text-red-500">*</span></label>
-                    <input type="text" value="" id="direccion" name="direccion"
+                    <input type="text" id="direccion" name="direccion"
                         class="rounded-[20px] p-3  border border-color-text" required>
                     <label for="referencia">Referencia y Nota para la Entrega <span
                             class="text-red-500">*</span></label>
-                    <textarea type="text" rows="5" value="" id="referencia" name="referencia"
+                    <textarea type="text" rows="5" id="referencia" name="referencia"
                         class="rounded-[20px] p-3  border border-color-text" required>
                     </textarea>
                     <div class="flex text-[17px]  justify-between pt-4 space-x-2">

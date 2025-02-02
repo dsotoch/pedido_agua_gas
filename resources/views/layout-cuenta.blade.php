@@ -48,15 +48,22 @@
                         </a>
                     </div>
                     <div
-                        class="{{ request()->routeIs('empresa.usuarios') ? 'btn-active-mi-cuenta' : '' }} border border-transparent p-3 rounded-md hover:bg-naranja hover:border-red-500">
-                        <a class="" href="{{ route('empresa.usuarios') }}" id="btn_boton_usuarios">
-                            <i class="fa-solid fa-user-gear"></i>&nbsp;&nbsp;Usuarios
+                        class="{{ request()->routeIs('empresa.cupones') ? 'btn-active-mi-cuenta' : '' }} border border-transparent p-3 rounded-md hover:bg-naranja hover:border-red-500">
+                        <a href="{{ route('empresa.cupones') }}" id="btn_boton_cupones">
+                            <i class="fa-solid fa-ticket"></i>&nbsp;&nbsp;Cupones
                         </a>
                     </div>
+
                     <div
                         class="{{ request()->routeIs('empresa.reportes') ? 'btn-active-mi-cuenta' : '' }}  border border-transparent p-3 rounded-md hover:bg-naranja hover:border-red-500">
                         <a class="" href="{{ route('empresa.reportes') }}" id="btn_boton_reportes"><i
                                 class="fa-solid fa-chart-line"></i>&nbsp;&nbsp;Reportes</a>
+                    </div>
+                    <div
+                        class="{{ request()->routeIs('empresa.empresa') ? 'btn-active-mi-cuenta' : '' }} border border-transparent p-3 rounded-md hover:bg-naranja hover:border-red-500">
+                        <a class="" href="{{ route('empresa.empresa') }}" id="btn_boton_configuraciones">
+                            <i class="fa-solid fa-cog"></i>&nbsp;&nbsp;Configuraciones
+                        </a>
                     </div>
                 @endif
                 @if ($usuario->tipo == 'cliente')

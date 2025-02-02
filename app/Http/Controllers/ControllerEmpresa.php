@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\RequestAdmin;
 use App\Http\Requests\RequestEmpresa;
+use App\Models\Cupones;
 use App\Models\empresa;
 use App\Models\Pedido;
 use App\Models\Persona;
@@ -12,16 +13,121 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class ControllerEmpresa extends Controller
 {
+    public function index_cupones()
+    {
+        if (!Auth::check()) {
+            abort(403, "Usuario no autenticado");
+        }
+        $usuario = Auth::user();
+        $usuario = User::find($usuario->id);
+        $empresa = $usuario->empresas()->first();
+        $cupones = Cupones::where('empresa_id',$empresa->id)->get();
+        return view('cupones', compact('usuario', 'empresa', 'cupones'));
+    }
+    public function modificar_empresa(Request $request)
+    {
+        try {
+            if (!Auth::check()) {
+                abort(403, "Usuario no autenticado");
+            }
 
+            DB::beginTransaction();
+
+            // Buscar la empresa existente
+            $empresa = Empresa::find($request->empresa_id);
+
+            if (!$empresa) {
+                return back()->withErrors(['mensaje' => 'La empresa no existe.']);
+            }
+
+            // Actualizar datos
+            $empresa->nombre = $request->nombre;
+            $empresa->dominio = $request->slug;
+            $empresa->direccion = $request->direccion;
+            $empresa->descripcion = e($request->descripcion);
+
+            // Actualizar logo
+            if ($request->hasFile('logo')) {
+                if ($empresa->logo) {
+                    Storage::disk('public')->delete($empresa->logo);
+                }
+
+                $logo = $request->file('logo');
+                $uniqueLogoName = uniqid() . '_' . $logo->getClientOriginalName();
+                $empresa->logo = $logo->storeAs('logos', $uniqueLogoName, 'public');
+            }
+
+            // Actualizar logo vertical
+            if ($request->hasFile('logo_vertical')) {
+                if ($empresa->logo_vertical) {
+                    Storage::disk('public')->delete($empresa->logo_vertical);
+                }
+
+                $logoVertical = $request->file('logo_vertical');
+                $uniqueLogoName = uniqid() . '_' . $logoVertical->getClientOriginalName();
+                $empresa->logo_vertical = $logoVertical->storeAs('logos', $uniqueLogoName, 'public');
+            }
+
+            // Actualizar imágenes de galería
+            if ($request->hasFile('imagenes')) {
+                // Eliminar imágenes antiguas
+                if ($empresa->imagenes) {
+                    $imagenesAnteriores = json_decode($empresa->imagenes, true);
+                    foreach ($imagenesAnteriores as $img) {
+                        Storage::disk('public')->delete($img);
+                    }
+                }
+
+                // Guardar nuevas imágenes
+                $imagenes = [];
+                foreach ($request->file('imagenes') as $imagen) {
+                    $uniqueImageName = uniqid() . '_' . $imagen->getClientOriginalName();
+                    $imagenes[] = $imagen->storeAs('galeria', $uniqueImageName, 'public');
+                }
+                $empresa->imagenes = json_encode($imagenes);
+            }
+
+            // Otros datos
+            $empresa->whatsapp = $request->whatsapp;
+            $empresa->facebook = $request->facebook;
+            $empresa->telefono = $request->telefono;
+            $empresa->servicios = $request->has('servicios') ? json_encode($request->servicios) : null;
+
+            $empresa->save();
+
+            DB::commit();
+
+            return redirect()->back()->with([
+                'mensaje' => 'Datos de la distribuidora modificados correctamente.',
+                'empresa' => $empresa->id
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withErrors([
+                'mensaje' => 'Hubo un error al procesar la solicitud. ' . $e->getMessage()
+            ]);
+        }
+    }
+
+
+    public function index_empresa()
+    {
+        $usuario = Auth::user();
+        $usuario = User::find($usuario->id);
+        $empresa = $usuario->empresas()->first();
+        $serviciosSeleccionados = json_decode($empresa->servicios, true) ?? []; // Convertir JSON en array
+        return view('datos_empresa', compact('usuario', 'empresa', 'serviciosSeleccionados'));
+    }
     public function index_reportes()
     {
         $usuario = Auth::user();
         $usuario = User::find($usuario->id);
         $empresa = $usuario->empresas()->first();
-        $pedidos = $empresa->pedidos()->with('usuario','repartidor','repartidor.persona','entregaPromociones')->get();
+        $pedidos = $empresa->pedidos()->with('usuario', 'repartidor', 'repartidor.persona', 'entregaPromociones')->get();
         return view('reportes', compact('usuario', 'empresa', 'pedidos'));
     }
     public function index_usuarios()
@@ -264,10 +370,15 @@ class ControllerEmpresa extends Controller
             $empresa->nombre = $request->nombre;
             $empresa->dominio = $request->slug;
             $empresa->direccion = $request->direccion;
-            $empresa->descripcion = $request->descripcion;
+            $empresa->descripcion = e($request->descripcion);
 
             if ($request->hasFile('logo')) {
                 $logo = $request->file('logo');
+                $uniqueLogoName = uniqid() . '_' . $logo->getClientOriginalName();
+                $empresa->logo = $logo->storeAs('logos', $uniqueLogoName, 'public');
+            }
+            if ($request->hasFile('logo_vertical')) {
+                $logo = $request->file('logo_vertical');
                 $uniqueLogoName = uniqid() . '_' . $logo->getClientOriginalName();
                 $empresa->logo = $logo->storeAs('logos', $uniqueLogoName, 'public');
             }

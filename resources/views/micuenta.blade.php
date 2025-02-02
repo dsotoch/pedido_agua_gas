@@ -56,32 +56,32 @@
                                                     <!-- Botón Asignar Repartidor -->
                                                     <button title="Asignar repartidor" data-id="{{ $pedido->id }}"
                                                         class="btnasignarrepartidor z-50 flex items-center px-2 py-2  border-color-titulos-entrega text-color-titulos-entrega rounded shadow-md hover:scale-150 transform">
-                                                        <i class="btnasignarrepartidor fas fa-user-plus mr-2"
-                                                            data-id="{{ $pedido->id }}"></i>
+                                                        <i class=" fas fa-user-plus mr-2"
+                                                            ></i>
                                                         <!-- Ícono de Font Awesome -->
                                                     </button>
 
                                                     <!-- Botón Acción Adicional -->
                                                     <button title="Editar pedido" data-id="{{ $pedido->id }}"
                                                         class="btn_editar_pedido flex items-center px-2 py-2  border-color-titulos-entrega text-color-titulos-entrega rounded shadow-md hover:scale-150 transform ">
-                                                        <i class="btn_editar_pedido fas fa-edit  mr-2"
-                                                            data-id="{{ $pedido->id }}"></i>
+                                                        <i class=" fas fa-edit  mr-2"
+                                                            ></i>
                                                         <!-- Ícono de Font Awesome -->
                                                     </button>
                                                 @else
                                                     <!-- Botón Confirmar Entrega y Pago -->
                                                     <button title="Confirmar entrega y pago" data-id="{{ $pedido->id }}"
                                                         class="btnconfirmarentrega z-50 flex items-center px-2 py-2  border-color-titulos-entrega text-color-titulos-entrega rounded shadow-md hover:scale-110 transform hover:bg-green-600 hover:text-white">
-                                                        <i class="btnconfirmarentrega fas fa-hands-helping mr-2"
-                                                            data-id="{{ $pedido->id }}"></i>
+                                                        <i class=" fas fa-hands-helping mr-2"
+                                                            ></i>
                                                         <!-- Ícono de manos ayudando -->
                                                     </button>
 
                                                     <!-- Botón Anular Pedido -->
                                                     <button title="Anular pedido" data-id="{{ $pedido->id }}"
                                                         class="btnanularpedido z-50 flex items-center px-2 py-2 border-color-titulos-entrega text-color-titulos-entrega rounded shadow-md hover:scale-110 transform hover:bg-red-600 hover:text-white">
-                                                        <i class="btnanularpedido fas fa-times-circle mr-2"
-                                                            data-id="{{ $pedido->id }}"></i> <!-- Ícono de anulación -->
+                                                        <i class=" fas fa-times-circle mr-2"
+                                                            ></i> <!-- Ícono de anulación -->
                                                     </button>
 
 
@@ -89,8 +89,8 @@
                                                         <!-- Botón Acción Adicional -->
                                                         <button title="Aceptar Pedido" data-id="{{ $pedido->id }}"
                                                             class="boton_repartidor_aceptar_pedido flex items-center px-2 py-2  border-color-titulos-entrega text-color-titulos-entrega rounded shadow-md hover:bg-naranja  hover:text-white transform ">
-                                                            <i class="boton_repartidor_aceptar_pedido fas fa-check mr-2"
-                                                                data-id="{{ $pedido->id }}"></i>
+                                                            <i class=" fas fa-check mr-2"
+                                                                ></i>
                                                             <!-- Ícono de Font Awesome -->
                                                         </button>
                                                     @endif
@@ -354,7 +354,7 @@
                                                 </svg>
                                             </div>
                                             <div class="flex flex-col justify-end h-[35px] ml-2">
-                                                <p>{{ $pedido->nombres }}</p>
+                                                <p class="mi_cuenta_cliente">{{ $pedido->nombres }}</p>
                                             </div>
 
                                         </div>

@@ -6,6 +6,7 @@ use App\Http\Controllers\ControllerMensajes;
 use App\Http\Controllers\ControllerPedido;
 use App\Http\Controllers\ControllerProducto;
 use App\Http\Controllers\ControllerUsuario;
+use App\Http\Controllers\CuponController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -59,8 +60,7 @@ Route::controller(ControllerPedido::class)->group(function () {
     Route::put('cambiarestadopago', 'cambiarestadopago')->name('pedido.cambiarestadopago');
     Route::put('anular', 'anular')->name('pedido.anular');
     Route::put('editar', 'editar')->name('pedido.editar');
-    Route::get('pedido/{id}','buscar_pedido')->name('pedido.buscar');
-
+    Route::get('pedido/{id}', 'buscar_pedido')->name('pedido.buscar');
 });
 
 Route::controller(ControllerMensajes::class)->group(function () {
@@ -76,7 +76,15 @@ Route::prefix('mi-cuenta')->controller(ControllerEmpresa::class)->group(function
     Route::get('datos', 'index_mis_datos')->name('empresa.datos');
     Route::get('usuarios', 'index_usuarios')->name('empresa.usuarios');
     Route::get('reportes', 'index_reportes')->name('empresa.reportes');
+    Route::get('empresa', 'index_empresa')->name('empresa.empresa');
+    Route::put('modificar', 'modificar_empresa')->name('empresa.editar');
+    Route::get('cupones', 'index_cupones')->name('empresa.cupones');
 
+});
+Route::controller(CuponController::class)->group(function () {
+    Route::post('/aplicar-cupon', 'aplicarCupon')->name('cupones.aplicar');
+    Route::post('/crear-cupon', 'crearCupon')->name('cupones.crear');
+    Route::delete('/eliminar-cupon/{id}', 'eliminar')->name('cupones.eliminar');
 });
 
 

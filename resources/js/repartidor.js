@@ -25,23 +25,27 @@ if (mi_cuenta_contenedor_pedidos) {
     mi_cuenta_contenedor_pedidos.addEventListener('click', async (event) => {
         let spanestadopedido;
         let spanpagado;
-
-        // Verificar si se hizo clic en el botón de aceptar pedido
-        if (event.target.classList.contains('boton_repartidor_aceptar_pedido')) {
-            const disparador = event.target; // 🔹 Usar event.target en lugar de currentTarget
-            const id = disparador.dataset.id;
-
-            if (!id) {
-                console.error("Error: No se encontró un ID en el dataset del botón.");
-                return;
-            }
-
+    
+        // Obtener el botón más cercano al clic (ya sea el botón o el icono dentro de él)
+        const disparador = event.target.closest('button');
+        
+        if (!disparador) return; // Si no hay un botón, salir
+    
+        const id = disparador.dataset.id; // Obtener el ID del pedido
+    
+        if (!id) {
+            console.error("Error: No se encontró un ID en el dataset del botón.");
+            return;
+        }
+    
+        // Verificar si el botón pertenece a una de las clases esperadas
+        if (disparador.classList.contains('boton_repartidor_aceptar_pedido')) {
             // Buscar el span del estado del pedido
             const estadoPedidoSpan = disparador.closest('.mi_cuenta_pedido')?.querySelector('.estado_pedido_span');
-
-            // Desactiva el botón para evitar múltiples solicitudes
+    
+            // Desactivar el botón para evitar múltiples solicitudes
             disparador.disabled = true;
-
+    
             try {
                 const response = await fetch(`/cambiarestadopago/${id}`, {
                     method: 'PUT',
@@ -50,14 +54,14 @@ if (mi_cuenta_contenedor_pedidos) {
                         'X-CSRF-TOKEN': token,
                     },
                 });
-
+    
                 if (!response.ok) {
                     const errorText = await response.text();
                     throw new Error(errorText || 'Error desconocido');
                 }
-
+    
                 const result = await response.json();
-
+    
                 // Mostrar la alerta de éxito con SweetAlert2
                 Swal.fire({
                     title: '¡Confirmación!',
@@ -70,71 +74,54 @@ if (mi_cuenta_contenedor_pedidos) {
                         timerProgressBar: 'bg-green-500',
                     },
                 });
-
-                // Actualizar el estado del pedido y cerrar modal
+    
+                // Actualizar el estado del pedido
                 if (estadoPedidoSpan) {
                     estadoPedidoSpan.textContent = result.estado === 'En Camino'
                         ? result.estado + " 🚚"
                         : result.estado || 'Estado desconocido';
                 }
-
+    
                 // Ocultar el botón después de completar la acción
-                disparador.classList.add('hidden'); // 🔹 Se usó `disparador` en lugar de `boton`
-
+                disparador.classList.add('hidden');
+    
                 cerrarmodalPedidoAsignado();
-
+    
             } catch (error) {
                 mensajeError(error.message || 'Ha ocurrido un error inesperado.');
             } finally {
                 disparador.disabled = false;
             }
-
-            return "";
+    
+            return;
         }
-
-        // Verificar si se hizo clic en el botón de confirmar entrega
-        if (event.target.classList.contains('btnconfirmarentrega')) {
-            const disparador = event.target;
-            const id = disparador.dataset.id;
-
-            if (!id) {
-                console.error("Error: No se encontró un ID en el dataset del botón.");
-                return;
-            }
-
+    
+        if (disparador.classList.contains('btnconfirmarentrega')) {
             spanestadopedido = disparador.closest('.mi_cuenta_pedido')?.querySelector('.estado_pedido_span');
             spanpagado = disparador.closest('.mi_cuenta_pedido')?.querySelector('.estado_metodo_pago');
             const id_pedido_modal_pago = document.getElementById('id_pedido_modal_pago');
-
+    
             disparador.disabled = true;
             paymentModal.classList.remove('hidden');
             paymentModal.classList.add('flex');
             modal_pago_pedido_id.textContent = "#" + id;
             id_pedido_modal_pago.value = id;
-
-            return "";
+    
+            return;
         }
-
-        // Verificar si se hizo clic en el botón de anular pedido
-        if (event.target.classList.contains('btnanularpedido')) {
-            const disparador = event.target;
-            const id = disparador.dataset.id;
-
-            if (!id) {
-                console.error("Error: No se encontró un ID en el dataset del botón.");
-                return;
-            }
-
+    
+        if (disparador.classList.contains('btnanularpedido')) {
             const id_pedido_modal_anular = document.getElementById('id_pedido_modal_anular');
             disparador.disabled = true;
             modal_anular_pedido.classList.remove('hidden');
             modal_anular_pedido.classList.add('flex');
             modal_anular_pedido_id.textContent = "#" + id;
             id_pedido_modal_anular.value = id;
-
-            return "";
+    
+            return;
         }
     });
+    
 }
 
 if (form_metodo_pago_repartidor) {
