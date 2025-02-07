@@ -389,11 +389,14 @@ function conectarWebSocket() {
 }
 
 try {
-    conectarWebSocket();
-    getRepartidores();
+    if (window.location.pathname !== '/') {  // Mejor usar pathname en lugar de href
+        conectarWebSocket();
+        getRepartidores();
+    }
 } catch (error) {
-
+    console.error("Error en la inicialización:", error);
 }
+
 // Función para obtener los mensajes
 function getMessages() {
     try {
@@ -783,7 +786,7 @@ const mi_cuenta_contenedor_pedidos = document.getElementById('mi_cuenta_contened
 
 
 if (mi_cuenta_contenedor_pedidos) {
- mi_cuenta_contenedor_pedidos.addEventListener('click', (event) => {
+    mi_cuenta_contenedor_pedidos.addEventListener('click', (event) => {
         const botonasignar = event.target.closest('.btnasignarrepartidor');
         const btn_editar_pedido = event.target.closest('.btn_editar_pedido');
         if (botonasignar) {

@@ -45,7 +45,7 @@ export function habilitarClienteID() {
 }
 
 export function guardarPaginaPredeterminada(url, empresa, procedencia) {
-    const esPrincipal = procedencia === 'principal' ? esPaginaPredeterminada_Principal() : esPaginaPredeterminada();
+    const esPrincipal = procedencia === 'principal' ? esPaginaPredeterminada_Principal(empresa.trim()) : esPaginaPredeterminada();
 
     if (esPrincipal) {
         borrarPaginaPredeterminada();
@@ -72,11 +72,15 @@ export function guardarPaginaPredeterminada(url, empresa, procedencia) {
 
     return true;
 }
-
+export function paginaPredeterminada() {
+    let clienteID = obtenerClienteID();
+    let paginaPredeterminada = localStorage.getItem(`${clienteID}_paginaPredeterminada`) || obtenerCookie(clienteID);
+    return paginaPredeterminada;
+}
 export function esPaginaPredeterminada_Principal(dominio) {
     let clienteID = obtenerClienteID();
     let paginaPredeterminada = localStorage.getItem(`${clienteID}_paginaPredeterminada`) || obtenerCookie(clienteID);
-    return paginaPredeterminada === window.location.href + dominio;
+    return paginaPredeterminada === window.location.origin + '/' + dominio;
 }
 
 export function esPaginaPredeterminada() {
@@ -85,14 +89,19 @@ export function esPaginaPredeterminada() {
     return paginaPredeterminada === window.location.href;
 }
 
-export function esFavorito() {
+export function esFavorito(dominio) {
+    let clienteID = obtenerClienteID();
+    let favoritos = JSON.parse(localStorage.getItem(`${clienteID}_favoritos`)) || [];
+
+    return favoritos.some(fav => fav.url === window.location.origin + '/' + dominio);
+}
+export function esFavoritoDistribuidora() {
     let clienteID = obtenerClienteID();
     let favoritos = JSON.parse(localStorage.getItem(`${clienteID}_favoritos`)) || [];
 
     return favoritos.some(fav => fav.url === window.location.href);
 }
-
-export function agregarFavorito(url, nombre) {
+export function agregarFavorito(url, nombre,logo) {
     let clienteID = obtenerClienteID();
     let favoritos = JSON.parse(localStorage.getItem(`${clienteID}_favoritos`)) || [];
 
@@ -101,7 +110,7 @@ export function agregarFavorito(url, nombre) {
         return false;
     }
 
-    favoritos.push({ url, nombre });
+    favoritos.push({ url, nombre , logo });
 
     if (favoritos.length > 3) {
         favoritos.shift();
@@ -123,8 +132,13 @@ export function agregarFavorito(url, nombre) {
 
     return true;
 }
+export function obtenerFavoritos() {
+    let clienteID = obtenerClienteID();
+    return JSON.parse(localStorage.getItem(`${clienteID}_favoritos`)) || [];
+}
 
-function eliminarFavorito(url) {
+
+export function eliminarFavorito(url) {
     let clienteID = obtenerClienteID();
     let favoritos = JSON.parse(localStorage.getItem(`${clienteID}_favoritos`)) || [];
 

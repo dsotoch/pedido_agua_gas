@@ -12,7 +12,7 @@
             <button id="btn_acceder" class="md:mr-40 mr-4 text-[16px] leading-9">Acceder&nbsp;&nbsp;<i
                     class="fa-solid fa-right-to-bracket"></i></button>
             <div class="flex space-x-2">
-                <button id="btn_favorito" data-dominio="{{ $empresa->dominio }}" data-nombre="{{ $empresa->nombre }}"
+                <button id="btn_favorito_dis" data-dominio="{{ $empresa->dominio }}" data-logo="{{ $empresa->logo }}" data-nombre="{{ $empresa->nombre }}"
                     class="text-lg text-color-titulos-entrega hover:text-yellow-500" title="Agregar a Favoritos"><i
                         class="fas fa-star"></i></button>
                 <button id="btn_predeterminado" data-dominio="{{ $empresa->dominio }}"

@@ -17,6 +17,16 @@ use Illuminate\Support\Facades\Storage;
 
 class ControllerEmpresa extends Controller
 {
+    public function index_favoritas()
+    {
+        if (!Auth::check()) {
+            abort(403, "Usuario no autenticado");
+        }
+        $usuario = Auth::user();
+        $usuario = User::find($usuario->id);
+        $empresa = $usuario->empresas()->first();
+        return view('favoritas', compact('usuario', 'empresa'));
+    }
     public function index_cupones()
     {
         if (!Auth::check()) {
@@ -196,9 +206,8 @@ class ControllerEmpresa extends Controller
                 ];
             });
         }
-        $horaActual = now()->format('h:i:s A'); // Formato de 12 horas con AM/PM
-        $fueraHorario = $horaActual < $empresa->hora_inicio || $horaActual > $empresa->hora_fin;
-
+        $horaActual = now('America/Lima')->format('h:i:s A'); // Formato de 12 horas con AM/PM
+        $fueraHorario = $horaActual < $empresa->hora_inicio && $horaActual > $empresa->hora_fin;
         // Retornar la vista con los datos
         return view('negocio', compact(
             'promociones_faltantes',

@@ -16,12 +16,13 @@
                     {{ $usuario ? $usuario->persona->nombres : 'Sandra Maribel' }}</p>
                 <p class="hidden" id="tipo_usuario">{{ $usuario ? $usuario->tipo : '' }}</p>
             </center>
+            <!---dominio de la empresa-->
             <div class="grid font-sans text-[14px] leading-[14px] space-y-3 mt-4 mb-6">
                 @if (($usuario && $usuario->tipo === 'admin') || ($usuario->tipo === 'repartidor' && $usuario->empresas()->exists()))
                     <a href="{{ route('index.negocio', ['slug' => $usuario->empresas()->first()->dominio]) }}">Pedir</a>
                 @else
-                    <a
-                        href="{{ route('index.negocio', ['slug' => $pedido && !empty($pedido->empresa->dominio) ? $pedido->empresa->dominio : 'default-slug']) }}">Pedir</a>
+                    <a id="ruta_cliente_distribuidora"
+                        href="">Pedir</a>
                 @endif
 
                 @if ($usuario && ($usuario->tipo === 'admin' || $usuario->tipo === 'repartidor'))
@@ -105,6 +106,12 @@
                         <a class="" href="{{ route('empresa.datos') }}" id="btn_boton_datos"><i
                                 class="fa-solid fa-user-gear"></i>
                             &nbsp;&nbsp;Mis Datos</a>
+                    </div>
+                    <div
+                        class="border border-transparent p-3 {{ request()->routeIs('empresa.favoritas') ? 'btn-active-mi-cuenta' : '' }} rounded-md hover:bg-naranja hover:border-red-500">
+                        <a class="" href="{{ route('empresa.favoritas') }}" id="btn_boton_distribuidoras">
+                            <i class="fa-solid fa-star"></i> &nbsp;&nbsp;Distribuidoras Fav.
+                        </a>
                     </div>
                 @endif
                 @if ($usuario->tipo == 'repartidor')

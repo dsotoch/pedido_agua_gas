@@ -81,6 +81,8 @@ Route::prefix('mi-cuenta')->controller(ControllerEmpresa::class)->group(function
     Route::get('empresa', 'index_empresa')->name('empresa.empresa');
     Route::put('modificar', 'modificar_empresa')->name('empresa.editar');
     Route::get('cupones', 'index_cupones')->name('empresa.cupones');
+    Route::get('favoritas', 'index_favoritas')->name('empresa.favoritas');
+
 });
 Route::controller(CuponController::class)->group(function () {
     Route::post('/aplicar-cupon', 'aplicarCupon')->name('cupones.aplicar');

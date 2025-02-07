@@ -15,5 +15,6 @@ import './clientes';
 import './reportes';
 import './cupon';
 import './dashboard';
+import './favoritas';
 
 

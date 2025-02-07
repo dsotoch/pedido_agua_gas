@@ -1,4 +1,4 @@
-import { agregarFavorito, deshabilitarClienteID, esFavorito, esPaginaPredeterminada, guardarPaginaPredeterminada, habilitarClienteID } from "./cookies";
+import { agregarFavorito, deshabilitarClienteID, esFavoritoDistribuidora, esPaginaPredeterminada, esPaginaPredeterminada_Principal, guardarPaginaPredeterminada, habilitarClienteID, paginaPredeterminada } from "./cookies";
 
 const mi_cuenta_input_buscar = document.getElementById('mi_cuenta_input_buscar');
 const mi_cuenta_contenedor_pedidos = document.getElementById('mi_cuenta_contenedor_pedidos_super');
@@ -8,10 +8,12 @@ const modal_usuario_no_autenticado = document.getElementById('modal_usuario_no_a
 const select_direccion = document.getElementById('select_direccion');
 const direccion = document.getElementById('direccion');
 const btn_distribuidoras_cliente = document.getElementById('btn_distribuidoras_cliente');
-const btn_favorito = document.getElementById('btn_favorito');
+const btn_favorito = document.querySelector('#btn_favorito_dis');
 const btn_predeterminado = document.getElementById('btn_predeterminado');
 const btn_menu = document.getElementById('btn_menu');
 const menu = document.getElementById('menu');
+const ruta_cliente_distribuidora = document.querySelector('#ruta_cliente_distribuidora');
+
 if (btn_menu) {
     btn_menu.addEventListener("click", () => {
         menu.classList.remove('hidden');
@@ -44,8 +46,8 @@ if (btn_predeterminado) {
 if (btn_favorito) {
     btn_favorito.addEventListener('click', () => {
         let baseUrl = window.location.origin;
-        let url = `${baseUrl}/${btn_predeterminado.dataset.dominio}`; // Construcción correcta de la URL
-        if (agregarFavorito(url, btn_favorito.dataset.nombre)) {
+        let url = `${baseUrl}/${btn_favorito.dataset.dominio}`; // Construcción correcta de la URL
+        if (agregarFavorito(url, btn_favorito.dataset.nombre ,btn_favorito.dataset.logo)) {
             btn_favorito.classList.add('text-yellow-500');
 
         } else {
@@ -61,13 +63,21 @@ if (esPaginaPredeterminada()) {
         btn_predeterminado.classList.add('text-green-500');
 
     }
+
 }
 
-if (esFavorito()) {
-    if (btn_favorito) {
-        btn_favorito.classList.add('text-yellow-500');
-    }
+if (ruta_cliente_distribuidora) {
+    ruta_cliente_distribuidora.href = paginaPredeterminada()?? '/';
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    if (esFavoritoDistribuidora()) {
+        if (btn_favorito) {
+            btn_favorito.classList.add('text-yellow-500');
+        }
+
+    }
+})
 
 
 if (btn_distribuidoras_cliente) {

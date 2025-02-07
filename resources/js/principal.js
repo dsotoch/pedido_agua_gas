@@ -1,4 +1,4 @@
-import { agregarFavorito, guardarPaginaPredeterminada } from "./cookies";
+import { agregarFavorito, esFavorito, esPaginaPredeterminada_Principal, guardarPaginaPredeterminada } from "./cookies";
 
 document.addEventListener('DOMContentLoaded', () => {
     const divbars = document.getElementById('audioBars');
@@ -22,8 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 10000); // 5000 milisegundos = 5 segundos
 
 
-    // Duración en milisegundos (5 segundos)
-    const duracion = 3000;
+    const duracion = 1000;
 
     // Comienza la ejecución repetida
 
@@ -164,30 +163,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // ⭐ Botón de Favoritos
             const btnFavorito = document.createElement('button');
-            btnFavorito.className = 'text-gray-400 hover:text-yellow-500';
+            btnFavorito.className = `hover:text-yellow-500 ${esFavorito(empresa.dominio) ? 'text-yellow-500' : 'text-gray-400'}`;
             btnFavorito.innerHTML = '<i class="fas fa-star"></i>';
             btnFavorito.addEventListener('click', (e) => {
                 e.stopPropagation(); // Evita redirección
-                btnFavorito.classList.toggle('text-yellow-500'); // Cambia color al activar
                 let url = window.location + empresa.dominio;
-                agregarFavorito(url, empresa.nombre);
+                if (agregarFavorito(url, empresa.nombre, empresa.logo)) {
+                    btnFavorito.classList.add('text-yellow-500'); // Cambia color al activar
+
+                } else {
+                    btnFavorito.classList.remove('text-yellow-500'); // Cambia color al activar
+                    btnFavorito.classList.add('text-gray-400'); // Cambia color al activar
+
+                }
             });
 
             // ✅ Botón de Predeterminado
             const btnPredeterminado = document.createElement('button');
-            btnPredeterminado.className = 'text-gray-400 hover:text-green-500 btn_pred';
+            btnPredeterminado.className = `hover:text-green-500 ${esPaginaPredeterminada_Principal(empresa.dominio) ? 'text-green-500' : 'text-gray-400'} btn_pred`;
             btnPredeterminado.dataset.dominio = empresa.dominio;
-            btnPredeterminado.innerHTML = '<i class="fas fa-check-circle"></i>';
+            btnPredeterminado.innerHTML = '<i class="fas fa-check-circle "></i>';
             btnPredeterminado.title = 'Elegir como Predeterminado';
             btnPredeterminado.addEventListener('click', (e) => {
                 e.stopPropagation(); // Evita redirección
-                document.querySelectorAll('.fa-check-circle').forEach(icono => {
-                    icono.classList.remove('text-green-500'); // Desactiva otros
+                document.querySelectorAll('.btn_pred').forEach(icono => {
+                    if (icono !== btnPredeterminado) {  // Evita afectar el botón actual
+                        icono.classList.remove('text-green-500');
+                    }
                 });
-                btnPredeterminado.classList.add('text-green-500'); // Activa este
                 let baseUrl = window.location.origin;
                 let url = `${baseUrl}/${empresa.dominio}`; // Construcción correcta de la URL
-                guardarPaginaPredeterminada(url, empresa.nombre,'principal');
+                if (!guardarPaginaPredeterminada(url, empresa.dominio, 'principal')) {
+                    btnPredeterminado.classList.remove('text-green-500');
+                } else {
+                    btnPredeterminado.classList.add('text-green-500'); // Activa este
+
+                }
             });
 
             // Agregar botones al contenedor de botones
