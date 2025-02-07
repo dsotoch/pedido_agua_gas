@@ -20,9 +20,14 @@
                         <!-- Usuario -->
                         <li class="flex justify-between items-center p-4 usuariosadmin" data-id="{{ $item->id }}">
                             <div class="space-y-2">
+                                
+                                
                                 <h3 class="font-medium  text-base">
                                     {{ $item->persona->nombres ?? 'Sin nombre' }}
                                 </h3>
+                                <p class="text-base">
+                                    <i class="fas fa-id-card mr-1"></i> {{ $item->persona->dni }}
+                                </p>
                                 <p class="text-base "><i class="fas fa-phone mr-1 "></i>
                                     {{ $item->usuario }}</p>
                                 <p class="text-base ">
@@ -91,6 +96,13 @@
                         <input type="text" name="apellidos"
                             class="p-2 w-full border  rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 mt-1"
                             placeholder="Apellidos del usuario">
+                    </div>
+                    <div>
+                        <label for="dni"
+                            class="block text-sm font-medium text-color-titulos-entrega">DNI</label>
+                        <input type="text" name="dni" required
+                            class="p-2 w-full border  rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 mt-1"
+                            placeholder="DNI del usuario">
                     </div>
                     <div>
                         <label for="direccion"

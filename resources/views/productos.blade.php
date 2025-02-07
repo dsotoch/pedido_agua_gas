@@ -107,6 +107,9 @@
                                         @foreach ($empresa->productos as $item)
                                             <option value="{{ $item->descripcion }}">{{ $item->descripcion }}</option>
                                         @endforeach
+                                    @else
+                                    <option value="mismo">Mismo Producto a Registrar</option>
+
                                     @endif
                                 </select>
                             </div>

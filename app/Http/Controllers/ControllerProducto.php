@@ -50,10 +50,11 @@ class ControllerProducto extends Controller
                 // Verificar si hay datos para la promoción
                 if (!is_null($productos_por_cada) && !is_null($productos_gratis)) {
                     // Crear la promoción si los datos están disponibles
+
                     PromocionesUnitario::create([
                         'producto_id' => $producto->id,
                         'cantidad' => $productos_por_cada,
-                        'producto_gratis' => $productos_gratis,
+                        'producto_gratis' => $productos_gratis == 'mismo' ? $producto->descripcion : $productos_gratis,
                     ]);
                 }
 

@@ -10,18 +10,28 @@ class Cupones extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['codigo', 'tipo', 'valor', 'limite_uso', 'usado', 'expira_en', 'producto_id', 'empresa_id'];
+    protected $fillable = ['codigo', 'tipo', 'valor', 'limite_uso', 'usado', 'expira_en', 'producto_id', 'empresa_id', 'limite_uso_por_cliente'];
 
     public function empresa()
     {
-        return $this->hasOne(empresa::class,'id');
+        return $this->hasOne(empresa::class, 'id');
     }
     // Verifica si el cupón es válido
     public function esValido()
     {
-        return (!$this->expira_en || Carbon::now()->lt($this->expira_en)) // No ha expirado
-            && ($this->limite_uso === null || $this->usado < $this->limite_uso); // No excede el límite de uso
+        // Verificar si ha expirado
+        if ($this->expira_en && Carbon::now()->gte($this->expira_en)) {
+            return false;
+        }
+
+        // Verificar si ha excedido el límite de uso
+        if (!is_null($this->limite_uso) && $this->usado >= $this->limite_uso) {
+            return false;
+        }
+
+        return true;
     }
+
 
     // Aplica el descuento al total de la compra
     public function aplicarDescuento($total)

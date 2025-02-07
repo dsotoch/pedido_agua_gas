@@ -1,3 +1,4 @@
+import { error } from "jquery";
 import Swal from "sweetalert2";
 const botonregistrarsepanelcliente = document.getElementById('botonregistrarsepanelcliente');
 const formLogindiv = document.getElementById('formLogindiv');
@@ -18,6 +19,150 @@ const contenedor_registrarse_no_aut = document.getElementById('contenedor_regist
 const boton_regresar_a_login_no_au = document.getElementById('boton_regresar_a_login_no_au');
 const botonregistrarsepanelcliente_no_au = document.getElementById('botonregistrarsepanelcliente_no_au');
 const form_registrar_usuario_no_aut = document.getElementById('form_registrar_usuario_no_aut');
+const contenedor_modal_restablecer_password = document.getElementById('contenedor_modal_restablecer_password');
+const form_reset_pass = document.getElementById('form_reset_pass');
+const contenedor_formulario_cambiar_password = document.getElementById('contenedor_formulario_cambiar_password');
+const contenedor_formulario_validar_datos = document.getElementById('contenedor_formulario_validar_datos');
+const form_cambiar_password = document.getElementById('form_cambiar_password');
+
+if (form_cambiar_password) {
+    form_cambiar_password.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const password_reset = document.getElementById('password_reset');
+        const password_confirmation = document.getElementById('password_confirmation');
+        if (password_reset.value.trim() != password_confirmation.value.trim()) {
+            Swal.fire({
+                title: 'Advertencia',
+                text: 'Las Contraseñas no Coinciden. Intentalo nuevamente',
+                icon: 'warning',
+                timer: 3000,
+                timerProgressBar: true,
+                showConfirmButton: false,
+                customClass: {
+                    timerProgressBar: 'bg-yellow-500 rounded h-2'
+                }
+
+            })
+        } else {
+            const formData = new FormData(form_cambiar_password);
+            const data = Object.fromEntries(formData.entries()); 
+
+            try {
+                const response = await fetch(form_cambiar_password.getAttribute('action'), {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': token
+                    },
+                    body: JSON.stringify(data) // Enviar datos del formulario
+                });
+
+                const respuesta = await response.json(); // Procesar JSON
+                if (!response.ok) {
+                    throw new Error(respuesta.mensaje || 'Ocurrió un error inesperado.');
+                }
+                // Ocultar y mostrar formularios correctamente
+                document.getElementById('contenedor_formulario_cambiar_password').classList.add('hidden');
+                document.getElementById('contenedor_formulario_validar_datos').classList.remove('hidden');
+                document.getElementById('contenedor_modal_restablecer_password').classList.add('hidden');
+                Swal.fire({
+                    title: 'Confirmación',
+                    text: respuesta.mensaje,
+                    icon: 'success',
+                    timer: 3000,
+                    timerProgressBar: true,
+                    showConfirmButton: false,
+                    customClass: {
+                        timerProgressBar: 'bg-gren-500 rounded h-2'
+                    }
+                });
+            } catch (error) {
+                Swal.fire({
+                    title: 'Error en la solicitud',
+                    text: error,
+                    icon: 'error',
+                    timer: 3000,
+                    timerProgressBar: true,
+                    showConfirmButton: false,
+                    customClass: {
+                        timerProgressBar: 'bg-red-500 rounded h-2'
+                    }
+                });
+            }
+        }
+    })
+}
+if (form_reset_pass) {
+    form_reset_pass.addEventListener('submit', function (event) {
+        // Prevenir el comportamiento por defecto (recarga de página)
+        event.preventDefault();
+
+        // Obtener los datos del formulario
+        const formData = new FormData(form_reset_pass);
+
+        // Hacer la solicitud fetch al servidor
+        fetch(form_reset_pass.getAttribute('action'), {
+            method: 'POST',
+            body: formData, // Se usa directamente FormData sin necesidad de variable extra
+            headers: {
+                'X-CSRF-TOKEN': token // CSRF token
+            }
+        }).then(async response => {
+            let data;
+
+            try {
+                data = await response.json(); // Intentar parsear JSON
+            } catch (error) {
+                throw new Error("Error en la respuesta del servidor.");
+            }
+
+            if (!response.ok) {
+                let mensajeError;
+
+                if (data.errors) {
+                    if (Array.isArray(data.errors)) {
+                        mensajeError = data.errors.join('\n'); // Si es un array, unir errores
+                    } else if (typeof data.errors === 'object') {
+                        mensajeError = Object.values(data.errors).flat().join('\n'); // Si es un objeto, extraer valores y unir
+                    } else {
+                        mensajeError = data.errors; // Si es un string, usarlo directamente
+                    }
+                } else {
+                    mensajeError = data.mensaje || "Ocurrió un error inesperado.";
+                }
+
+                throw new Error(mensajeError);
+            }
+            contenedor_formulario_validar_datos.classList.add('hidden');
+            contenedor_formulario_cambiar_password.classList.remove('hidden');
+            document.getElementById('user_id_pass').value = data.mensaje;
+        }).catch(errors => {
+
+            Swal.fire({
+                title: 'Hubo un error al procesar la solicitud',
+                text: errors,
+                icon: 'error',
+                timer: 3000,
+                timerProgressBar: true,
+                showConfirmButton: false,
+                customClass: {
+                    timerProgressBar: 'bg-red-500 h-2 rounded'
+                }
+            });
+        });
+    });
+
+}
+
+document.addEventListener('click', (event) => {
+    if (event.target.matches(".btn_pass")) {
+        contenedor_modal_restablecer_password.classList.remove('hidden');
+        contenedor_modal_restablecer_password.classList.add('flex');
+    }
+});
+
+
+
 //EL cliente no esta autenticado
 if (form_registrar_usuario_no_aut) {
     form_registrar_usuario_no_aut.addEventListener('submit', async (event) => {

@@ -105,6 +105,12 @@ class ControllerPedido extends Controller
             $pedido = Pedido::findOrFail($validated['pedido_id']);
             $repartidor = User::findOrFail($validated['repartidor_id']);
 
+            // Verificar si el repartidor ya está asignado a este pedido
+            if (!is_null($pedido->repartidor_id) && $pedido->repartidor_id === $repartidor->id) {
+                return response()->json([
+                    'mensaje' => 'El repartidor ya esta asignado a este pedido.',
+                ], 409); // Código 409: Conflicto
+            }
             // Actualizar el pedido con el ID del repartidor
             $pedido->update([
                 'repartidor_id' => $repartidor->id,
@@ -464,8 +470,20 @@ class ControllerPedido extends Controller
                         $cantidadPedidos->save();
                     });
                 }
-                // Actualizar el total del pedido
-                $pedido->update(['total' => $totalPedido]);
+                $controlador_cupon = new CuponController();
+                if (!empty($request->cupon)) {
+                    $resultados = $controlador_cupon->aplicarCupon($request->cupon, $totalPedido);
+                    $pedido->update([
+                        'total' => $resultados['total_con_descuento'],
+                        'descuento' => $resultados['descuento'],
+                        'cupon' => $request->cupon
+                    ]);
+                } else {
+                    // Actualizar el total del pedido
+                    $pedido->update(['total' => $totalPedido]);
+                }
+
+
                 // Crear una instancia del otro controlador
                 $controlador_mensaje = new ControllerMensajes();
                 // Filtrar los usuarios relacionados con la empresa y verificar si el usuario es tipo 'admin'

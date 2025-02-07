@@ -8,7 +8,7 @@
 
 
     </div>
-    <div class="grid bg-gradient-to-br from-secundario to-principal p-10 items-center">
+    <div class="grid bg-gradient-to-br from-secundario to-principal md:p-10 p-2 items-center">
         @if (session()->has('mensaje'))
             <div id="mensaje" class="text-center p-4 m-4 bg-green-500 text-white text-md">
                 {{ session('mensaje') }}
@@ -19,7 +19,7 @@
                 {{ $errors->first('mensaje') }}
             </div>
         @endif
-        <div class="p-6 w-1/2 mx-auto  bg-white shadow-md rounded" id="contenedorRegistroAdministrador">
+        <div class="p-6 md:w-1/2 w-full mx-auto  bg-white shadow-md rounded" id="contenedorRegistroAdministrador">
             <h2 class="text-2xl font-normal text-center text-gray-700 mb-6">Registrar Administrador</h2>
 
             <form id="formRegistroAdministrador" method="POST" action="{{ route('empresa.admin') }}">
@@ -30,8 +30,18 @@
                     <label for="telefono-admin" class="block text-gray-600 font-normal mb-1">Teléfono</label>
                     <input type="tel" id="telefono-admin" name="telefono" value="{{ old('telefono') }}"
                         placeholder="Ej. 987 654 321" required
-                        class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" >
                     @error('telefono')
+                        <div class="text-red-500 text-sm mt-2">{{ $message }}</div>
+                    @enderror
+                </div>
+                <!-- Dni -->
+                <div class="mb-4">
+                    <label for="dni-admin" class="block text-gray-600 font-normal mb-1">DNI</label>
+                    <input type="tel" id="dni-admin" name="dni" value="{{ old('dni') }}"
+                        placeholder="Ej.18082298" required
+                        class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" >
+                    @error('dni')
                         <div class="text-red-500 text-sm mt-2">{{ $message }}</div>
                     @enderror
                 </div>
@@ -89,7 +99,7 @@
                     @enderror
                 </div>
 
-                <input type="" name="empresa_id" id="empresa_id" value="{{ session('empresa') }}">
+                <input type="text" class="hidden" name="empresa_id" id="empresa_id" value="{{session('empresa')}}">
 
                 @error('empresa_id')
                     <div class="text-red-500 text-sm mt-2">{{ $message }}</div>

@@ -20,7 +20,7 @@
                             class="fa-solid fa-right-to-bracket"></i></button>
                     <button id="openModalUsuario" class="text-white  block md:hidden p-2">
                         <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="Capa_1"
-                            class="h-[35px] w-[35px]" x="0px" y="0px" viewBox="0 0 720 720" xml:space="preserve">
+                            class="h-[30px] w-[30px]" x="0px" y="0px" viewBox="0 0 720 720" xml:space="preserve">
                             <rect fill="#293241" width="720" height="58.5"></rect>
                             <rect y="661.5" fill="#293241" width="720" height="58.5"></rect>
                             <rect y="330.75" fill="#293241" width="720" height="58.5"></rect>
@@ -28,12 +28,12 @@
                     </button>
                     @auth
                         <div
-                            class="absolute w-full hidden overflow-y-auto max-h-[80vh] min-h-[250px] z-50 group-hover:flex  flex-col justify-start text-start  top-12  bg-white shadow-md">
+                            class="absolute w-full   hidden overflow-y-auto min-w-[400px] md:min-w-[600px] max-h-[80vh] min-h-[250px] z-50 group-hover:flex  flex-col justify-start text-start  top-12  -left-[350px] bg-white shadow-md">
 
                             <!--Usuario ya Autenticado--->
                             <div class="absolute w-full">
                                 <div class="pt-7 w-full mx-auto ">
-                                    <div class="text-center grid space-y-8">
+                                    <div class="text-center grid space-y-8 pt-2 pb-2 pl-2 p-2">
 
                                         <h1 class="font-cabin font-[500px] text-[25px] text-color-titulos-entrega">
                                             {{ $usuario->persona->nombres }}👋</h1>
@@ -85,7 +85,7 @@
 
                                 <div class="flex flex-col justify-start text-left mt-2 space-y-4">
                                     <!-- Alineado a la izquierda -->
-                                    <button class="text-left text-color-text">¿Olvidaste tu Contraseña? <i
+                                    <button class="btn_pass text-left text-color-text" >¿Olvidaste tu Contraseña? <i
                                             class="fas fa-arrow-right-long text-2xl  ml-2"></i></button>
                                     <button id="botonregistrarsepanelcliente" class="text-left text-color-text">Crear Una Cuenta
                                         <i class="fas fa-arrow-right-long text-2xl ml-2"></i></button>
@@ -96,6 +96,13 @@
                                 <p class="text-[22px] font-medium">Crear Una Cuenta</p>
                                 <form action="{{ route('crear.usuario') }}" method="POST" class="mt-4 space-y-5 text-[16px]"
                                     id="form_registrar_usuario">
+
+                                    <!-- Dni -->
+                                    <label for="dni" class="block text-color-text">Número de Dni
+                                        <span class="text-red-500">*</span></label>
+                                    <!-- Input de Dni -->
+                                    <input id="dni" type="number" maxlength="8" name="dni" autocomplete="off"
+                                        class=" w-full border-color-text p-3 border rounded-3xl focus:outline-none focus:ring-2 focus:ring-blue-500 ">
 
                                     <!-- Teléfono -->
                                     <label for="telefono" class="block text-color-text">Número de Celular
@@ -191,15 +198,14 @@
                     <span class="font-semibold ">Olvídate de las llamadas y las esperas en línea.</span> Encuentra los
                     distribuidores más cercanos, selecciona tus productos y paga al recibir.
                 </p>
-                <div class="flex bg-black  items-center border rounded-lg overflow-hidden shadow-sm">
+                <div class="flex bg-black  items-center border rounded-[20px] overflow-hidden shadow-sm">
                     <input type="search" id="buscador" placeholder="Buscar por distribuidor o ciudad..."
-                        class="p-4 pl-4 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 text-black">
+                        class="p-4 pl-4 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 text-black placeholder-black">
                     <button disabled class="p-4 bg-naranja text-white hover:bg-naranja focus:outline-none">
                         <i class="fas fa-search"></i>
                     </button>
-
                 </div>
-                <div class="relative w-full bg-white rounded-md p-2 hidden" id="contenedorResultados">
+                <div class="relative w-full bg-white  rounded-md p-2 hidden" id="contenedorResultados">
                     <!-- Aseguramos que el div con audioBars se posicione dentro del contexto relativo -->
                     <div id="audioBars"
                         class="hidden  items-center space-x-1 rounded-md p-3 top-0 left-0 justify-center absolute w-full bg-white">
@@ -209,6 +215,10 @@
                         <div class="w-2 bg-naranja h-10"></div>
                         <div class="w-2 bg-naranja h-7"></div>
                     </div>
+
+                </div>
+                <div class="relative  bg-white  hidden rounded-md p-2" id="contenedorResultados2">
+
 
                 </div>
 

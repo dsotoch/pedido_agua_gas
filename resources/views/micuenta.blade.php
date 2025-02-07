@@ -1,13 +1,15 @@
 @extends('layout-cuenta')
 @section('logica')
-    <div class="container">
-        <div class="flex w-full h-full">
-            <div class="pl-[20px] flex">
+    <div class="relative md:container">
+
+
+        <div class="flex w-full h-full ">
+            <div class="pl-[20px] flex space-x-2">
 
                 <div class="max-w-[212px] w-[212px]">
                     <input id="mi_cuenta_input_buscar" class="rounded-3xl bg-transparent border-color-text border p-3"
-                        type="search" autocomplete="off" name="first_name" value="" placeholder="Buscar por nombres..."
-                        aria-label="Buscar por nombre">
+                        type="search" autocomplete="off" name="first_name" value=""
+                        placeholder="Buscar por nombres..." aria-label="Buscar por nombre">
                 </div>
                 <button type="button" class="bg-naranja text-white w-[48px] h-[50px] rounded-xl" disabled>
                     <i class="fa fa-search text-base font-bold"></i>
@@ -22,16 +24,17 @@
                     por {{ $usuario->tipo == 'admin' || $usuario->tipo == 'repartidor' ? 'gestionar' : 'visualizar' }}.</p>
             </div>
         </div>
-        <div id="mi_cuenta_contenedor_pedidos_super">
+        <div id="mi_cuenta_contenedor_pedidos_super" class="w-full">
 
-            <div class="flex flex-wrap" id="mi_cuenta_contenedor_pedidos">
+            <div class="flex flex-wrap  justify-center space-y-4 md:space-y-0 md:justify-start w-full" id="mi_cuenta_contenedor_pedidos">
                 <!---Pedidos--->
                 @if ($usuario->tipo == 'admin' || $usuario->tipo == 'repartidor')
                     @if ($pedidos->count() > 0)
                         @foreach ($pedidos as $pedido)
-                            <div id="caja-{{ $pedido->id }}" class="p-[15px] mi_cuenta_pedido w-[363px] max-w-[363px]">
+                            <div id="caja-{{ $pedido->id }}"
+                                class="md:p-[15px] p-0 mi_cuenta_pedido w-4/5 md:w-[363px]">
                                 <div
-                                    class="flex-1 h-full w-[333px] max-w-[333px] p-[20px] bg-color-tarjetas rounded-3xl text-color-titulos-entrega font-sans text-base">
+                                    class="flex-1 h-full w-full md:w-[333px] md:max-w-[333px] p-[20px] bg-color-tarjetas rounded-3xl text-color-titulos-entrega font-sans text-base">
                                     <div class="space-y-0 relative">
                                         <div class="flex justify-between">
                                             <div class="flex">
@@ -51,37 +54,35 @@
 
 
                                             </div>
+
                                             <div class="flex space-x-2 ml-2 z-50">
                                                 @if ($usuario->tipo == 'admin')
                                                     <!-- Botón Asignar Repartidor -->
                                                     <button title="Asignar repartidor" data-id="{{ $pedido->id }}"
                                                         class="btnasignarrepartidor z-50 flex items-center px-2 py-2  border-color-titulos-entrega text-color-titulos-entrega rounded shadow-md hover:scale-150 transform">
-                                                        <i class=" fas fa-user-plus mr-2"
-                                                            ></i>
+                                                        <i class=" fas fa-user-plus mr-2"></i>
                                                         <!-- Ícono de Font Awesome -->
                                                     </button>
 
                                                     <!-- Botón Acción Adicional -->
                                                     <button title="Editar pedido" data-id="{{ $pedido->id }}"
                                                         class="btn_editar_pedido flex items-center px-2 py-2  border-color-titulos-entrega text-color-titulos-entrega rounded shadow-md hover:scale-150 transform ">
-                                                        <i class=" fas fa-edit  mr-2"
-                                                            ></i>
+                                                        <i class=" fas fa-edit  mr-2"></i>
                                                         <!-- Ícono de Font Awesome -->
                                                     </button>
                                                 @else
                                                     <!-- Botón Confirmar Entrega y Pago -->
                                                     <button title="Confirmar entrega y pago" data-id="{{ $pedido->id }}"
                                                         class="btnconfirmarentrega z-50 flex items-center px-2 py-2  border-color-titulos-entrega text-color-titulos-entrega rounded shadow-md hover:scale-110 transform hover:bg-green-600 hover:text-white">
-                                                        <i class=" fas fa-hands-helping mr-2"
-                                                            ></i>
+                                                        <i class=" fas fa-hands-helping mr-2"></i>
                                                         <!-- Ícono de manos ayudando -->
                                                     </button>
 
                                                     <!-- Botón Anular Pedido -->
                                                     <button title="Anular pedido" data-id="{{ $pedido->id }}"
                                                         class="btnanularpedido z-50 flex items-center px-2 py-2 border-color-titulos-entrega text-color-titulos-entrega rounded shadow-md hover:scale-110 transform hover:bg-red-600 hover:text-white">
-                                                        <i class=" fas fa-times-circle mr-2"
-                                                            ></i> <!-- Ícono de anulación -->
+                                                        <i class=" fas fa-times-circle mr-2"></i>
+                                                        <!-- Ícono de anulación -->
                                                     </button>
 
 
@@ -89,8 +90,7 @@
                                                         <!-- Botón Acción Adicional -->
                                                         <button title="Aceptar Pedido" data-id="{{ $pedido->id }}"
                                                             class="boton_repartidor_aceptar_pedido flex items-center px-2 py-2  border-color-titulos-entrega text-color-titulos-entrega rounded shadow-md hover:bg-naranja  hover:text-white transform ">
-                                                            <i class=" fas fa-check mr-2"
-                                                                ></i>
+                                                            <i class=" fas fa-check mr-2"></i>
                                                             <!-- Ícono de Font Awesome -->
                                                         </button>
                                                     @endif
@@ -267,8 +267,36 @@
                                             <p class="underline mt-2">Notas del pedido:</p>
                                             <p class="p-2">{{ $pedido->nota_interna }}</p>
                                         </div>
+
+                                        @if (!empty($pedido->cupon))
+                                            <div class="absolute -top-0 right-10 h-[50px]">
+                                                <div
+                                                    class="relative bg-transparent w-[150px]  h-[190px]  text-color-titulos-entrega group ">
+                                                    <div>
+                                                        <div
+                                                            class="z-50 -top-10 bg-green-400 left-0 hidden absolute group-hover:flex  w-[250px] min-w-[250px] text-white p-2 rounded-md text-center">
+                                                            <p class="relative text-[14px] leading-[19.6px] ">
+                                                                <strong>¡Cupón Aplicado!</strong><br>
+                                                                Aplica un descuento de S/{{ $pedido->descuento }}
+                                                                equivalente al cupón
+                                                                #{{ $pedido->cupon }}
+                                                                en este pedido.
+                                                            </p>
+                                                            <div
+                                                                class="absolute -bottom-[13px] left-[calc(50%-60px)] clip-v-shape h-[20px] w-[20px] bg-green-400 ">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <img src="{{ asset('imagenes/cajas/cupons.png') }}" alt=""
+                                                        class="absolute top-[65px] left-[25px] w-[60px] h-[50px] ">
+
+                                                </div>
+
+
+                                            </div>
+                                        @endif
                                         @if ($pedido->entregaPromociones->count() > 0)
-                                            <div class="absolute -top-14 right-0 ">
+                                            <div class="absolute -top-14 right-0">
                                                 <div class="relative">
                                                     <div
                                                         class="bg-transparent w-[150px]  h-[190px]  text-color-titulos-entrega group ">
@@ -278,8 +306,7 @@
                                                                 <p class="relative text-[14px] leading-[19.6px] pb-4">
                                                                     <strong>¡Promo Producto Gratis!</strong><br>
                                                                     Aplica un descuento equivalente al costo de
-                                                                    {{ $pedido->entregaPromociones->count() }}
-                                                                    producto(s)
+                                                                    {{ $pedido->entregaPromociones->count() }} producto(s)
                                                                     incluido(s)
                                                                     en este pedido.
                                                                 </p>
@@ -289,17 +316,15 @@
                                                             </div>
                                                         </div>
 
+
                                                         <img src="{{ asset('imagenes/cajas/botella.svg') }}"
                                                             alt="" class="absolute top-[120px] left-[104px]">
-
-
 
                                                     </div>
 
                                                 </div>
                                             </div>
                                         @endif
-
                                     </div>
                                 </div>
                             </div>
@@ -312,9 +337,9 @@
                 @else
                     @if ($pedidos->count() > 0)
                         @foreach ($pedidos as $pedido)
-                            <div id="caja-{{ $pedido->id }}" class="mi_cuenta_pedido w-[363px] p-[15px] max-w-[363px]">
+                            <div id="caja-{{ $pedido->id }}" class="mi_cuenta_pedido w-5/6 md:w-[363px] p-[15px] md:max-w-[363px]">
                                 <div
-                                    class="flex-1 h-full w-[333px] max-w-[333px] m-[15px] p-[20px] bg-color-tarjetas rounded-3xl text-color-titulos-entrega font-sans text-base">
+                                    class="flex-1 h-full w-full md:w-[333px] md:max-w-[333px] m-[15px] p-[20px] bg-color-tarjetas rounded-3xl text-color-titulos-entrega font-sans text-base">
                                     <div class="space-y-0 relative">
                                         <div class="flex justify-between">
                                             <div class="flex">
@@ -636,7 +661,33 @@
                                                 </div>
                                             </div>
                                         @endif
+                                        @if (!empty($pedido->cupon))
+                                            <div class="absolute -top-0 right-10 h-[50px]">
+                                                <div
+                                                    class="relative bg-transparent w-[150px]  h-[190px]  text-color-titulos-entrega group ">
+                                                    <div>
+                                                        <div
+                                                            class="z-50 -top-10 bg-green-400 left-0 hidden absolute group-hover:flex  w-[250px] min-w-[250px] text-white p-2 rounded-md text-center">
+                                                            <p class="relative text-[14px] leading-[19.6px] ">
+                                                                <strong>¡Cupón Aplicado!</strong><br>
+                                                                Aplica un descuento de S/{{ $pedido->descuento }}
+                                                                equivalente al cupón
+                                                                #{{ $pedido->cupon }}
+                                                                en este pedido.
+                                                            </p>
+                                                            <div
+                                                                class="absolute -bottom-[13px] left-[calc(50%-60px)] clip-v-shape h-[20px] w-[20px] bg-green-400 ">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <img src="{{ asset('imagenes/cajas/cupons.png') }}" alt=""
+                                                        class="absolute top-[55px] left-[25px] w-[60px] h-[50px] ">
 
+                                                </div>
+
+
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
                             </div>

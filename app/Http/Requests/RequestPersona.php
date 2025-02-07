@@ -26,8 +26,8 @@ class RequestPersona extends FormRequest
 
             'nombres' => 'required|string|max:255',
             'apellidos' => 'required|string|max:255',
-            'dni' => 'nullable|string|max:8|unique:persona,dni',
-            'telefono' => 'required|string|max:15|unique:users,usuario',
+            'dni' => 'nullable|string|max:8|min:8|unique:persona,dni',
+            'telefono' => 'required|string|max:9|unique:users,usuario',
             'password' => 'required|string|min:6',
             'direccion' => 'required|string|max:255',
             'nota' => 'nullable|string|max:500',

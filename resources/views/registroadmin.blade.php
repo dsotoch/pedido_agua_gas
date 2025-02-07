@@ -8,7 +8,7 @@
 
 
     </div>
-    <div class="md:flex grid bg-gradient-to-br from-secundario  to-principal text-base p-10 items-center">
+    <div class="md:flex grid bg-gradient-to-br from-secundario  to-principal text-base md:p-10 p-2 items-center">
         <!-- Contenedor de textos -->
         <div class="p-6 md:w-1/2  w-full mx-auto bg-white shadow-md rounded" id="contenedorRegistroEmpresa"required>
             <h2 class="text-2xl font-normal text-gray-700 mb-6">Registrar Distribuidora</h2>
@@ -73,11 +73,11 @@
                     @enderror
                 </div>
                 <!-- Logo Cuadrado -->
-                <div>
+                <div class="mb-4">
                     <label for="logo_vertical" class="block text-gray-600 font-medium mb-1">Logo Cuadrado</label>
-                    <input type="file" id="logo_vertical" name="logo_vertical" accept="image/png, image/jpeg"
+                    <input type="file"  name="logo_vertical" accept="image/png, image/jpeg"
                         class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-                    @error('logo_cuadrado')
+                    @error('logo_vertical')
                         <span class="text-red-500">{{ $message }}</span>
                     @enderror
                 </div>

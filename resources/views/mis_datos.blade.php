@@ -1,7 +1,7 @@
 @extends('layout-cuenta')
 
 @section('logica')
-    <div class="container mx-auto mt-5">
+    <div class="container mx-auto mt-5 md:p-0 p-4">
         <h1 class="text-2xl font-cabin font-medium mb-4 text-color-titulos-entrega">Mis Datos</h1>
         @if (session('success'))
             <p class="mt-4 text-green-500 text-base w-full min-w-full bg-white p-2 text-center border border-green-500">{{ session('success') }}</p>
@@ -20,6 +20,12 @@
             class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 text-color-titulos-entrega text-base font-sans">
             @csrf
             @method('PUT')
+             <!-- dni -->
+             <div class="mb-4">
+                <label for="dni" class="block text-gray-700 text-sm font-bold mb-2">DNI:</label>
+                <input type="text" name="dni" id="dni" value="{{ old('dni', $usuario->persona->dni) }}" readonly
+                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            </div>
             <!-- celular -->
             <div class="mb-4">
                 <label for="celular" class="block text-gray-700 text-sm font-bold mb-2">Celular:</label>

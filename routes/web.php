@@ -43,6 +43,8 @@ Route::controller(ControllerUsuario::class)->group(function () {
     Route::get('/logout', 'logout')->name('usuario.logout');
     Route::get('/buscar-usuario/{telefono}', 'buscarUsuario')->name('usuario.buscar');
     Route::put('/update/{id}', 'update')->name('usuario.update');
+    Route::post('/validar-datos', 'validateUser')->name('password.validate');
+    Route::put('/restablecer-password', 'resetPassword')->name('password.reset');
 });
 
 Route::controller(ControllerProducto::class)->group(function () {
@@ -79,10 +81,10 @@ Route::prefix('mi-cuenta')->controller(ControllerEmpresa::class)->group(function
     Route::get('empresa', 'index_empresa')->name('empresa.empresa');
     Route::put('modificar', 'modificar_empresa')->name('empresa.editar');
     Route::get('cupones', 'index_cupones')->name('empresa.cupones');
-
 });
 Route::controller(CuponController::class)->group(function () {
     Route::post('/aplicar-cupon', 'aplicarCupon')->name('cupones.aplicar');
+    Route::post('/calcular-total', 'calcularTotal')->name('cupones.total');
     Route::post('/crear-cupon', 'crearCupon')->name('cupones.crear');
     Route::delete('/eliminar-cupon/{id}', 'eliminar')->name('cupones.eliminar');
 });
@@ -97,6 +99,6 @@ Route::prefix('distribuidora')->controller(ControllerEmpresa::class)->group(func
     Route::post('/crearAdmin', 'crearAdmin')->name('empresa.admin');
     Route::get('/configView/{id}', 'conf')->name('empresa.configView');
     Route::post('/config/{id}', 'configurarColores')->name('empresa.config');
-    Route::get('/buscar-empresas', 'buscarEmpresas');
+    Route::get('/buscar-empresas/{filtro}', 'buscarEmpresas');
 });
 Route::get('/{slug}', [ControllerEmpresa::class, 'index_distribuidora'])->name('index.negocio');

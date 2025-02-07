@@ -40,6 +40,30 @@
             </div>
         </div>
     </div>
+    @auth
+        @if ($usuario->tipo == 'cliente' && $fueraHorario)
+            <div id="anuncio"
+                class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 font-sans">
+                <div class="bg-white p-6 rounded-lg shadow-lg w-3/4 md:w-1/2 text-center">
+                    <h2 class="text-xl font-semibold text-red-600">📢 Aviso Importante</h2>
+                    <p class="text-color-titulos-entrega mt-2">
+                        Actualmente estamos fuera de nuestro horario de atención.
+                        Los pedidos realizados en este momento serán procesados el siguiente día hábil.
+                    </p>
+                    <p class="text-center text-color-titulos-entrega">
+                        {{ date('h:i A', strtotime($empresa->hora_inicio)) }} -
+                        {{ date('h:i A', strtotime($empresa->hora_fin)) }}
+                    </p>
+
+                    <button
+                        onclick="document.getElementById('anuncio').classList.remove('flex');document.getElementById('anuncio').classList.add('hidden');"
+                        class="mt-4 px-4 py-3 border shadow-xl border-red-600 text-red-600 rounded text-base font-semibold transform hover:scale-105">
+                        Entendido
+                    </button>
+                </div>
+            </div>
+        @endif
+    @endauth
 
 
 

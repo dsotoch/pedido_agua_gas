@@ -24,7 +24,9 @@ class Pedido extends Model
         'direccion',
         'celular',
         'nota_interna',
-        'actor'
+        'actor',
+        'descuento',
+        'cupon'
     ];
 
 
@@ -57,6 +59,6 @@ class Pedido extends Model
 
     public function usuario()
     {
-        return $this->belongsTo(User::class,'cliente_id');
+        return $this->belongsTo(User::class, 'cliente_id');
     }
 }

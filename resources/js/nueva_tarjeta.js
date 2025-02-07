@@ -100,7 +100,33 @@ export function agregarPedido(pedido, usuario) {
                     </div>`;
         }
     }
-    
+
+    const cupon = (pedido) => {
+        if (pedido.cupon && pedido.cupon.trim() !== "") {
+            return `
+            <div class="absolute -top-0 right-10 h-[50px]">
+                <div class="relative bg-transparent w-[150px] h-[190px] text-color-titulos-entrega group">
+                    <div>
+                        <div class="z-50 -top-5 bg-green-400 left-0 hidden absolute group-hover:flex 
+                                    w-[250px] min-w-[250px] text-white p-2 rounded-md text-center">
+                            <p class="relative text-[14px] leading-[19.6px]">
+                                <strong>¡Cupón Aplicado!</strong><br>
+                                Aplica un descuento de S/${pedido.descuento} equivalente al cupón
+                                #${pedido.cupon} en este pedido.
+                            </p>
+                            <div class="absolute -bottom-[13px] left-[calc(50%-60px)] clip-v-shape 
+                                        h-[20px] w-[20px] bg-green-400">
+                            </div>
+                        </div>
+                    </div>
+                    <img src="/imagenes/cajas/cupons.png" alt="Cupón"
+                        class="absolute top-[70px] left-[25px] w-[60px] h-[50px]">
+                </div>
+            </div>
+            `;
+        }
+        return ""; // Retorna vacío si no hay cupón válido
+    };
 
 
     divPedido.innerHTML = `
@@ -124,7 +150,7 @@ export function agregarPedido(pedido, usuario) {
                 ${botones(pedido.id)}
             </div>
         ${botella_promocion(pedido.entrega_promociones)}
-
+        ${cupon(pedido)}
             <div class="flex items-center">
                 <div class="w-[17px] h-[17px] text-color-titulos-entrega opacity-80">
                     <img src="imagenes/cajas/persona.svg" alt="">

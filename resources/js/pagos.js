@@ -1,5 +1,5 @@
 const medio = document.getElementById('medio');
-const repartidor = document.getElementById('repartidor');
+const repartidor = document.getElementById('repartidor_pagos');
 const input_cliente = document.getElementById('input_cliente');
 const contenedor_pedido = document.getElementById('contenedor_pedido');
 
@@ -9,7 +9,7 @@ if (medio) {
         const mensajeSinResultados = document.getElementById('mensaje_no_resultados'); // El <p> para el mensaje
 
         if (contenedor_pedido) {
-            let hayResultados=false;
+            let hayResultados = false;
             // Mostrar todos los elementos antes de filtrar
             contenedor_pedido.querySelectorAll('.pedidos').forEach(element => {
                 element.classList.remove('hidden'); // Quita la clase 'hidden' de todos los elementos
@@ -20,12 +20,13 @@ if (medio) {
                 const metodo = element.querySelector('.metodo');
                 if (selectedValue == '') {
                     element.classList.remove('hidden');
-                    return;
+                    hayResultados=true;
+                    return '';
                 }
                 if (metodo && metodo.textContent.trim() !== selectedValue) {
                     element.classList.add('hidden'); // Oculta los elementos que no coincidan
-                }else{
-                    hayResultados=true;
+                } else {
+                    hayResultados = true;
                 }
             });
             // Mostrar o esconder el mensaje según los resultados
@@ -60,7 +61,8 @@ if (repartidor) {
                 const repartidor = element.querySelector('.repartidor');
                 if (selectedValue == '') {
                     element.classList.remove('hidden');
-                    return;
+                    hayResultados = true;
+                    return '';
                 }
                 if (repartidor && repartidor.textContent.trim() !== selectedValue) {
                     element.classList.add('hidden'); // Oculta los elementos que no coincidan

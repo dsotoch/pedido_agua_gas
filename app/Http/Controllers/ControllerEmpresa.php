@@ -25,7 +25,7 @@ class ControllerEmpresa extends Controller
         $usuario = Auth::user();
         $usuario = User::find($usuario->id);
         $empresa = $usuario->empresas()->first();
-        $cupones = Cupones::where('empresa_id',$empresa->id)->get();
+        $cupones = Cupones::where('empresa_id', $empresa->id)->get();
         return view('cupones', compact('usuario', 'empresa', 'cupones'));
     }
     public function modificar_empresa(Request $request)
@@ -49,6 +49,8 @@ class ControllerEmpresa extends Controller
             $empresa->dominio = $request->slug;
             $empresa->direccion = $request->direccion;
             $empresa->descripcion = e($request->descripcion);
+            $empresa->hora_inicio = date('H:i:s', strtotime($request->hora_inicio));
+            $empresa->hora_fin = date('H:i:s', strtotime($request->hora_fin));
 
             // Actualizar logo
             if ($request->hasFile('logo')) {
@@ -120,6 +122,7 @@ class ControllerEmpresa extends Controller
         $usuario = User::find($usuario->id);
         $empresa = $usuario->empresas()->first();
         $serviciosSeleccionados = json_decode($empresa->servicios, true) ?? []; // Convertir JSON en array
+
         return view('datos_empresa', compact('usuario', 'empresa', 'serviciosSeleccionados'));
     }
     public function index_reportes()
@@ -193,7 +196,8 @@ class ControllerEmpresa extends Controller
                 ];
             });
         }
-
+        $horaActual = now()->format('h:i:s A'); // Formato de 12 horas con AM/PM
+        $fueraHorario = $horaActual < $empresa->hora_inicio || $horaActual > $empresa->hora_fin;
 
         // Retornar la vista con los datos
         return view('negocio', compact(
@@ -202,7 +206,8 @@ class ControllerEmpresa extends Controller
             'usuario',
             'productos',
             'imagenes',
-            'colors'
+            'colors',
+            'fueraHorario'
         ));
     }
     public function index_productos()
@@ -248,11 +253,11 @@ class ControllerEmpresa extends Controller
         $usuario_auth = Auth::user();
         $usuario = User::with('empresas', 'empresas.productos')->where('id', $usuario_auth->id)->first();
         $empresa = $usuario->empresas()->first();
+        $repartidores = $empresa->usuarios()->with('persona')->where('tipo', 'repartidor')->get();
         $pagosdeldia = Pedido::with(['detalles', 'detalles.producto'])->where('empresa_id', $empresa->id)
             ->where('pago', true)
             ->whereDate('fecha', Carbon::now('America/Lima')->toDateString())
             ->get();
-
         // Filtrar y agrupar productos comercializables
         $productosVendidos = $pagosdeldia->flatMap(function ($pedido) {
             // Aplanar los detalles de los pedidos
@@ -282,14 +287,12 @@ class ControllerEmpresa extends Controller
         // Si quieres, puedes convertir el resultado a un array para usarlo en la vista
         $desglosepagosdeldia = $desglosepagosdeldia->values()->toArray();
 
-        return view('pagos', compact('desglosepagosdeldia', 'pagosdeldia', 'usuario', 'empresa', 'productosVendidos'));
+        return view('pagos', compact('repartidores', 'desglosepagosdeldia', 'pagosdeldia', 'usuario', 'empresa', 'productosVendidos'));
     }
 
 
-    public function buscarEmpresas(Request $request)
+    public function buscarEmpresas($filtro)
     {
-        // Obtén el término de búsqueda
-        $filtro = $request->input('filtro');
 
         // Valida el término
         if (!$filtro) {
@@ -378,9 +381,9 @@ class ControllerEmpresa extends Controller
                 $empresa->logo = $logo->storeAs('logos', $uniqueLogoName, 'public');
             }
             if ($request->hasFile('logo_vertical')) {
-                $logo = $request->file('logo_vertical');
-                $uniqueLogoName = uniqid() . '_' . $logo->getClientOriginalName();
-                $empresa->logo = $logo->storeAs('logos', $uniqueLogoName, 'public');
+                $logo_vertical = $request->file('logo_vertical');
+                $uniqueLogoName = uniqid() . '_' . $logo_vertical->getClientOriginalName();
+                $empresa->logo_vertical = $logo_vertical->storeAs('logos', $uniqueLogoName, 'public');
             }
 
             if ($request->hasFile('imagenes')) {
@@ -438,14 +441,13 @@ class ControllerEmpresa extends Controller
             ]);
 
             $empresa = empresa::find($request->empresa_id);
-
             if (!$usuario->empresas()->where('empresa_id', $empresa->id)->exists()) {
                 $usuario->empresas()->attach($empresa->id);
             }
             DB::commit(); // Confirmar la transacción
 
             // Respuesta exitosa
-            return redirect()->route('empresa.configView')->with([
+            return redirect()->route('empresa.configView', ['id' => $empresa->id])->with([
                 'id' => $empresa->id,
                 'administrador' => "Administrador creado correctamente. Ahora, configura el color de tu botón para personalizarlo."
             ]);

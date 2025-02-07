@@ -31,6 +31,7 @@ class RequestEmpresa extends FormRequest
             'direccion' => 'required|string|max:255',
             'descripcion' => 'nullable|string|max:1000',
             'logo' => 'nullable|image|mimes:jpeg,png,jpg',
+            'logo_vertical' => 'nullable|image|mimes:jpeg,png,jpg',
             'imagenes' => 'nullable|array',
             'imagenes.*' => 'image|mimes:jpeg,png,jpg',
             'whatsapp' => 'nullable|url',
@@ -67,6 +68,10 @@ class RequestEmpresa extends FormRequest
             'logo.mimes' => 'El logo debe estar en formato jpeg, png o jpg.',
             'logo.max' => 'El logo no debe superar los 2 MB.',
 
+            'logo_vertical.image' => 'El logo debe ser una imagen.',
+            'logo_vertical.mimes' => 'El logo debe estar en formato jpeg, png o jpg.',
+            'logo_vertical.max' => 'El logo no debe superar los 2 MB.',
+
             'imagenes.array' => 'Las imágenes deben ser un arreglo.',
             'imagenes.*.image' => 'Cada imagen debe ser un archivo de tipo imagen.',
             'imagenes.*.mimes' => 'Cada imagen debe estar en formato jpeg, png o jpg.',
@@ -89,12 +94,10 @@ class RequestEmpresa extends FormRequest
     protected function failedValidation(Validator $validator)
     {
         $response = redirect()
-        ->back()
-        ->withInput($this->except(['logo', 'imagenes']))
-        ->withErrors($validator->errors());
+            ->back()
+            ->withInput($this->except(['logo', 'imagenes', 'logo_vertical']))
+            ->withErrors($validator->errors());
 
-    throw new HttpResponseException($response);
+        throw new HttpResponseException($response);
     }
-
-
 }

@@ -121,25 +121,40 @@
                             <span class="text-red-500">{{ $message }}</span>
                         @enderror
                     </div>
-                    <!-- Checkboxes -->
-                    <div class="mb-4">
-                        <span class="block text-gray-600 font-medium mb-1">Servicios Ofrecidos</span>
+                    <div>
+                        <!-- Checkboxes -->
+                        <div class="mb-4">
+                            <span class="block text-gray-600 font-medium mb-1">Servicios Ofrecidos</span>
 
-                        <label class="inline-flex items-center">
-                            <input type="checkbox" name="servicios[]" value="agua" class="form-checkbox text-blue-500"
-                                {{ in_array('agua', $serviciosSeleccionados) ? 'checked' : '' }}>
-                            <span class="ml-2">Agua</span>
-                        </label>
+                            <label class="inline-flex items-center">
+                                <input type="checkbox" name="servicios[]" value="agua" class="form-checkbox text-blue-500"
+                                    {{ in_array('agua', $serviciosSeleccionados) ? 'checked' : '' }}>
+                                <span class="ml-2">Agua</span>
+                            </label>
 
-                        <label class="inline-flex items-center ml-6">
-                            <input type="checkbox" name="servicios[]" value="gas" class="form-checkbox text-blue-500"
-                                {{ in_array('gas', $serviciosSeleccionados) ? 'checked' : '' }}>
-                            <span class="ml-2">Gas</span>
-                        </label>
+                            <label class="inline-flex items-center ml-6">
+                                <input type="checkbox" name="servicios[]" value="gas"
+                                    class="form-checkbox text-blue-500"
+                                    {{ in_array('gas', $serviciosSeleccionados) ? 'checked' : '' }}>
+                                <span class="ml-2">Gas</span>
+                            </label>
 
-                        @error('servicios')
-                            <span class="text-red-500">{{ $message }}</span>
-                        @enderror
+                            @error('servicios')
+                                <span class="text-red-500">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700">Horario de Atención</label>
+                            <div class="md:flex grid space-x-2 mt-1">
+                                <input type="time" id="hora_inicio" name="hora_inicio"
+                                    value="{{ $empresa->hora_inicio }}"
+                                    class="p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                <span class="text-gray-500">a</span>
+                                <input type="time" id="hora_fin" name="hora_fin" value="{{ $empresa->hora_fin }}"
+                                    class="p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 

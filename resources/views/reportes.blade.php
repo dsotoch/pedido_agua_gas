@@ -1,9 +1,9 @@
 @extends('layout-cuenta')
 @section('logica')
-    <div class="w-full container mx-auto  text-base p-6 font-sans ">
+    <div class="w-full container mx-auto  text-base p-6 font-sans bg-color-dashboard ">
         <h1 class="text-2xl font-cabin font-bold mb-4">Filtros de Búsqueda</h1>
-        <div class=" justify-between md:flex md:space-x-2 space-x-2 grid">
-            <div class="flex space-x-2">
+        <div class="justify-between md:flex md:space-x-2 space-x-2 grid">
+            <div class="grid  md:flex space-x-0 md:space-x-2">
 
                 <!-- Filtro por ID Pedido -->
                 <div class="mb-4">
@@ -29,7 +29,7 @@
                 </div>
             </div>
 
-            <div class="flex space-x-2">
+            <div class="grid space-x-0 md:flex md:space-x-2">
                 <!-- Filtro por Estado Delivery -->
                 <div class="mb-4">
                     <label for="deliveryStatus" class="block text-base font-semibold text-color-titulos-entrega">Estado
@@ -83,7 +83,7 @@
 
             </div>
         </div>
-        <div class="p-4 flex justify-center space-x-2">
+        <div class="p-4 flex flex-col md:flex-row justify-center  space-x-0 md:space-x-2 bg-color-dashboard">
             <!-- Noveno Gratis Checkbox Filter -->
             <div class="">
                 <div class="text-lg  font-semibold mb-2">Promoción Gratis</div>

@@ -8,7 +8,6 @@
     <div>
        
        
-
         <!-- Modal Crear Cliente -->
         <div id="modalCrearCliente" role="dialog" aria-modal="true"
             class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 w-full h-full  justify-center items-center z-50 overflow-auto">

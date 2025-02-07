@@ -1,8 +1,8 @@
 @extends('layout-cuenta')
 @section('logica')
-    <div class="flex flex-col w-full  min-h-screen">
+    <div class="flex flex-col  min-h-screen w-full container ">
         <b
-            class="flex justify-center text-[30px] items-center font-cabin leading-[45px] tracking-normal text-color-titulos-entrega font-bold">
+            class="flex w-full  justify-center text-[30px] items-center font-cabin leading-[45px] tracking-normal text-color-titulos-entrega font-bold">
             Pagos de
             hoy: S/
             @if ($pagosdeldia->count() > 0)
@@ -17,7 +17,7 @@
             @endif
         </b>
         <!---Nombres de Productos-->
-        <div class="flex justify-center mt-3.5 space-x-7 text-wrap">
+        <div class="flex justify-center mt-3.5 space-x-3 md:space-x-7 text-wrap">
             @if ($productosVendidos->count() > 0)
                 @foreach ($productosVendidos as $descripcion => $cantidadTotal)
                     <p class="font-sans items-center flex text-base text-wrap">
@@ -41,7 +41,7 @@
 
         </div>
 
-        <div class="flex items-center justify-center  space-x-6 mt-5">
+        <div class="flex items-center justify-center space-x-3 md:space-x-6 mt-5">
             <div class="flex items-center">
                 <div class="w-[40px] h-[40px]"><svg xmlns="http://www.w3.org/2000/svg"
                         xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="40px" height="40px"
@@ -178,18 +178,15 @@
                     @endif
                 </div>
             </div>
-
-
-
         </div>
 
-        <div class="flex justify-center items-center mt-5 space-x-6">
-            <div class="grid space-y-2">
+        <div class="grid md:flex justify-center items-center mt-5 space-x-0 md:space-y-0 space-y-2 md:space-x-6">
+            <div class="grid space-y-2 ">
                 <label for="medio" class="ml-2">
                     Medio
                 </label>
                 <select name="medio" id="medio"
-                    class="w-[138px] h-[50px] rounded-[20px] p-2 border border-color-text">
+                    class=" w-full md:w-[138px] h-[50px] rounded-[20px] p-2 border border-color-text">
                     <option value="" selected>Seleccione...</option>
                     <option value="yape">Pago con Yape</option>
                     <option value="efectivo">Pago en Efectivo</option>
@@ -201,15 +198,16 @@
                 <label for="repartidor">
                     Repartidor
                 </label>
-                <select name="repartidor" id="repartidor"
-                    class="w-[138px] h-[50px] rounded-[20px] p-2 border border-color-text">
-                    <option value="" selected class="">Seleccione...</option>
-                    @if ($empresa->usuarios && $empresa->usuarios->isNotEmpty())
-                        @foreach ($empresa->usuarios->filter(fn($user) => $user->tipo === 'repartidor') as $item)
-                            <option value="{{ $item->persona->nombres }}">{{ $item->persona->nombres }}</option>
+                <select name="repartidor" id="repartidor_pagos"
+                    class="w-full md:w-[138px] h-[50px] rounded-[20px] p-2 border border-color-text">
+                    <option value="" selected>Seleccione...</option>
+                    @if ($repartidores && $repartidores->count() > 0)
+                        @foreach ($repartidores->pluck('persona.nombres') as $item)
+                            <option value="{{ $item }}">{{ $item }}</option>
                         @endforeach
                     @endif
                 </select>
+
             </div>
             <div class="grid space-y-2">
                 <label for="repartidor">
@@ -388,7 +386,7 @@
                                         </path>
                                     </svg></div>
                                 <div class="text-wrap">
-                                    <p class="repartidor">Actualizado por {{$pedido->actor}}</p>
+                                    <p>Actualizado por <span class="repartidor">{{ $pedido->actor }}</span></p>
                                 </div>
                             </div>
                         </div>

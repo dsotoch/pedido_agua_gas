@@ -7,12 +7,70 @@ use App\Models\empresa;
 use App\Models\Pedido;
 use App\Models\Persona;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class ControllerUsuario extends Controller
 {
+
+
+    public function validateUser(Request $request)
+    {
+        try {
+            $request->validate([
+                'dni' => 'required|exists:persona,dni',
+                'telefono' => 'required|exists:users,usuario',
+                'email' => 'required|email|exists:persona,correo',
+            ]);
+
+            $user = User::where('usuario', $request->telefono)
+                ->whereHas('persona', function ($query) use ($request) {
+                    $query->where('dni', $request->dni)
+                        ->where('correo', $request->email);
+                })
+                ->first();
+
+
+            if (!$user) {
+                return response()->json(['mensaje' => 'Los datos no coinciden.'], 400);
+            }
+            return response()->json(['mensaje' => $user->id], 200);
+        } catch (\Exception $e) {
+            return response()->json(['mensaje' =>  $e->getMessage()], 500);
+        }
+    }
+
+
+
+    public function resetPassword(Request $request)
+    {
+        try {
+            // Validación de la solicitud
+            $request->validate([
+                'password' => 'required|string|min:6',
+                'user_id_pass' => 'required|exists:users,id',
+            ]);
+
+            // Buscar el usuario
+            $user = User::find($request->user_id_pass);
+            if (!$user) {
+                return response()->json(['mensaje' => 'Usuario no encontrado.'], 404);
+            }
+
+            // Actualizar la contraseña
+            $user->password = bcrypt($request->password);
+            $user->save();
+
+            return response()->json(['mensaje' => 'Contraseña restablecida correctamente.'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['mensaje' => $e->getMessage()], 500);
+        }
+    }
+
+
+
 
     public function index()
     {
@@ -58,7 +116,7 @@ class ControllerUsuario extends Controller
                 ")
                 ->orderByDesc('fecha')
                 ->get()
-            : Pedido::with('detalles', 'empresa', 'usuario', 'entregaPromociones')
+                : Pedido::with('detalles', 'empresa', 'usuario', 'entregaPromociones')
                 ->where('cliente_id', $usuario->id)
                 ->orderByRaw("
                     CASE 
@@ -70,25 +128,29 @@ class ControllerUsuario extends Controller
                 ->orderByDesc('fecha')
                 ->get()
             );
-            $pedido = Pedido::where('cliente_id', $usuario->id)->latest()->first();
+        $pedido = Pedido::where('cliente_id', $usuario->id)->latest()->first();
 
-        return view('micuenta', compact('pedido','pedidos', 'empresa', 'usuario'));
+        return view('micuenta', compact('pedido', 'pedidos', 'empresa', 'usuario'));
     }
 
 
     public function update(Request $request, $id)
     {
         // Validar los datos del formulario
-        $request->validate([
-            'celular' => 'required|string|max:9',
-            'nombre' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:persona,correo,' . $id,
-            'direccion' => 'nullable|string|max:255',
-            'direccion2'=>'nullable|string|max:255',
-            'nota' => 'nullable|string|max:500',
-            'password' => 'nullable|string|min:8',
-        ]);
-
+        try {
+            $request->validate([
+                'celular' => 'required|string|max:9|unique:users,usuario,' . $id,
+                'nombre' => 'required|string|max:255',
+                'dni' => 'required|string|min:8|max:8|unique:persona,dni,' . $id,
+                'email' => 'required|email|max:255|unique:persona,correo,' . $id,
+                'direccion' => 'nullable|string|max:255',
+                'direccion2' => 'nullable|string|max:255',
+                'nota' => 'nullable|string|max:500',
+                'password' => 'nullable|string|min:8',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()->back()->withErrors(['error' => $e->getMessage()]);
+        }
         // Obtener el usuario
         $usuario = User::find($id);
         $persona = $usuario->persona;
@@ -101,9 +163,10 @@ class ControllerUsuario extends Controller
         $usuario->usuario = $request->input('celular');
         $persona->nombres = $request->input('nombre');
         $persona->correo = $request->input('email');
+        $persona->dni = $request->input('dni');
         $persona->direccion = $request->input('direccion');
         $persona->nota = $request->input('nota');
-        $persona->direccion2 =$request->input('direccion2');
+        $persona->direccion2 = $request->input('direccion2');
 
         // Actualizar la contraseña solo si se proporciona
         if ($request->filled('password')) {
@@ -139,20 +202,24 @@ class ControllerUsuario extends Controller
             'usuario' => $request->telefono,
             'password' => $request->password,
         ];
+        $usuario = User::where('usuario', $request->telefono)->first();
+        if ($usuario) {
+            if ($usuario->persona->estado == false) {
+                return response()->json([
+                    'mensaje' => 'Estas inhabilitado, no puedes entrar al sistema.',
+                ], 403);
+            }
+        }
 
         // Intentar autenticación
         if (Auth::attempt($credentials)) {
             // Regenerar sesión para proteger contra ataques de fijación de sesión
             $request->session()->regenerate();
 
-            // Obtener datos del usuario autenticado
-            // Redirigir al índice con un mensaje de éxito
-
             return  response()->json([
                 'mensaje' => 'Usuario Logueado Correctamente.',
             ], 200);
         }
-
         // Si falla la autenticación, redirigir de vuelta con un mensaje de error
         return response()->json([
             'mensaje' => 'Las credenciales no coinciden con nuestros registros.',
@@ -171,16 +238,22 @@ class ControllerUsuario extends Controller
             'usuario' => $request->telefono,
             'password' => $request->password,
         ];
-
+        $usuario = User::where('usuario', $request->telefono)->first();
+        if ($usuario) {
+            if ($usuario->persona->estado == false) {
+                return response()->json([
+                    'mensaje' => 'Estas inhabilitado, no puedes entrar al sistema.',
+                ], 403);
+            }
+        }
         // Intentar autenticación
         if (Auth::attempt($credentials)) {
             // Regenerar sesión para proteger contra ataques de fijación de sesión
             $request->session()->regenerate();
-            $usuario = User::findOr(Auth::user()->id);
-            
+
             return  response()->json([
                 'mensaje' => 'Usuario Logueado Correctamente.',
-                'cliente_id'=>$usuario->usuario
+                'cliente_id' => $usuario->usuario
             ], 200);
         }
 

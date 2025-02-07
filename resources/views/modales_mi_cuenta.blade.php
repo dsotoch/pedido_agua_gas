@@ -67,7 +67,7 @@
              <div class="mb-4 w-full">
                  <textarea class="p-4 border w-full"
                      placeholder="Agrega notas internas sobre este pedido. Ejemplo: Le debo un vuelto de x soles, pagó con x cantidad."
-                     name="notas" id="notas"></textarea>
+                     name="notas" ></textarea>
              </div>
              <!-- Botones -->
              <div class="flex justify-end mt-6 space-x-1">

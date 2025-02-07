@@ -31,7 +31,7 @@
                             <i class="fas fa-plus "></i>
                         </button>
                     </div>
-                    <p class=" mb-5 text-[13px] p-[14px] w-full">Precio Unitario: <span
+                    <p class="  text-[13px] p-[14px] w-full">Precio Unitario: <span
                             class="text-[13px]  precioprincipal">S/{{ number_format($item->precio ?? 0, 2, '.', '') }}</span>
                     </p>
                     @auth
@@ -64,11 +64,11 @@
                                     })
                                     ->first();
                                 // Si no falta, asignar el nombre del producto
-                                $producto_gratis = $faltante === 0 ? $promociones_inactivas->producto : '';
+                                $producto_gratis = $faltante === 0 ? $promociones_inactivas?->producto : '';
                             @endphp
 
                             @if ($usuario->tipo == 'cliente')
-                                <span class="bidones-faltan text-[14px] max-h-[55px] h-[55px] text-color-text">
+                                <span class="bidones-faltan text-[14px] max-h-[55px]  text-color-text">
                                     @if ($faltante > 0)
                                         ¡Te faltan <span
                                             class="resaltar-numero font-bold text-[16px]">{{ $faltante }}</span>
@@ -92,8 +92,36 @@
                 </div>
                 <hr class="w-1/2">
             @endforeach
+            <div class="flex flex-col w-full max-w-md mx-auto p-2 mt-1   rounded-lg">
+                <!-- Mensaje y botón de despliegue -->
+                <div class="flex items-center justify-center space-x-2 cursor-pointer" id="toggleCupon">
+                    <p class="text-base font-semibold text-color-titulos-entrega font-sans">¿Tienes algún cupón?</p>
+                    <i class="fa-solid fa-chevron-down text-color-titulos-entrega transition-transform duration-300"
+                        id="iconoFlecha"></i>
+                </div>
+
+                <!-- Input para cupón (oculto por defecto) -->
+                <div id="cuponForm" class="hidden mt-3 mx-auto">
+                    <div class="flex text-center w-1/2">
+                        <input type="text" id="codigoCupon" placeholder="Ingresa tu cupón"
+                            class="flex-1 p-2 border border-gray-400 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <button id="btnAplicarCupon"
+                            class="px-4 bg-blue-500 text-white font-semibold rounded-r-lg hover:bg-blue-600">
+                            Aplicar
+                        </button>
+                    </div>
+                </div>
+            </div>
 
             <div id="contenedor-total" class="mt-2 contenedor-total grid content-center justify-items-center ">
+                <div id="contenedor_cupones" class="hidden flex-col">
+                    <div class="flex justify-center">
+                        <p class="text-[15px]">Cupón Aplicado:<input id="span_cupon"  readonly class="font-bold bg-transparent "/></p>
+                    </div>
+                    <div class="flex justify-center">
+                        <p class="text-[15px]">Descuento:<input id="descuento" readonly class="font-bold bg-transparent"/></p>
+                    </div>
+                </div>
                 <input type="text" readonly
                     class="total text-[18px] border w-[328px] h-[55px] rounded-md focus:outline-none bg-secundario text-white font-bold  text-center pt-[10px] pb-[10px] "
                     value="Total: S/0.00">
@@ -155,8 +183,8 @@
                     <input type="text" value="{{ $usuario->persona->nombres }}" name="nombres" id="nombres"
                         class="rounded-[20px]  p-3 border border-color-text" required>
                     <label for="direccion">Dirección <span class="text-red-500">*</span></label>
-                    <input type="text" value="{{ $usuario->persona->direccion }}" id="direccion" name="direccion"
-                        class="rounded-[20px] p-3  border border-color-text" required>
+                    <input type="text" value="{{ $usuario->persona->direccion }}" id="direccion"
+                        name="direccion" class="rounded-[20px] p-3  border border-color-text" required>
                     <label for="referencia">Referencia y Nota para la Entrega <span
                             class="text-red-500">*</span></label>
                     <textarea type="text" rows="5" id="referencia" name="referencia" required
@@ -165,18 +193,20 @@
                     <div class="flex text-[17px]  justify-between pt-4 space-x-2">
                         <button type="button" id="btn_regresar_a_productos"
                             class="w-1/5 h-[57px] border border-color-text rounded-[3px]">Atrás</button>
-                        <button type="submit" class="custom-bg-button w-4/5 h-[57px] rounded-[3px] text-white">Realizar
+                        <button type="submit"
+                            class="custom-bg-button w-4/5 h-[57px] rounded-[3px] text-white">Realizar
                             pedido</button>
                     </div>
 
                 </div>
             </form>
         @else
-            <form action="{{ route('pedido.crear', ['slug' => $empresa->dominio]) }}" method="POST" id="form_realizar_pedido"
-                class="mx-auto">
+            <form action="{{ route('pedido.crear', ['slug' => $empresa->dominio]) }}" method="POST"
+                id="form_realizar_pedido" class="mx-auto">
                 <div
                     class="flex space-y-2 flex-col w-[450px] h-[650px] bg-white rounded-[20px] pt-[30px] pb-[60px] pl-[20px] pr-[20px]">
-                    <input type="hidden" id="usuario_id" name="usuario_id" value="{{ $usuario ? $usuario->id :'' }}" required>
+                    <input type="hidden" id="usuario_id" name="usuario_id"
+                        value="{{ $usuario ? $usuario->id : '' }}" required>
                     <input type="hidden" id="empresa_id" name="empresa_id" value="{{ $empresa->id }}" required>
 
                     <label for="celular">Celular <span class="text-red-500">*</span></label>

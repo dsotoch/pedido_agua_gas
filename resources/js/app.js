@@ -9,10 +9,11 @@ import './admin';
 import './repartidor';
 import './principal';
 import './login';
-import './dashboard';
 import './productos';
 import './pagos';
 import './clientes';
 import './reportes';
 import './cupon';
+import './dashboard';
+
 

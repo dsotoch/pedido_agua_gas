@@ -1,6 +1,5 @@
 
 import Swal from "sweetalert2"
-import Push from "push.js";
 import confetti from "canvas-confetti";
 import { agregarPedido } from "./nueva_tarjeta";
 import { mostrarNotificacion } from "./notificaciones";
@@ -247,6 +246,7 @@ function ocultarContenedorFormRealizarPedido() {
 //Continuar con el pedido
 if (btn_siguiente_pedido) {
     btn_siguiente_pedido.addEventListener('click', () => {
+        document.querySelector("#contenedor_modales_usuario_no_auth").classList.remove('hidden');
         ocultarContenedorProductosItem();
         contenedor_form_realizar_pedido.classList.remove('hidden');
         contenedor_form_realizar_pedido.classList.add('grid');
@@ -270,6 +270,7 @@ if (form_realizar_pedido) {
     form_realizar_pedido.addEventListener('submit', async (event) => {
         event.preventDefault();
         form_realizar_pedido.classList.add('opacity-50')
+        const span_cupon = document.getElementById('span_cupon');
 
         const formdata = new FormData(form_realizar_pedido);
         let data = {};
@@ -281,6 +282,7 @@ if (form_realizar_pedido) {
 
         // Agregar los productos al objeto de datos
         data['productos'] = window.idproductos || [];
+        data['cupon'] = span_cupon.value.replace('#', '');
         try {
             // Realizar la solicitud Fetch
             const response = await fetch(form_realizar_pedido.getAttribute('action'), {
@@ -781,30 +783,32 @@ const mi_cuenta_contenedor_pedidos = document.getElementById('mi_cuenta_contened
 
 
 if (mi_cuenta_contenedor_pedidos) {
-    mi_cuenta_contenedor_pedidos.addEventListener('click', function (event) {
+ mi_cuenta_contenedor_pedidos.addEventListener('click', (event) => {
         const botonasignar = event.target.closest('.btnasignarrepartidor');
         const btn_editar_pedido = event.target.closest('.btn_editar_pedido');
-
         if (botonasignar) {
-            const pedido = botonasignar.closest('.mi_cuenta_pedido');
-            spanrepartidor = pedido.querySelector('.span_repartidor_nombre');
-            const idpedido = botonasignar.dataset.id;
-
-            modalasignarrepartidor.classList.remove('hidden');
-            modalasignarrepartidor.classList.add('flex');
-            pedido_id.value = idpedido;
+            botonasignar.addEventListener('click', () => {
+                const pedido = botonasignar.closest('.mi_cuenta_pedido');
+                spanrepartidor = pedido.querySelector('.span_repartidor_nombre');
+                const idpedido = botonasignar.dataset.id;
+                modalasignarrepartidor.classList.remove('hidden');
+                modalasignarrepartidor.classList.add('flex');
+                pedido_id.value = idpedido;
+            })
         }
-
         if (btn_editar_pedido) {
-            const idpedido = btn_editar_pedido.dataset.id;
+            btn_editar_pedido.addEventListener('click', () => {
+                const idpedido = btn_editar_pedido.dataset.id;
 
-            modal_editar_pedido.classList.remove('hidden');
-            modal_editar_pedido.classList.add('flex');
-            id_pedido_modal_editar.value = idpedido;
-            modal_editar_pedido_id.textContent = idpedido;
-            obtenerDatosPedido(idpedido);
+                modal_editar_pedido.classList.remove('hidden');
+                modal_editar_pedido.classList.add('flex');
+                id_pedido_modal_editar.value = idpedido;
+                modal_editar_pedido_id.textContent = idpedido;
+                obtenerDatosPedido(idpedido);
+            })
         }
     });
+
 }
 
 async function obtenerDatosPedido(idPedido) {

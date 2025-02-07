@@ -24,7 +24,9 @@ class empresa extends Model
         'telefono',
         'servicios',
         'configuraciones',
-        'logo_vertical'
+        'logo_vertical',
+        'hora_inicio',
+        'hora_fin'
     ];
 
     public function cupones()

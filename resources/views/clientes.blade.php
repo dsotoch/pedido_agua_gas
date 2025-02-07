@@ -1,9 +1,9 @@
 @extends('layout-cuenta')
 @section('logica')
     <div class="flex flex-col w-full h-screen">
-        <div class="pl-[10px] flex">
+        <div class="md:pl-[10px] pl-4 flex">
 
-            <div class="max-w-[450px] w-[450px] mr-2">
+            <div class="md:max-w-[450px] w-3/4 md:w-[450px] mr-2">
                 <input id="cliente_input_buscar"
                     class="placeholder-gray-500 rounded-3xl w-full bg-transparent border-color-text border p-3" type="search"
                     autocomplete="off" name="first_name" value="" placeholder="Buscar por nombres..."
@@ -15,13 +15,14 @@
 
 
         </div>
-        <div id="cliente_contenedor_cliente" class="  mt-8 ml-8 grid md:grid-cols-3 grid-cols-1">
+        <div id="cliente_contenedor_cliente" class="mt-8 md:ml-8 ml-0 grid md:grid-cols-3 grid-cols-1 md:space-y-0 space-y-4 place-items-center">
             @if ($clientes && $clientes->isNotEmpty())
                 @foreach ($clientes as $user)
                     @if ($user->persona)
-                        <div class="cliente_clientes w-[368px] max-w[368px]  text-base text-color-titulos-entrega">
+                        <div
+                            class="cliente_clientes md:w-[368px] w-full flex flex-col items-center justify-center mx-auto  text-base text-color-titulos-entrega">
                             <div
-                                class="space-y-2 cml-[20px] pb-[27px] grid  w-[338px] max-w[338px]  rounded-[20px] bg-white pl-[20px] pt-[27px]">
+                                class="flex-1 space-y-2 pb-[27px] grid w-4/5  md:w-[338px]   rounded-[20px] bg-white p-3 pt-[27px]">
                                 <div class="a a-ab79122 elementor-widget elementor-widget-jet-listing-dynamic-field"
                                     data-id="ab79122" data-element_type="widget"
                                     data-widget_type="jet-listing-dynamic-field.default">
@@ -114,7 +115,7 @@
                                                     d="M172.268 501.67C26.97 291.031 0 269.413 0 192 0 85.961 85.961 0 192 0s192 85.961 192 192c0 77.413-26.97 99.031-172.268 309.67-9.535 13.774-29.93 13.773-39.464 0zM192 272c44.183 0 80-35.817 80-80s-35.817-80-80-80-80 35.817-80 80 35.817 80 80 80z">
                                                 </path>
                                             </svg></div>
-                                        <div class="jet-listing-dynamic-field__content">{{ $user->persona->direccion }}
+                                        <div class="jet-listing-dynamic-field__content">{{ $user->persona->direccion?? 'Sin Dirección' }}
                                         </div>
                                     </div>
                                 </div>
@@ -129,7 +130,7 @@
                                                     d="M112 316.94v156.69l22.02 33.02c4.75 7.12 15.22 7.12 19.97 0L176 473.63V316.94c-10.39 1.92-21.06 3.06-32 3.06s-21.61-1.14-32-3.06zM144 0C64.47 0 0 64.47 0 144s64.47 144 144 144 144-64.47 144-144S223.53 0 144 0zm0 76c-37.5 0-68 30.5-68 68 0 6.62-5.38 12-12 12s-12-5.38-12-12c0-50.73 41.28-92 92-92 6.62 0 12 5.38 12 12s-5.38 12-12 12z">
                                                 </path>
                                             </svg></div>
-                                        <div class="jet-listing-dynamic-field__content">{{ $user->persona->nota }}</div>
+                                        <div class="jet-listing-dynamic-field__content">{{ $user->persona->nota?? 'Sin nota' }}</div>
                                     </div>
                                 </div>
                             </div>
@@ -143,7 +144,9 @@
                 </p>
             @endif
         </div>
-        <div class="w-full  justify-center mt-8 ml-8 hidden" id="cliente_mensaje_no_resultados"> <p class="text-base text-color-titulos-entrega">No Se Encontraron Resultados.</p></div>
+        <div class="w-full  justify-center mt-8 ml-8 hidden" id="cliente_mensaje_no_resultados">
+            <p class="text-base text-color-titulos-entrega">No Se Encontraron Resultados.</p>
+        </div>
 
 
     </div>

@@ -1,15 +1,85 @@
+import { agregarFavorito, deshabilitarClienteID, esFavorito, esPaginaPredeterminada, guardarPaginaPredeterminada, habilitarClienteID } from "./cookies";
+
 const mi_cuenta_input_buscar = document.getElementById('mi_cuenta_input_buscar');
 const mi_cuenta_contenedor_pedidos = document.getElementById('mi_cuenta_contenedor_pedidos_super');
 const mensajeSinResultados = document.getElementById('mi_cuenta_mensaje_no_resultados');
 const id_usuario_autenticado = document.getElementById('id_usuario_autenticado');
 const modal_usuario_no_autenticado = document.getElementById('modal_usuario_no_autenticado');
-const ruta_actual = document.getElementById('ruta_actual');
 const select_direccion = document.getElementById('select_direccion');
 const direccion = document.getElementById('direccion');
+const btn_distribuidoras_cliente = document.getElementById('btn_distribuidoras_cliente');
+const btn_favorito = document.getElementById('btn_favorito');
+const btn_predeterminado = document.getElementById('btn_predeterminado');
+const btn_menu = document.getElementById('btn_menu');
+const menu = document.getElementById('menu');
+if (btn_menu) {
+    btn_menu.addEventListener("click", () => {
+        menu.classList.remove('hidden');
+        menu.classList.toggle("-translate-x-full");
+    });
+}
+// Cerrar menú si se hace clic fuera
+document.addEventListener("click", (e) => {
+    if (menu) {
+        if (!menu.contains(e.target) && !btn_menu.contains(e.target)) {
+            menu.classList.add("-translate-x-full");
+        }
+    }
+});
+if (btn_predeterminado) {
+    btn_predeterminado.addEventListener('click', () => {
+        let baseUrl = window.location.origin;
+        let url = `${baseUrl}/${btn_predeterminado.dataset.dominio}`; // Construcción correcta de la URL
+        habilitarClienteID();
+        if (!guardarPaginaPredeterminada(url, btn_predeterminado.dataset.nombre, 'distribuidora')) {
+            btn_predeterminado.classList.remove('text-green-500');
+        } else {
+            btn_predeterminado.classList.add('text-green-500');
+
+        }
+    });
+
+
+}
+if (btn_favorito) {
+    btn_favorito.addEventListener('click', () => {
+        let baseUrl = window.location.origin;
+        let url = `${baseUrl}/${btn_predeterminado.dataset.dominio}`; // Construcción correcta de la URL
+        if (agregarFavorito(url, btn_favorito.dataset.nombre)) {
+            btn_favorito.classList.add('text-yellow-500');
+
+        } else {
+            btn_favorito.classList.remove('text-yellow-500');
+        }
+
+    });
+
+
+}
+if (esPaginaPredeterminada()) {
+    if (btn_predeterminado) {
+        btn_predeterminado.classList.add('text-green-500');
+
+    }
+}
+
+if (esFavorito()) {
+    if (btn_favorito) {
+        btn_favorito.classList.add('text-yellow-500');
+    }
+}
+
+
+if (btn_distribuidoras_cliente) {
+    btn_distribuidoras_cliente.addEventListener('click', () => {
+        deshabilitarClienteID();
+        window.location.href = '/';
+    })
+}
 
 if (select_direccion) {
     select_direccion.addEventListener('change', () => {
-        direccion.value=select_direccion.value;
+        direccion.value = select_direccion.value;
     });
 }
 if (mi_cuenta_input_buscar) {

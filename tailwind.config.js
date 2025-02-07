@@ -21,7 +21,7 @@ export default {
         'color-tarjetas':'#f9f9f9'
       },
       fontFamily: {
-        sans: ['Open Sans'], // Agrega aquí 'Segoe UI'
+        sans: ['Open Sans', 'sans-serif'], // Agrega Open Sans sin eliminar la fuente predeterminada
         cabin: ['Cabin', 'sans-serif'],
 
 

@@ -1,14 +1,26 @@
-    <div class="flex bg-white justify-between items-center content-end  w-full">
+    <div class="flex bg-white md:justify-between justify-end items-center content-end  w-full">
         <!-- Imagen al inicio -->
         <div class="grid justify-start w-1/2 ">
-            <img src="{{ Storage::url($empresa->logo) }}" alt="Logo" class="w-[421px] h-[68px] object-contain">
+            <a href="{{ route('index.negocio', ['slug' => $empresa->dominio]) }}"> <img
+                    src="{{ Storage::url($empresa->logo) }}" alt="Logo" class="w-[421px] h-[68px] object-contain">
+            </a>
         </div>
 
         <!-- Botón al final -->
-        <div class="relative group flex  justify-end w-1/2 ">
+        <div class="relative group flex  justify-end w-1/2 pr-2">
 
-            <button id="btn_acceder" class="mr-40 text-[16px] leading-9">Acceder&nbsp;&nbsp;<i
+            <button id="btn_acceder" class="md:mr-40 mr-4 text-[16px] leading-9">Acceder&nbsp;&nbsp;<i
                     class="fa-solid fa-right-to-bracket"></i></button>
+            <div class="flex space-x-2">
+                <button id="btn_favorito" data-dominio="{{ $empresa->dominio }}" data-nombre="{{ $empresa->nombre }}"
+                    class="text-lg text-color-titulos-entrega hover:text-yellow-500" title="Agregar a Favoritos"><i
+                        class="fas fa-star"></i></button>
+                <button id="btn_predeterminado" data-dominio="{{ $empresa->dominio }}"
+                    data-nombre="{{ $empresa->nombre }}"
+                    class="text-lg text-color-titulos-entrega  hover:text-green-500"
+                    title="Elegir como Distribuidora Predeterminada"><i class="fas fa-check-circle"></i></button>
+            </div>
+
             <button id="openModalUsuario" class="text-white hidden  p-2">
                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="Capa_1"
                     class="h-[35px] w-[35px]" x="0px" y="0px" viewBox="0 0 720 720" xml:space="preserve">
@@ -19,13 +31,14 @@
             </button>
             @guest
                 <div id="contenedor_login"
-                    class="absolute hidden overflow-y-auto max-h-[80vh] min-h-[400px] z-50 group-hover:flex  flex-col justify-start text-start  top-12 w-4/5 bg-white shadow-md">
+                    class="absolute hidden overflow-y-auto min-w-[400px] md:min-w-[600px] max-h-[80vh] z-50 group-hover:flex  flex-col justify-start text-start  top-12 w-4/5 bg-white shadow-md">
 
                     <!-- Formulario de inicio de sesión -->
                     <div class="bg-white w-full p-10" id="formLogindiv">
                         <p class="text-[22px] font-medium">Iniciar Sesión</p>
 
-                        <form id="formulario_login_pagina_principal" class="text-[16px] grid space-y-4 justify-self-center w-full"
+                        <form id="formulario_login_pagina_principal"
+                            class="text-[16px] grid space-y-4 justify-self-center w-full"
                             action="{{ route('usuario.login') }}" method="POST">
                             @csrf
                             <label for="telefono" class="">Numero Telefónico <span
@@ -42,7 +55,7 @@
 
                         <div class="flex flex-col justify-start text-left mt-2 space-y-4">
                             <!-- Alineado a la izquierda -->
-                            <button class="text-left text-color-text">¿Olvidaste tu Contraseña? <i
+                            <button class="btn_pass text-left text-color-text">¿Olvidaste tu Contraseña? <i
                                     class="fas fa-arrow-right-long text-2xl  ml-2"></i></button>
                             <button id="botonregistrarsepanelcliente" class="text-left text-color-text">Crear Una Cuenta <i
                                     class="fas fa-arrow-right-long text-2xl ml-2"></i></button>
@@ -53,6 +66,13 @@
                         <p class="text-[22px] font-medium">Crear Una Cuenta</p>
                         <form action="{{ route('crear.usuario') }}" method="POST" class="mt-4 space-y-5 text-[16px]"
                             id="form_registrar_usuario">
+
+                            <!-- Dni -->
+                            <label for="dni" class="block text-color-text">Número de Dni
+                                <span class="text-red-500">*</span></label>
+                            <!-- Input de Dni -->
+                            <input  type="number" maxlength="8" name="dni" autocomplete="off"
+                                class=" w-full border-color-text p-3 border rounded-3xl focus:outline-none focus:ring-2 focus:ring-blue-500 ">
 
                             <!-- Teléfono -->
                             <label for="telefono" class="block text-color-text">Número de Celular
@@ -114,7 +134,7 @@
 
                             <!-- Botón de crear cliente -->
                             <div class="mt-4 flex justify-center">
-                                <button type="submit" 
+                                <button type="submit"
                                     class="p-4 bg-tarjetas text-[16px]  text-white rounded-xl w-full transition">Registrar
                                 </button>
                             </div>
@@ -137,7 +157,7 @@
             @endguest
             @auth
                 <div
-                    class="absolute hidden overflow-y-auto max-h-[80vh] min-h-[200px] z-50 group-hover:flex  flex-col justify-start text-start  top-12 w-4/5 bg-white shadow-md">
+                    class="absolute hidden overflow-y-auto min-w-[400px] md:min-w-[600px] max-h-[80vh] min-h-[250px] z-50 group-hover:flex  flex-col justify-start text-start  top-12 w-4/5 bg-white shadow-md">
 
                     <!--Usuario ya Autenticado--->
                     <div class="absolute w-full">
