@@ -55,7 +55,7 @@ export async function mostrarNotificacion(titulo, texto, tag) {
             icon: 'error',
             timer: 3000,
             customClass: {
-                timerProgressBar: 'bg-red-500'
+                timerProgressBar: 'bg-red-500 h-2 rounded-md'
             }
         });
     }

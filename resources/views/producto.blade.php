@@ -113,15 +113,26 @@
                 </div>
             </div>
 
-            <div id="contenedor-total" class="mt-2 contenedor-total grid content-center justify-items-center ">
-                <div id="contenedor_cupones" class="hidden flex-col">
-                    <div class="flex justify-center">
-                        <p class="text-[15px]">Cupón Aplicado:<input id="span_cupon"  readonly class="font-bold bg-transparent "/></p>
-                    </div>
-                    <div class="flex justify-center">
-                        <p class="text-[15px]">Descuento:<input id="descuento" readonly class="font-bold bg-transparent"/></p>
-                    </div>
+            <div id="contenedor-total" class="mt-2 contenedor-total grid  justify-items-center ">
+                <div id="contenedor_cupones" class="hidden  flex-col w-full text-center items-center justify-center">
+                    <center>
+                        <div class="w-full">
+                            <p class="text-[15px] grid grid-cols-2 ">
+                                Cupón Aplicado:
+                                <input id="span_cupon" readonly class="font-bold bg-transparent text-start " />
+                            </p>
+                        </div>
+                    </center>
+                    <center>
+                        <div class="  w-full mt-2">
+                            <p class="text-[15px] grid grid-cols-2 ">
+                                Descuento:
+                                <input id="descuento" readonly class="font-bold bg-transparent text-start " />
+                            </p>
+                        </div>
+                    </center>
                 </div>
+
                 <input type="text" readonly
                     class="total text-[18px] border w-[328px] h-[55px] rounded-md focus:outline-none bg-secundario text-white font-bold  text-center pt-[10px] pb-[10px] "
                     value="Total: S/0.00">

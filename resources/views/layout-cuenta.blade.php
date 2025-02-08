@@ -69,12 +69,7 @@
                             <i class="fa-solid fa-ticket"></i>&nbsp;&nbsp;Cupones
                         </a>
                     </div>
-                    <div
-                        class="{{ request()->routeIs('empresa.cupones') ? 'btn-active-mi-cuenta' : '' }} border border-transparent p-3 rounded-md hover:bg-naranja hover:border-red-500">
-                        <a href="{{ route('empresa.cupones') }}" id="btn_boton_cupones">
-                            <i class="fa-solid fa-ticket"></i>&nbsp;&nbsp;Cupones
-                        </a>
-                    </div>
+                  
                     <div
                         class="{{ request()->routeIs('empresa.usuarios') ? 'btn-active-mi-cuenta' : '' }} border border-transparent p-3 rounded-md hover:bg-naranja hover:border-red-500">
                         <a href="{{ route('empresa.usuarios') }}" id="usuarios">

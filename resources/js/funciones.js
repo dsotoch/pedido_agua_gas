@@ -33,19 +33,19 @@ if (btnregresar) {
 
 
 //Boton login enlace Compra
-if(compraloginbotonlogin){
+if (compraloginbotonlogin) {
     compraloginbotonlogin.addEventListener('click', () => {
         formregistrarclientecompra.classList.add('hidden');
         formLoginCompra.classList.remove('hidden');
-    
+
     });
 }
 //Boton registrase enlace Compra
-if(compraloginbotonregistrarse){
+if (compraloginbotonregistrarse) {
     compraloginbotonregistrarse.addEventListener('click', () => {
         formLoginCompra.classList.add('hidden');
         formregistrarclientecompra.classList.remove('hidden');
-    
+
     });
 }
 //Boton iniciar sesion Compra
@@ -112,7 +112,7 @@ if (openModalUsuario) {
 }
 
 // Cerrar modal Usuario
-if(closeModalUsuario){
+if (closeModalUsuario) {
     closeModalUsuario.addEventListener('click', () => {
 
         modalUsuario.classList.add('translate-x-full');
@@ -128,7 +128,7 @@ if(closeModalUsuario){
 
 
 // Cerrar modal Pedido
-if(closeModalCliente){
+if (closeModalCliente) {
     closeModalCliente.addEventListener('click', () => {
         modalCrearCliente.classList.remove("flex");
         modalCrearCliente.classList.add("hidden");
@@ -145,27 +145,27 @@ if(closeModalCliente){
 
 //REGISTRAR CLIENTE A TRAVES DEL FORMULARIO DE COMPRA
 
-if(formregistrarclientecompraform){
+if (formregistrarclientecompraform) {
     formregistrarclientecompraform.addEventListener('submit', (event) => {
         const submitButton = formregistrarclientecompra.querySelector('button[type="submit"]');
         if (submitButton) {
             submitButton.disabled = true;
         }
         event.preventDefault(); // Evita el comportamiento predeterminado del formulario
-    
+
         // Crear un objeto FormData para recopilar los datos
         const formData = new FormData(formregistrarclientecompraform);
-    
+
         // Convertir FormData en un objeto JSON
         const data = {};
         formData.forEach((value, key) => {
             data[key] = value;
         });
         data['dominio'] = dominio.replace("/", "");
-    
+
         // Obtener la URL de acción del formulario
         const actionURL = formregistrarclientecompraform.getAttribute('action');
-    
+
         // Realizar la petición al servidor
         fetch(actionURL, {
             method: 'POST',
@@ -268,7 +268,7 @@ if (btn_micuentapanelcliente) {
     });
 }
 
-if(btndatosclientepanel){
+if (btndatosclientepanel) {
     btndatosclientepanel.addEventListener('click', () => {
         btndatosclientepanel.classList.add('bg-blue-600');
         btndatosclientepanel.classList.add('text-white');
@@ -280,7 +280,7 @@ if(btndatosclientepanel){
         divmisdatosclientepanel.classList.remove('hidden');
     });
 }
-if(btnpedidosclientepanel){
+if (btnpedidosclientepanel) {
     btnpedidosclientepanel.addEventListener('click', () => {
         btnpedidosclientepanel.classList.add('bg-blue-600');
         btnpedidosclientepanel.classList.add('text-white');
@@ -294,11 +294,11 @@ if(btnpedidosclientepanel){
 }
 
 
-if(compraloginbotonloginclientepanel){
+if (compraloginbotonloginclientepanel) {
     compraloginbotonloginclientepanel.addEventListener('click', () => {
         formLogindiv.classList.remove('hidden');
         formregistrarclientepanel.classList.add('hidden');
-    
+
     });
 }
 
@@ -326,7 +326,12 @@ function mensajeError(texto) {
         title: 'Ocurrio un Error!',
         text: texto,
         icon: 'error',
-        confirmButtonText: 'Aceptar'
+        showConfirmButton: false,
+        timerProgressBar: true,
+        timer: 2000,
+        customClass: {
+            timerProgressBar: 'bg-red-500 h-2 rounded-md'
+        }
     })
 }
 //Mensaje de Exito
@@ -335,11 +340,15 @@ function mensajeExito(texto) {
         title: 'Confirmación!',
         text: texto,
         icon: 'success',
-        confirmButtonText: 'Aceptar'
+        showConfirmButton: false,
+        timerProgressBar: true,
+        timer: 2000,
+        customClass: {
+            timerProgressBar: 'bg-green-500 h-2 rounded-md'
+        }
     })
 }
 
 //DISEÑO
-const waveElement = document.getElementById('wave');
 
 

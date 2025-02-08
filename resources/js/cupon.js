@@ -46,7 +46,7 @@ if (btnAplicarCupon) {
                         timer: 3000,
                         timerProgressBar: true,
                         customClass: {
-                            timerProgressBar: 'bg-red-500 h2 rounded-md'
+                            timerProgressBar: 'bg-red-500 h-2 rounded-md'
                         }
 
                     }
@@ -64,7 +64,7 @@ if (btnAplicarCupon) {
                     timer: 3000,
                     timerProgressBar: true,
                     customClass: {
-                        timerProgressBar: 'bg-red-500 h2 rounded-md'
+                        timerProgressBar: 'bg-red-500 h-2 rounded-md'
                     }
 
                 }
@@ -92,11 +92,11 @@ async function aplicar_Cupon(cupon, total_valor) {
         mostrar_contenedor_cupones();
         total.value = "Total S/" + parseFloat(result.nuevo_total).toFixed(2);
         span_cupon.value = " " + "#" + cupon;
-        descuento.value = " " + parseFloat(result.descuento).toFixed(2);
+        descuento.value = " S/" + parseFloat(result.descuento).toFixed(2);
         cuponForm.classList.toggle('hidden');
         iconoFlecha.classList.toggle('rotate-180');
         usos_restantes_global = result.usos_restantes_global;
-        usos_restantes_cliente = usos_restantes_cliente;
+        usos_restantes_cliente = result.usos_restantes_cliente;
 
         Swal.fire(
             {
@@ -107,7 +107,7 @@ async function aplicar_Cupon(cupon, total_valor) {
                 timer: 3000,
                 timerProgressBar: true,
                 customClass: {
-                    timerProgressBar: 'bg-green-500 h2 rounded-md'
+                    timerProgressBar: 'bg-green-500 h-2 rounded-md'
                 }
 
             }
@@ -124,7 +124,7 @@ async function aplicar_Cupon(cupon, total_valor) {
                 timer: 3000,
                 timerProgressBar: true,
                 customClass: {
-                    timerProgressBar: 'bg-red-500 h2 rounded-md'
+                    timerProgressBar: 'bg-red-500 h-2 rounded-md'
                 }
 
             }

@@ -74,7 +74,8 @@ class ControllerProducto extends Controller
             // Retornar respuesta exitosa
             return response()->json([
                 'mensaje' => "Producto registrado correctamente.",
-                'id' => $producto->id
+                'id' => $producto->id,
+                'comercializable' => $producto->comercializable
             ], 201);
         } catch (\Exception $e) {
             DB::rollBack();

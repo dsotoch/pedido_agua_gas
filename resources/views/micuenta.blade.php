@@ -8,8 +8,8 @@
 
                 <div class="max-w-[212px] w-[212px]">
                     <input id="mi_cuenta_input_buscar" class="rounded-3xl bg-transparent border-color-text border p-3"
-                        type="search" autocomplete="off" name="first_name" value=""
-                        placeholder="Buscar por nombres..." aria-label="Buscar por nombre">
+                        type="search" autocomplete="off" name="first_name" value="" placeholder="Buscar por nombres..."
+                        aria-label="Buscar por nombre">
                 </div>
                 <button type="button" class="bg-naranja text-white w-[48px] h-[50px] rounded-xl" disabled>
                     <i class="fa fa-search text-base font-bold"></i>
@@ -26,13 +26,13 @@
         </div>
         <div id="mi_cuenta_contenedor_pedidos_super" class="w-full">
 
-            <div class="flex flex-wrap  justify-center space-y-4 md:space-y-0 md:justify-start w-full" id="mi_cuenta_contenedor_pedidos">
+            <div class="flex flex-wrap  justify-center space-y-4 md:space-y-0 md:justify-start w-full"
+                id="mi_cuenta_contenedor_pedidos">
                 <!---Pedidos--->
                 @if ($usuario->tipo == 'admin' || $usuario->tipo == 'repartidor')
                     @if ($pedidos->count() > 0)
                         @foreach ($pedidos as $pedido)
-                            <div id="caja-{{ $pedido->id }}"
-                                class="md:p-[15px] p-0 mi_cuenta_pedido w-4/5 md:w-[363px]">
+                            <div id="caja-{{ $pedido->id }}" class="md:p-[15px] p-0 mi_cuenta_pedido w-4/5 md:w-[363px]">
                                 <div
                                     class="flex-1 h-full w-full md:w-[333px] md:max-w-[333px] p-[20px] bg-color-tarjetas rounded-3xl text-color-titulos-entrega font-sans text-base">
                                     <div class="space-y-0 relative">
@@ -214,9 +214,11 @@
                                                     <p>{{ $item->producto->descripcion }} x {{ $item->cantidad }}</p>
                                                 @endforeach
                                                 @foreach ($pedido->entregaPromociones as $et)
-                                                    <p> {{ $et->producto }} x {{ $et->cantidad }} Gratis.
-                                                    </p>
+                                                    @if ($et->estado)
+                                                        <p> {{ $et->producto }} x {{ $et->cantidad }} Gratis. </p>
+                                                    @endif
                                                 @endforeach
+
                                             </div>
                                         </div>
                                         <div class="flex items-center">
@@ -331,13 +333,14 @@
                         @endforeach
                     @else
                         <div class="w-full ">
-                            <p class="text-center text-base  text-color-text">Aun No se ha Realizado Ningun Pedido.</p>
+                            <p class="pedidos_vacio text-center text-base  text-color-text">Aun No se ha Realizado Ningun Pedido.</p>
                         </div>
                     @endif
                 @else
                     @if ($pedidos->count() > 0)
                         @foreach ($pedidos as $pedido)
-                            <div id="caja-{{ $pedido->id }}" class="mi_cuenta_pedido w-5/6 md:w-[363px] p-[15px] md:max-w-[363px]">
+                            <div id="caja-{{ $pedido->id }}"
+                                class="mi_cuenta_pedido w-5/6 md:w-[363px] p-[15px] md:max-w-[363px]">
                                 <div
                                     class="flex-1 h-full w-full md:w-[333px] md:max-w-[333px] m-[15px] p-[20px] bg-color-tarjetas rounded-3xl text-color-titulos-entrega font-sans text-base">
                                     <div class="space-y-0 relative">
@@ -505,9 +508,11 @@
                                                     <p>{{ $item->producto->descripcion }} x {{ $item->cantidad }}</p>
                                                 @endforeach
                                                 @foreach ($pedido->entregaPromociones as $et)
-                                                    <p> {{ $et->producto }} x {{ $et->cantidad }} Gratis.
-                                                    </p>
-                                                @endforeach
+                                                @if ($et->estado)
+                                                    <p> {{ $et->producto }} x {{ $et->cantidad }} Gratis. </p>
+                                                @endif
+                                            @endforeach
+                                            
                                             </div>
                                         </div>
                                         <div class="flex items-center">

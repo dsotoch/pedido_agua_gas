@@ -31,7 +31,7 @@
                                             @endforeach
                                         </p>
                                         <p><i class="fa-solid fa-cart-shopping"></i> Disponible para la venta:
-                                            {{$item->comercializable ? 'SI':'NO'}}
+                                            {{ $item->comercializable ? 'SI' : 'NO' }}
                                         </p>
                                         <form data-id="{{ $item->id }}" class="flex justify-start"
                                             action="{{ route('eliminar.producto', ['id' => $item->id]) }}" method="post"
@@ -104,12 +104,14 @@
                                     class="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                                     <option value="" selected>Seleccione...</option>
                                     @if ($empresa->productos && $empresa->productos->isnotEmpty())
+                                        <option value="mismo">Mismo Producto a Registrar</option>
                                         @foreach ($empresa->productos as $item)
-                                            <option value="{{ $item->descripcion }}">{{ $item->descripcion }}</option>
+                                            @if (!$item->comercializable)
+                                                <option value="{{ $item->descripcion }}">{{ $item->descripcion }}</option>
+                                            @endif
                                         @endforeach
                                     @else
-                                    <option value="mismo">Mismo Producto a Registrar</option>
-
+                                        <option value="mismo">Mismo Producto a Registrar</option>
                                     @endif
                                 </select>
                             </div>

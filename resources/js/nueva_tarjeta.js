@@ -1,4 +1,8 @@
 export function agregarPedido(pedido, usuario) {
+    const pedidos_vacio = document.querySelector('.pedidos_vacio');
+    if (!pedidos_vacio.classList.contains('hidden')) {
+        pedidos_vacio.classList.add('hidden');
+    }
     const cantidad_pedidos = document.querySelector('.cantidad_pedidos');
     cantidad_pedidos.textContent = parseInt(cantidad_pedidos.textContent) + 1;
     const contenedor = document.getElementById("mi_cuenta_contenedor_pedidos"); // Asegúrate de que existe este div en tu HTML
@@ -16,7 +20,7 @@ export function agregarPedido(pedido, usuario) {
         ? pedido.detalles.map(item =>
             `<p>${item.producto?.descripcion || "Producto desconocido"} x ${item.cantidad}</p>`
         ).join('')
-        : '<p>No hay detalles disponibles</p>';
+        : '';
 
 
     const promocionesHTML = Array.isArray(pedido.entrega_promociones) && pedido.entrega_promociones.length > 0

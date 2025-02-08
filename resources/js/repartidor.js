@@ -333,7 +333,12 @@ function mensajeError(texto) {
         title: 'Ocurrio un Error!',
         text: texto,
         icon: 'error',
-        confirmButtonText: 'Aceptar'
+        showConfirmButton: false,
+        timerProgressBar: true,
+        timer: 2000,
+        customClass: {
+            timerProgressBar: 'bg-red-500 h-2 rounded-md'
+        }
     })
 }
 //Mensaje de Exito
@@ -342,6 +347,11 @@ function mensajeExito(texto) {
         title: 'Confirmación!',
         text: texto,
         icon: 'success',
-        confirmButtonText: 'Aceptar'
+        showConfirmButton: false,
+        timerProgressBar: true,
+        timer: 2000,
+        customClass: {
+            timerProgressBar: 'bg-green-500 h-2 rounded-md'
+        }
     })
 }

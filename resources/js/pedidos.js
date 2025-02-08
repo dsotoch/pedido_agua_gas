@@ -375,10 +375,11 @@ function conectarWebSocket() {
                     actualizarEstadoYPagoPanelAdministrador(e.message.pedido_id, e.message.estado);
                     break;
                 default:
-                    if (window.location.pathname != '/mi-cuenta') {
-                        getMessages(); // Recargar los mensajes cuando se recibe un nuevo evento
-
-                    }
+                    /*   if (window.location.pathname != '/mi-cuenta') {
+                           getMessages(); // Recargar los mensajes cuando se recibe un nuevo evento
+   
+                       }
+                           */
                     mostrarNotificacion("Nuevo Pedido ", ` ¡Administrador! La Distribuidora tiene un nuevo Pedido #${e.message.pedido_id}, revísalo en este momento`, 'Nuevo-Pedido');
                     agregarPedido(e.message.pedido, "admin");
                     break;

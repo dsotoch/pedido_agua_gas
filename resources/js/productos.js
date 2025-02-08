@@ -66,15 +66,15 @@ if (formproductoadmincrear) {
                     result.id,
                     descripcion,
                     precio,
-
+                    result.comercializable
                 );
-
+                if (!result.comercializable) {
+                    agregarProductoASelect(descripcion);
+                }
                 if (mensaje_sin_productos_registrados && !mensaje_sin_productos_registrados.classList.contains('hidden')) {
                     mensaje_sin_productos_registrados.classList.add('hidden');
                 }
                 limpiardatos(formproductoadmincrear);
-
-
             })
             .catch(error => {
                 mensajeError(error.message);
@@ -82,14 +82,23 @@ if (formproductoadmincrear) {
             });
     });
 }
+function agregarProductoASelect(nombreProducto) {
 
-function agregarProductoDOM(id, descripcion, precio) {
+    // Crear una nueva opción
+    const option = document.createElement("option");
+    option.value = nombreProducto; // Asignar el valor
+    option.textContent = nombreProducto; // Asignar el texto visible
+
+    // Agregar la opción al select
+    select_productosGratis.appendChild(option);
+}
+function agregarProductoDOM(id, descripcion, precio, comercializable) {
     // Crear el nuevo elemento
     const nuevo = document.createElement('div');
     nuevo.classList.add('pro', 'space-y-2', 'font-base', 'flex', 'items-center', 'justify-between', 'border-b', 'pb-4', 'productosadmin');
     // Definir el contenido HTML
     nuevo.innerHTML = `
-      <div>
+      <div class="space-y-2">
           <h3 class="text-lg font-semibold text-color-titulos-entrega">
               <i class="fas fa-box text-color-titulos-entrega"></i> #${id}
           </h3>
@@ -102,6 +111,9 @@ function agregarProductoDOM(id, descripcion, precio) {
          <p class="text-color-titulos-entrega">
             <i class="fas fa-tags text-color-titulos-entrega"></i> Promociones:
             ${promociones.map(pro => `S/${pro.preciopromocion} x ${pro.unidades} Un.`).join(' | ')}
+        </p>
+        <p class="text-color-titulos-entrega"><i class="fa-solid fa-cart-shopping"></i> Disponible para la venta:
+                                            ${comercializable ? 'SI' : 'NO'}
         </p>
         
           <form data-id="${id}" action="/eliminar/${id}" method="post" class="flex justify-start">
@@ -242,7 +254,13 @@ function mensajeError(texto) {
         title: 'Ocurrio un Error!',
         text: texto,
         icon: 'error',
-        confirmButtonText: 'Aceptar'
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+        customClass: {
+            timerProgressBar: 'bg-red-500 h-2 rounded-md'
+        }
+
     })
 }
 //Mensaje de Exito
@@ -251,6 +269,11 @@ function mensajeExito(texto) {
         title: 'Confirmación!',
         text: texto,
         icon: 'success',
-        confirmButtonText: 'Aceptar'
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+        customClass: {
+            timerProgressBar: 'bg-green-500 h-2 rounded-md'
+        }
     })
 }

@@ -206,8 +206,11 @@ class ControllerEmpresa extends Controller
                 ];
             });
         }
-        $horaActual = now('America/Lima')->format('h:i:s A'); // Formato de 12 horas con AM/PM
-        $fueraHorario = $horaActual < $empresa->hora_inicio && $horaActual > $empresa->hora_fin;
+        $horaActual = Carbon::now('America/Lima'); // Obtiene la hora actual como un objeto Carbon
+        $horaInicio = Carbon::parse($empresa->hora_inicio); // Convierte la hora de inicio
+        $horaFin = Carbon::parse($empresa->hora_fin); // Convierte la hora de fin
+
+        $fueraHorario = $horaActual->lt($horaInicio) || $horaActual->gt($horaFin);
         // Retornar la vista con los datos
         return view('negocio', compact(
             'promociones_faltantes',
