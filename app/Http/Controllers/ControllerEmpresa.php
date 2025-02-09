@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\RequestAdmin;
 use App\Http\Requests\RequestEmpresa;
 use App\Models\Cupones;
-use App\Models\empresa;
+use App\Models\Empresa;
 use App\Models\Pedido;
 use App\Models\Persona;
 use App\Models\User;
