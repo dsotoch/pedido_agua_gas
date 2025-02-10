@@ -1,12 +1,10 @@
 @extends('layout-cuenta')
 @section('logica')
     <div class="relative md:container">
-
-
-        <div class="flex w-full h-full ">
+        <div class="flex w-full h-full">
             <div class="pl-[20px] flex space-x-2">
 
-                <div class="max-w-[212px] w-[212px]">
+                <div class="md:w-[212px]">
                     <input id="mi_cuenta_input_buscar" class="rounded-3xl bg-transparent border-color-text border p-3"
                         type="search" autocomplete="off" name="first_name" value="" placeholder="Buscar por nombres..."
                         aria-label="Buscar por nombre">
