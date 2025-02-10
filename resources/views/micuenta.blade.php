@@ -344,7 +344,7 @@
                                 class="mi_cuenta_pedido w-full md:w-[363px] p-[15px] md:max-w-[363px]">
                                 <div
                                     class="flex-1 h-full w-full md:w-[333px] md:max-w-[333px] m-[15px] p-[20px] bg-color-tarjetas rounded-3xl text-color-titulos-entrega font-sans text-base">
-                                    <div class="space-y-0 relative">
+                                    <div class="space-y-0 relative w-full">
                                         <div class="flex justify-between">
                                             <div class="flex">
                                                 <div class="flex">
@@ -668,7 +668,7 @@
                                             </div>
                                         @endif
                                         @if (!empty($pedido->cupon))
-                                        <div class="absolute -top-0 right-28 md:right-10 h-[50px] sm:translate-x-[4px]">
+                                        <div class="absolute -top-0 right-28 md:right-10 h-[50px] ">
                                             <div class="relative bg-transparent w-[150px] h-[190px] text-color-titulos-entrega group">
                                                 <div>
                                                     <div
