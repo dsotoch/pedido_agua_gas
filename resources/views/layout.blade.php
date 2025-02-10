@@ -113,7 +113,7 @@
         @guest
             <div id="modal_usuario_no_autenticado"
                 class=" fixed text-base inset-0  bg-gray-500 bg-opacity-50 z-40 mx-auto justify-center items-center">
-                <div class="modal-content bg-white p-6 rounded-lg shadow-lg w-4/5 md:w-1/2">
+                <div class="modal-content bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-1/2">
                     <div class="bg-yellow-100 border-l-4 text-center border-yellow-500 text-yellow-700 p-3 mb-4">
                         <p>Para disfrutar de una mejor experiencia y acceder a todas las funciones del sistema, regístrate o
                             inicia sesión.</p>
