@@ -154,7 +154,7 @@
             <form action="{{ route('pedido.crear', ['slug' => $empresa->dominio]) }}" id="form_realizar_pedido"
                 class=" text-start " method="POST">
                 <div
-                    class="flex space-y-2 flex-col w-[450px] h-[650px] bg-white rounded-[20px] pt-[30px] pb-[60px] pl-[20px] pr-[20px]">
+                    class="flex space-y-2 flex-col w-full md:w-[450px] h-[650px] bg-white rounded-[20px] pt-[30px] pb-[60px] pl-[20px] pr-[20px]">
                     <input type="hidden" id="usuario_id" name="usuario_id" value="{{ $usuario->id }}" required>
                     <input type="hidden" id="empresa_id" name="empresa_id" value="{{ $empresa->id }}" required>
 
