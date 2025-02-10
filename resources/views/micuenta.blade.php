@@ -34,7 +34,7 @@
                         @foreach ($pedidos as $pedido)
                             <div id="caja-{{ $pedido->id }}" class="md:p-[15px] p-0 mi_cuenta_pedido w-4/5 md:w-[363px]">
                                 <div
-                                    class="flex-1 h-full w-full md:w-[333px] md:max-w-[333px] p-[20px] bg-color-tarjetas rounded-3xl text-color-titulos-entrega font-sans text-base">
+                                    class="flex-1 h-full w-[85%] md:w-[333px] md:max-w-[333px] p-[20px] bg-color-tarjetas rounded-3xl text-color-titulos-entrega font-sans text-base">
                                     <div class="space-y-0 relative">
                                         <div class="flex justify-between">
                                             <div class="flex">
@@ -339,7 +339,7 @@
                     @if ($pedidos->count() > 0)
                         @foreach ($pedidos as $pedido)
                             <div id="caja-{{ $pedido->id }}"
-                                class="mi_cuenta_pedido w-full md:w-[363px] p-[15px] md:max-w-[363px]">
+                                class="mi_cuenta_pedido w-[85%] md:w-[363px] p-[15px] md:max-w-[363px]">
                                 <div
                                     class="flex-1 h-full w-full md:w-[333px] md:max-w-[333px] m-[15px] p-[20px] bg-color-tarjetas rounded-3xl text-color-titulos-entrega font-sans text-base">
                                     <div class="space-y-0 relative w-full">
