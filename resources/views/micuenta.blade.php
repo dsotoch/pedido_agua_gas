@@ -668,7 +668,7 @@
                                             </div>
                                         @endif
                                         @if (!empty($pedido->cupon))
-                                            <div class="absolute -top-0 right-28 md:right-10 h-[50px] md:translate-x-0 translate-x-2">
+                                            <div class="absolute -top-0 right-26 md:right-10 h-[50px]">
                                                 <div
                                                     class="relative bg-transparent w-[150px]  h-[190px]  text-color-titulos-entrega group ">
                                                     <div>
