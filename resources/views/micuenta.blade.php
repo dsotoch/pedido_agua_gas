@@ -682,12 +682,12 @@
                                                                 en este pedido.
                                                             </p>
                                                             <div
-                                                                class="absolute -bottom-[13px] left-[calc(50%-40px)] clip-v-shape h-[20px] w-[20px] bg-green-400 ">
+                                                                class="absolute -bottom-[13px] md:left-[calc(50%-60px)] left-[calc(100%-50px)] clip-v-shape h-[20px] w-[20px] bg-green-400 ">
                                                             </div>
                                                         </div>
                                                     </div>
                                                     <img src="{{ asset('imagenes/cajas/cupons.png') }}" alt=""
-                                                        class="absolute top-[55px] md:left-[25px] md:translate-x-0da translate-x-1 right-0 w-[60px] h-[50px] ">
+                                                        class="absolute top-[55px] md:left-[25px] md:translate-x-0 translate-x-2 right-0 w-[60px] h-[50px] ">
 
                                                 </div>
 
