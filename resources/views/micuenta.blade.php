@@ -290,7 +290,7 @@
                                                         </div>
                                                     </div>
                                                     <img src="{{ asset('imagenes/cajas/cupons.png') }}" alt=""
-                                                        class="absolute top-[55px] md:left-[25px] right-0  md:w-[60px] w-[38px] h-[50px]">
+                                                        class="absolute top-[55px] md:left-[25px] -right-3  md:w-[60px] w-[38px] h-[50px]">
 
                                                 </div>
                                             </div>
@@ -685,7 +685,7 @@
                                                         </div>
                                                     </div>
                                                     <img src="{{ asset('imagenes/cajas/cupons.png') }}" alt=""
-                                                        class="absolute top-[55px] md:left-[25px]  -right-5  md:w-[60px] w-[38px] h-[50px]">
+                                                        class="absolute top-[55px] md:left-[25px]  -right-3  md:w-[60px] w-[38px] h-[50px]">
 
                                                 </div>
                                             </div>
