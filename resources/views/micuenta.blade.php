@@ -668,31 +668,27 @@
                                             </div>
                                         @endif
                                         @if (!empty($pedido->cupon))
-                                            <div class="absolute -top-0 right-28 md:right-10 h-[50px]">
-                                                <div
-                                                    class="relative bg-transparent w-[150px]  h-[190px]  text-color-titulos-entrega group ">
-                                                    <div>
+                                        <div class="absolute -top-0 right-28 md:right-10 h-[50px] sm:translate-x-[4px]">
+                                            <div class="relative bg-transparent w-[150px] h-[190px] text-color-titulos-entrega group">
+                                                <div>
+                                                    <div
+                                                        class="z-50 -top-10 bg-green-400 left-0 hidden absolute group-hover:flex w-[250px] min-w-[250px] text-white p-2 rounded-md text-center">
+                                                        <p class="relative text-[14px] leading-[19.6px] ">
+                                                            <strong>¡Cupón Aplicado!</strong><br>
+                                                            Aplica un descuento de S/{{ $pedido->descuento }}
+                                                            equivalente al cupón #{{ $pedido->cupon }}
+                                                            en este pedido.
+                                                        </p>
                                                         <div
-                                                            class="z-50 -top-10 bg-green-400 left-0 hidden absolute group-hover:flex  w-[250px] min-w-[250px] text-white p-2 rounded-md text-center">
-                                                            <p class="relative text-[14px] leading-[19.6px] ">
-                                                                <strong>¡Cupón Aplicado!</strong><br>
-                                                                Aplica un descuento de S/{{ $pedido->descuento }}
-                                                                equivalente al cupón
-                                                                #{{ $pedido->cupon }}
-                                                                en este pedido.
-                                                            </p>
-                                                            <div
-                                                                class="absolute -bottom-[13px] left-[calc(50%-60px)]  clip-v-shape h-[20px] w-[20px] bg-green-400 ">
-                                                            </div>
+                                                            class="absolute -bottom-[13px] left-[calc(50%-60px)] clip-v-shape h-[20px] w-[20px] bg-green-400">
                                                         </div>
                                                     </div>
-                                                    <img src="{{ asset('imagenes/cajas/cupons.png') }}" alt=""
-                                                        class="absolute top-[55px] md:left-[25px]  right-0 w-[60px] h-[50px] ">
-
                                                 </div>
-
-
+                                                <img src="{{ asset('imagenes/cajas/cupons.png') }}" alt=""
+                                                    class="absolute top-[55px] md:left-[25px] right-0 w-[60px] h-[50px]">
                                             </div>
+                                        </div>
+                                        
                                         @endif
                                     </div>
                                 </div>
