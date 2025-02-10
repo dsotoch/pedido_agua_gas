@@ -396,14 +396,18 @@
             </div>
         @else
             <div class="mt-8 w-full">
-                <p class="text-base w-full flex justify-center items-center">
-                    No se encontraron pedidos pagados en el día de hoy.
-                </p>
+                <center>
+                    <p class="text-base w-full flex justify-center items-center">
+                        No se encontraron pedidos pagados en el día de hoy.
+                    </p>
+                </center>
             </div>
         @endif
         <div class="mt-8 w-full">
-            <p id="mensaje_no_resultados" class="hidden text-base w-full flex justify-center items-center">No se
-                encontraron resultados.</p>
+            <center>
+                <p id="mensaje_no_resultados" class="hidden text-base w-full flex justify-center items-center">No se
+                    encontraron resultados.</p>
+            </center>
         </div>
     </div>
 @endsection
