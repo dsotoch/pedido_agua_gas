@@ -132,7 +132,7 @@ export function agregarPedido(pedido, usuario) {
 
 
     divPedido.innerHTML = `
-    <div class="flex-1 h-full w-[333px] max-w-[333px] p-[20px] bg-color-tarjetas rounded-3xl text-color-titulos-entrega font-sans text-base">
+    <div class="flex-1 h-full  w-[85%] md:w-[333px] max-w-[333px] p-[20px] bg-color-tarjetas rounded-3xl text-color-titulos-entrega font-sans text-base">
         <div class="space-y-0 relative">
             <div class="flex justify-between">
                 <div class="flex">
