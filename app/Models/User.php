@@ -66,7 +66,7 @@ class User extends Authenticatable
 
     public function persona()
     {
-        return $this->hasOne(persona::class);
+        return $this->hasOne(Persona::class);
     }
     public function mensaje()
     {
