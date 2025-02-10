@@ -157,7 +157,7 @@
             @endguest
             @auth
                 <div
-                    class="absolute hidden overflow-y-auto  md:w-[600px] max-h-[80vh] min-h-[250px] z-50 group-hover:flex  flex-col justify-start text-start  top-12 w-4/5 bg-white shadow-md">
+                    class="absolute hidden overflow-y-auto w-full  md:w-[600px] max-h-[80vh] min-h-[250px] z-50 group-hover:flex  flex-col justify-start text-start  top-12  bg-white shadow-md">
 
                     <!--Usuario ya Autenticado--->
                     <div class="absolute w-full">
