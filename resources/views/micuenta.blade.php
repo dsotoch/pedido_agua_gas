@@ -339,7 +339,7 @@
                     @if ($pedidos->count() > 0)
                         @foreach ($pedidos as $pedido)
                             <div id="caja-{{ $pedido->id }}"
-                                class="mi_cuenta_pedido w-[85%] md:w-[363px] p-[15px] md:max-w-[363px]">
+                                class="mi_cuenta_pedido w-[95%] md:w-[363px] p-[15px] md:max-w-[363px]">
                                 <div
                                     class="flex-1 h-full w-full md:w-[333px] md:max-w-[333px] m-[15px] p-[20px] bg-color-tarjetas rounded-3xl text-color-titulos-entrega font-sans text-base">
                                     <div class="space-y-0 relative w-full">
