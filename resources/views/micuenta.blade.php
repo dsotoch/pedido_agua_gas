@@ -1,27 +1,29 @@
 @extends('layout-cuenta')
 @section('logica')
     <div class="relative md:container">
-        <div class="flex w-full h-full">
-            <div class="pl-[20px] flex space-x-2">
-
-                <div class="md:w-[212px]">
-                    <input id="mi_cuenta_input_buscar" class="rounded-3xl bg-transparent border-color-text border p-3"
-                        type="search" autocomplete="off" name="first_name" value="" placeholder="Buscar por nombres..."
-                        aria-label="Buscar por nombre">
-                </div>
+        <div class="flex flex-col md:flex-row w-full h-full gap-2 md:items-center">
+            <!-- Input de búsqueda -->
+            <div class="flex w-full md:w-auto items-center gap-2 px-4">
+                <input id="mi_cuenta_input_buscar"
+                    class="rounded-3xl bg-transparent border border-color-text p-3 w-full md:w-[212px]" type="search"
+                    autocomplete="off" name="first_name" placeholder="Buscar por nombres..." aria-label="Buscar por nombre">
                 <button type="button" class="bg-naranja text-white w-[48px] h-[50px] rounded-xl" disabled>
                     <i class="fa fa-search text-base font-bold"></i>
                 </button>
-
-
             </div>
-            <div class="text-base m-4 ">
-                <p class="text-color-text"><b><span
-                            class="font-bold cantidad_pedidos">{{ $pedidos->count() > 0 ? $pedidos->count() : 0 }}</span></b>
-                    pedidos
-                    por {{ $usuario->tipo == 'admin' || $usuario->tipo == 'repartidor' ? 'gestionar' : 'visualizar' }}.</p>
+
+            <!-- Texto de pedidos -->
+            <div class="text-base px-4 text-center md:text-left">
+                <p class="text-color-text">
+                    <b><span class="font-bold cantidad_pedidos">
+                            {{ $pedidos->count() > 0 ? $pedidos->count() : 0 }}
+                        </span></b>
+                    pedidos por
+                    {{ $usuario->tipo == 'admin' || $usuario->tipo == 'repartidor' ? 'gestionar' : 'visualizar' }}.
+                </p>
             </div>
         </div>
+
         <div id="mi_cuenta_contenedor_pedidos_super" class="w-full">
 
             <div class="flex flex-wrap  justify-center space-y-4 md:space-y-0 md:justify-start w-full"
@@ -331,7 +333,8 @@
                         @endforeach
                     @else
                         <div class="w-full ">
-                            <p class="pedidos_vacio text-center text-base  text-color-text">Aun No se ha Realizado Ningun Pedido.</p>
+                            <p class="pedidos_vacio text-center text-base  text-color-text">Aun No se ha Realizado Ningun
+                                Pedido.</p>
                         </div>
                     @endif
                 @else
@@ -506,11 +509,11 @@
                                                     <p>{{ $item->producto->descripcion }} x {{ $item->cantidad }}</p>
                                                 @endforeach
                                                 @foreach ($pedido->entregaPromociones as $et)
-                                                @if ($et->estado)
-                                                    <p> {{ $et->producto }} x {{ $et->cantidad }} Gratis. </p>
-                                                @endif
-                                            @endforeach
-                                            
+                                                    @if ($et->estado)
+                                                        <p> {{ $et->producto }} x {{ $et->cantidad }} Gratis. </p>
+                                                    @endif
+                                                @endforeach
+
                                             </div>
                                         </div>
                                         <div class="flex items-center">
