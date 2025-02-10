@@ -685,7 +685,7 @@
                                                     </div>
                                                 </div>
                                                 <img src="{{ asset('imagenes/cajas/cupons.png') }}" alt=""
-                                                class="absolute top-[55px] md:left-[25px] right-[10px] w-[60px] h-[50px]">
+                                                class="absolute top-[55px] md:left-[25px] right-[50px] w-[60px] h-[50px]">
                                             
                                             </div>
                                         </div>
