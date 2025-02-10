@@ -54,7 +54,7 @@ class Pedido extends Model
     }
     public function entregaPromociones()
     {
-        return $this->hasMany(entregaPromociones::class);
+        return $this->hasMany(EntregaPromociones::class);
     }
 
     public function usuario()
