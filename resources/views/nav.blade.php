@@ -31,7 +31,7 @@
             </button>
             @guest
                 <div id="contenedor_login"
-                    class="absolute hidden overflow-y-auto  md:w-[600px] max-h-[80vh] z-50 group-hover:flex  flex-col justify-start text-start  top-12 w-full bg-white shadow-md">
+                    class="absolute hidden overflow-y-auto w-[400px]  md:w-[600px] max-h-[80vh] z-50 group-hover:flex  flex-col justify-start text-start  top-12  bg-white shadow-md">
 
                     <!-- Formulario de inicio de sesión -->
                     <div class="bg-white w-full p-10" id="formLogindiv">
