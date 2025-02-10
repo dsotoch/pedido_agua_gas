@@ -682,7 +682,7 @@
                                                                 en este pedido.
                                                             </p>
                                                             <div
-                                                                class="absolute -bottom-[13px] left-[calc(50%-60px)] clip-v-shape h-[20px] w-[20px] bg-green-400 ">
+                                                                class="absolute -bottom-[13px] left-[calc(50%-40px)] clip-v-shape h-[20px] w-[20px] bg-green-400 ">
                                                             </div>
                                                         </div>
                                                     </div>
