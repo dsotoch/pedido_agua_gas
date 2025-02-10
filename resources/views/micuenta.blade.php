@@ -668,7 +668,7 @@
                                             </div>
                                         @endif
                                         @if (!empty($pedido->cupon))
-                                            <div class="absolute -top-0 right-28 md:right-10 h-[50px]">
+                                            <div class="absolute -top-0 right-28 md:right-10 h-[50px] md:translate-x-0 translate-x-2">
                                                 <div
                                                     class="relative bg-transparent w-[150px]  h-[190px]  text-color-titulos-entrega group ">
                                                     <div>
@@ -682,12 +682,12 @@
                                                                 en este pedido.
                                                             </p>
                                                             <div
-                                                                class="absolute -bottom-[13px] md:left-[calc(50%-60px)] left-[calc(100%-50px)] clip-v-shape h-[20px] w-[20px] bg-green-400 ">
+                                                                class="absolute -bottom-[13px] left-[calc(50%-60px)]  clip-v-shape h-[20px] w-[20px] bg-green-400 ">
                                                             </div>
                                                         </div>
                                                     </div>
                                                     <img src="{{ asset('imagenes/cajas/cupons.png') }}" alt=""
-                                                        class="absolute top-[55px] md:left-[25px] md:translate-x-0 translate-x-2 right-0 w-[60px] h-[50px] ">
+                                                        class="absolute top-[55px] md:left-[25px]  right-0 w-[60px] h-[50px] ">
 
                                                 </div>
 
