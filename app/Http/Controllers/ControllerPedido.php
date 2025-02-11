@@ -128,7 +128,7 @@ class ControllerPedido extends Controller
             // Manejo de errores
             return response()->json([
                 'mensaje' => 'Ocurrió un error al asignar el pedido.',
-                'error' => $e->getMessage(),
+                'error' => $e->getMessage().$e->getTraceAsString(),
             ], 500);
         }
     }
