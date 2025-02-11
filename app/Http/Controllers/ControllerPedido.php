@@ -95,7 +95,7 @@ class ControllerPedido extends Controller
         // Validar los datos de entrada
         $validated = $request->validate([
             'pedido_id' => 'required|exists:pedidos,id',
-            'repartidor_id' => 'required|exists:persona,id',
+            'repartidor_id' => 'required|exists:users,id',
         ]);
 
         try {
