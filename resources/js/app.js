@@ -16,5 +16,6 @@ import './reportes';
 import './cupon';
 import './dashboard';
 import './favoritas';
+import './websocket';
 
 

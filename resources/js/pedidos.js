@@ -402,8 +402,9 @@ function conectarWebSocket() {
 }
 
 try {
-    if (window.location.pathname !== '/') {  // Mejor usar pathname en lugar de href
+    if (window.location.pathname !== '/') {  // Mejor usar pathname en lugar de href        
         conectarWebSocket();
+
         getRepartidores();
     }
 } catch (error) {
@@ -945,6 +946,7 @@ if (formAsignarRepartidor) {
                 })
                 formAsignarRepartidor.reset();
                 spanrepartidor.textContent = result.repartidor;
+                enviarMensaje(result.operacion,result.repartidor_id);
 
             })
             .catch(error => {
@@ -985,6 +987,7 @@ function asignarRepartidor(pedidoId, repartidor, spanrepartidor) {
                     timerProgressBar: 'bg-green-500'
                 }
             })
+
             spanrepartidor.textContent = result.repartidor;
             modificarDomPedido(result.repartidor, pedidoId, 'repartidor');
         })
