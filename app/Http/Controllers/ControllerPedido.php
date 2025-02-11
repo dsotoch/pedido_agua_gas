@@ -16,7 +16,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Log;
 
 class ControllerPedido extends Controller
 {
@@ -125,6 +125,8 @@ class ControllerPedido extends Controller
                     'repartidor' => $repartidor->persona->nombres,
                 ], 201);
             } catch (\Exception $th) {
+                Log::error('Error al asignar el pedido: ' . $th->getMessage());
+
                 return response()->json([
                     'mensaje' => 'error al asignar el pedido.',
                     'error' => $th->getMessage(),
