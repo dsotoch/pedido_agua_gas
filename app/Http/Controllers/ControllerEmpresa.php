@@ -207,9 +207,8 @@ class ControllerEmpresa extends Controller
             });
         }
         $horaActual = Carbon::now('America/Lima'); // Obtiene la hora actual
-        $horaInicio = Carbon::parse('09:00'); // Hora de inicio
-        $horaFin = Carbon::parse('18:00'); // Hora de fin
-
+        $horaInicio = Carbon::parse($empresa->hora_inicio); // Convierte la hora de inicio
+        $horaFin = Carbon::parse($empresa->hora_fin); // Convierte la hora de fin
         // Verifica si la hora actual está dentro del rango de horas
         $fueraHorario = $horaActual->between($horaInicio, $horaFin);
 
