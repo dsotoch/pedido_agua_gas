@@ -211,12 +211,6 @@ class ControllerEmpresa extends Controller
         $horaFin = Carbon::parse($empresa->hora_fin); // Convierte la hora de fin
         // Verifica si la hora actual está dentro del rango de horas
         $fueraHorario = $horaActual->between($horaInicio, $horaFin);
-
-        if ($fueraHorario) {
-            return true; // Está dentro del horario
-        } else {
-            return false; // Está fuera del horario
-        }
         // Retornar la vista con los datos
         return view('negocio', compact(
             'promociones_faltantes',
