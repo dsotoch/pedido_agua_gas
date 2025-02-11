@@ -350,38 +350,56 @@ if (user) {
 }
 
 function conectarWebSocket() {
+    console.log("Intentando conectar a WebSocket...");
+
     window.Echo.private(webSocketChannel)
         .listen('MensajeEntendido', async (e) => {
-            console.log("Conectado a Websocket");
+            console.log("📡 Evento recibido en WebSocket:", e);
+
+            // Verificar que e.message no sea undefined
+            if (!e.message) {
+                console.error("⚠️ Error: Mensaje recibido sin datos.");
+                return;
+            }
+
             switch (e.message.operacion) {
                 case 'pedido_tomado':
                     actualizar_Estado_delivery_panel_cliente(e.message.pedido_id, e.message.estado);
                     break;
                 case 'confirmacion':
-                    mostrarNotificacion("Tu Pedido esta en Camino", `¡Hola Estimado Usuario(a)! El repartidor ha tomado tu pedido #${e.message.pedido_id}, y está en camino para entregártelo. ¡Prepárate para recibirlo pronto!`, 'Nuevo-Pedido-Camino');
+                    mostrarNotificacion("Tu Pedido está en Camino", 
+                        `¡Hola Estimado Usuario(a)! El repartidor ha tomado tu pedido #${e.message.pedido_id}, y está en camino para entregártelo. ¡Prepárate para recibirlo pronto!`, 
+                        'Nuevo-Pedido-Camino'
+                    );
                     actualizar_Estado_delivery_panel_cliente(e.message.pedido_id, e.message.estado);
                     break;
                 case 'asignacion':
-                    mostrarNotificacion("Nuevo Pedido Asignado", `¡Repartidor! La Distribuidora te ha asignado el Pedido #${e.message.pedido_id}, revísalo en este momento`, 'Nuevo-Pedido-Asignado');
+                    mostrarNotificacion("Nuevo Pedido Asignado", 
+                        `¡Repartidor! La Distribuidora te ha asignado el Pedido #${e.message.pedido_id}, revísalo en este momento`, 
+                        'Nuevo-Pedido-Asignado'
+                    );
                     pedidoasignadoarepartidor(e.message.pedido_id, 'repartidor');
                     agregarPedido(e.message.pedido, "repartidor");
                     break;
                 case 'finalizado':
-                    actualizarEstadoYPagoPanelAdministrador(e.message.pedido_id, e.message.estado);
-                    break;
                 case 'anulacion':
                     actualizarEstadoYPagoPanelAdministrador(e.message.pedido_id, e.message.estado);
                     break;
                 default:
-                    /* if (window.location.pathname != '/mi-cuenta') {
-                         getMessages(); // Recargar los mensajes cuando se recibe un nuevo evento
-                    } */
-                    mostrarNotificacion("Nuevo Pedido ", ` ¡Administrador! La Distribuidora tiene un nuevo Pedido #${e.message.pedido_id}, revísalo en este momento`, 'Nuevo-Pedido');
+                    mostrarNotificacion("Nuevo Pedido", 
+                        `¡Administrador! La Distribuidora tiene un nuevo Pedido #${e.message.pedido_id}, revísalo en este momento`, 
+                        'Nuevo-Pedido'
+                    );
                     agregarPedido(e.message.pedido, "admin");
                     break;
             }
+        })
+        .error((error) => {
+            console.error("🚨 Error en WebSocket:", error);
         });
-}  // Esta es la llave de cierre de la función
+
+    console.log("✅ WebSocket conectado y escuchando eventos.");
+}
 
 try {
     if (window.location.pathname !== '/') {  // Mejor usar pathname en lugar de href
