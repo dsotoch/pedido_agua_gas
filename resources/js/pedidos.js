@@ -355,6 +355,7 @@ const headers = {
 function conectarWebSocket() {
     window.Echo.private(webSocketChannel)
         .listen('MensajeEntendido', async (e) => {
+            console.log("Conectado a Websocket");
             switch (e.message.operacion) {
                 case 'pedido_tomado':
                     actualizar_Estado_delivery_panel_cliente(e.message.pedido_id, e.message.estado);

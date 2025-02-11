@@ -1,6 +1,6 @@
 export function agregarPedido(pedido, usuario) {
     const pedidos_vacio = document.querySelector('.pedidos_vacio');
-    if (!pedidos_vacio.classList.contains('hidden')) {
+    if (pedidos_vacio && !pedidos_vacio.classList.contains('hidden')) {
         pedidos_vacio.classList.add('hidden');
     }
     const cantidad_pedidos = document.querySelector('.cantidad_pedidos');
