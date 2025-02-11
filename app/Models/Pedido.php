@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -45,7 +44,7 @@ class Pedido extends Model
 
     public function empresa()
     {
-        return $this->belongsTo(empresa::class, 'empresa_id');
+        return $this->belongsTo(Empresa::class, 'empresa_id');
     }
 
     public function mensaje()
