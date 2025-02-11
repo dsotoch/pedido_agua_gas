@@ -348,10 +348,6 @@ let webSocketChannel = "";
 if (user) {
     webSocketChannel = `App.Models.User.${user.textContent}`;
 }
-const headers = {
-    "Content-Type": "application/json",
-    'X-CSRF-TOKEN': token, // El token CSRF debe estar configurado correctamente
-};
 function conectarWebSocket() {
     window.Echo.private(webSocketChannel)
         .listen('MensajeEntendido', async (e) => {

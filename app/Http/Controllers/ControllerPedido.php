@@ -124,16 +124,16 @@ class ControllerPedido extends Controller
                     'mensaje' => 'Pedido asignado correctamente.',
                     'repartidor' => $repartidor->persona->nombres,
                 ], 201);
-            } catch (\Throwable $th) {
+            } catch (\Exception $th) {
                 return response()->json([
-                    'mensaje' => 'Ocurrió un error al asignar el pedido.',
+                    'mensaje' => 'error al asignar el pedido.',
                     'error' => $th->getMessage(),
                 ], 500);
             }
         } catch (\Exception $e) {
             // Manejo de errores
             return response()->json([
-                'mensaje' => 'Ocurrió un error al asignar el pedido.',
+                'mensaje' => 'Ocurrio un error al asignar el pedido.',
                 'error' => $e->getMessage(),
             ], 500);
         }
