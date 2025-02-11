@@ -114,21 +114,27 @@ class ControllerPedido extends Controller
                 'repartidor_id' => $repartidor->id,
             ]);
             $pedido_completo = Pedido::with('detalles', 'detalles.producto', 'entregaPromociones')->find($pedido->id);
+            try {
 
-            $mensaje = ['operacion' => 'asignacion', 'mensaje' => 'Pedido Asignado.', 'pedido_id' => $validated['pedido_id'], 'pedido' => $pedido_completo];
+                $mensaje = ['operacion' => 'asignacion', 'mensaje' => 'Pedido Asignado.', 'pedido_id' => $validated['pedido_id'], 'pedido' => $pedido_completo];
 
-            SendMessage::dispatch($mensaje, $repartidor->id);
-
-            // Respuesta exitosa
-            return response()->json([
-                'mensaje' => 'Pedido asignado correctamente.',
-                'repartidor' => $repartidor->persona->nombres,
-            ], 201);
+                SendMessage::dispatch($mensaje, $repartidor->id);
+                // Respuesta exitosa
+                return response()->json([
+                    'mensaje' => 'Pedido asignado correctamente.',
+                    'repartidor' => $repartidor->persona->nombres,
+                ], 201);
+            } catch (\Throwable $th) {
+                return response()->json([
+                    'mensaje' => 'Ocurrió un error al asignar el pedido.',
+                    'error' => $th->getMessage(),
+                ], 500);
+            }
         } catch (\Exception $e) {
             // Manejo de errores
             return response()->json([
                 'mensaje' => 'Ocurrió un error al asignar el pedido.',
-                'error' => $e->getMessage().$e->getTraceAsString(),
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
