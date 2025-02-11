@@ -155,7 +155,7 @@ class ControllerPedido extends Controller
                 return response()->json(["mensaje" => "Pedido No Encontrado."], 404);
             }
         } catch (\Throwable $th) {
-            return response()->json(["mensaje" => $th->getMessage() + $th->getLine()], 500);
+            return response()->json(["mensaje" => $th->getMessage() . $th->getLine()], 500);
         }
     }
 
