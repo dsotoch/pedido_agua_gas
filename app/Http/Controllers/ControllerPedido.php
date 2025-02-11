@@ -146,8 +146,10 @@ class ControllerPedido extends Controller
 
                 $cliente = $pedido->usuario->id;
                 $admin = $pedido->empresa->usuarios()->where('tipo', 'admin')->first();
-                SendMessage::dispatch($mensaje, $cliente);
-                SendMessage::dispatch($mensaje2, $admin->id);
+                if ($admin) {
+                    SendMessage::dispatch($mensaje, $cliente);
+                    SendMessage::dispatch($mensaje2, $admin->id);
+                }
 
 
                 return response()->json(["mensaje" => "Pedido Confirmado.", 'estado' => $pedido->estado], 200);
