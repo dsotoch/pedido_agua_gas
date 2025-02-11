@@ -946,7 +946,6 @@ if (formAsignarRepartidor) {
                 })
                 formAsignarRepartidor.reset();
                 spanrepartidor.textContent = result.repartidor;
-                enviarMensaje(result.operacion,result.repartidor_id);
 
             })
             .catch(error => {
