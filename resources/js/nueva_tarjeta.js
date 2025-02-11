@@ -24,10 +24,12 @@ export function agregarPedido(pedido, usuario) {
 
 
     const promocionesHTML = Array.isArray(pedido.entrega_promociones) && pedido.entrega_promociones.length > 0
-        ? pedido.entrega_promociones.map(et =>
-            `<p>${et.producto} x ${et.cantidad} Gratis.</p>`
-        ).join('')
+        ? pedido.entrega_promociones
+            .filter(et => et.estado) // Filtra solo los que tienen estado `true`
+            .map(et => `<p>${et.producto} x ${et.cantidad} Gratis.</p>`)
+            .join('')
         : '';
+
 
 
     const botella_promocion = (promociones) => {
@@ -128,7 +130,7 @@ export function agregarPedido(pedido, usuario) {
         }
         return ""; // Retorna vacío si no hay cupón válido
     };
-    
+
 
 
     divPedido.innerHTML = `
