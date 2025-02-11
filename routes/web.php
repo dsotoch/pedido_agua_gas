@@ -27,7 +27,7 @@ Route::get('/', function () {
 })->name('index');
 
 Route::controller(ControllerCliente::class)->group(function () {
-    Route::get('/clientes', 'index')->name('empresa.clientes');
+    Route::get('/clientes', 'index')->name('empresa.clientes2');
     Route::post('/crear-cliente', 'store')->name('empresa.crearCliente');
     Route::get('/clientesporempresa', 'clientesporempresa')->name('empresa.clienteEmpresa');
     Route::get('/dom', 'verificardominio')->name('empresa.index');
