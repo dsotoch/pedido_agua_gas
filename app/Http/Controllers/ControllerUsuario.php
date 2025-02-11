@@ -7,7 +7,6 @@ use App\Models\Empresa;
 use App\Models\Pedido;
 use App\Models\Persona;
 use App\Models\User;
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
