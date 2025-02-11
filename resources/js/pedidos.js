@@ -348,6 +348,7 @@ let webSocketChannel = "";
 if (user) {
     webSocketChannel = `App.Models.User.${user.textContent}`;
 }
+
 function conectarWebSocket() {
     window.Echo.private(webSocketChannel)
         .listen('MensajeEntendido', async (e) => {
@@ -372,19 +373,15 @@ function conectarWebSocket() {
                     actualizarEstadoYPagoPanelAdministrador(e.message.pedido_id, e.message.estado);
                     break;
                 default:
-                    /*   if (window.location.pathname != '/mi-cuenta') {
-                           getMessages(); // Recargar los mensajes cuando se recibe un nuevo evento
-   
-                       }
-                           */
+                    /* if (window.location.pathname != '/mi-cuenta') {
+                         getMessages(); // Recargar los mensajes cuando se recibe un nuevo evento
+                    } */
                     mostrarNotificacion("Nuevo Pedido ", ` ¡Administrador! La Distribuidora tiene un nuevo Pedido #${e.message.pedido_id}, revísalo en este momento`, 'Nuevo-Pedido');
                     agregarPedido(e.message.pedido, "admin");
                     break;
             }
-
-
         });
-}
+}  // Esta es la llave de cierre de la función
 
 try {
     if (window.location.pathname !== '/') {  // Mejor usar pathname en lugar de href

@@ -29,7 +29,6 @@ async function verificar_permisos() {
 }
 
 export async function mostrarNotificacion(titulo, texto, tag) {
-    console.log("verficando permisos");
     const permiso = await verificar_permisos();
 
     if (permiso) {
