@@ -155,7 +155,7 @@ class ControllerPedido extends Controller
                 return response()->json(["mensaje" => "Pedido No Encontrado."], 404);
             }
         } catch (\Throwable $th) {
-            return response()->json(["mensaje" => $th->getMessage()], 500);
+            return response()->json(["mensaje" => $th->getMessage() + $th->getLine()], 500);
         }
     }
 
@@ -190,7 +190,7 @@ class ControllerPedido extends Controller
         // Buscar el pedido
 
         $pedido = Pedido::find($request->id_pedido);
-        $empresa = empresa::where('id', $pedido->empresa_id)->first();
+        $empresa = Empresa::where('id', $pedido->empresa_id)->first();
 
         if ($pedido) {
             // Obtener el administrador de la empresa relacionada con el pedido
