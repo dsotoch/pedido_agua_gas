@@ -206,11 +206,17 @@ class ControllerEmpresa extends Controller
                 ];
             });
         }
-        $horaActual = Carbon::now('America/Lima'); // Obtiene la hora actual como un objeto Carbon
+        $horaActual = Carbon::now('America/Lima'); // Obtiene la hora actual
         $horaInicio = Carbon::parse($empresa->hora_inicio); // Convierte la hora de inicio
         $horaFin = Carbon::parse($empresa->hora_fin); // Convierte la hora de fin
-
-        $fueraHorario = $horaActual->lt($horaInicio) || $horaActual->gt($horaFin);
+        $fueraHorario = false;
+        if ($horaInicio->gt($horaFin)) {
+            // Caso en el que el horario pasa la medianoche (Ej: 20:00 - 04:00)
+            $fueraHorario = !($horaActual->gte($horaInicio) || $horaActual->lte($horaFin));
+        } else {
+            // Caso normal (Ej: 08:00 - 18:00)
+            $fueraHorario = $horaActual->lt($horaInicio) || $horaActual->gt($horaFin);
+        }
         // Retornar la vista con los datos
         return view('negocio', compact(
             'promociones_faltantes',
