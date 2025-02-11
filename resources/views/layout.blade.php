@@ -352,7 +352,7 @@
     </script>
 
 
-    <p id="id_usuario_autenticado"class="">{{ Auth::user()?->id }}</p>
+    <p id="id_usuario_autenticado"class="hidden">{{ Auth::user()?->id }}</p>
     <p id="ruta_actual" class="hidden">{{ request()->path() }}</p>
     @vite('resources/js/app.js')
     @yield('scripts')
