@@ -3,7 +3,7 @@
     <div>
         <div
             class="relative w-full flex bg-white shadow-lg items-center pl-2 pt-2 pb-2 pr-0 md:justify-normal justify-between">
-            <div class="flex md:w-1/3 w-1/2 md:pl-28">
+            <div class="flex md:w-1/3 w-1/2 md:pl-28 z-50">
                 <a href="/"><img src="{{ asset('imagenes/entrega.png') }}" alt=""
                         class="object-contain  ml-auto  w-[255px] h-[68px] "></a>
             </div>
