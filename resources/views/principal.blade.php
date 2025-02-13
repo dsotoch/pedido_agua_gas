@@ -21,7 +21,7 @@
                 <!-- Contenedor del botón y el login -->
                 <div class=" group flex justify-end items-center w-full ">
                     <button id="btn_acceder"
-                        class="hidden md:block text-[16px] leading-9 -translate-x-36">Acceder&nbsp;&nbsp;<i
+                        class="hidden md:block text-[16px] leading-9 -translate-x-36 z-40">Acceder&nbsp;&nbsp;<i
                             class="fa-solid fa-right-to-bracket"></i></button>
                     <button id="openModalUsuario" class="text-white  block md:hidden p-2">
                         <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="Capa_1"
