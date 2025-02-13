@@ -13,6 +13,7 @@ use App\Models\Producto;
 use App\Models\PromocionesUnitario;
 use App\Models\User;
 use Carbon\Carbon;
+use Error;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -273,7 +274,17 @@ class ControllerPedido extends Controller
         try {
             $empresa = Empresa::find($request->empresa_id);
             if (!$empresa) {
-                return response()->json(['mensaje' => 'Empresa no encontrada.'], 404);
+                return "empresa";
+            }
+            // Obtener los IDs de los productos de la empresa
+            $productosEmpresaIds = $empresa->productos->pluck('id');
+            // Filtrar las promociones relacionadas a los productos de la empresa
+            $existe_entrega = EntregaPromociones::whereIn('producto_id', $productosEmpresaIds)
+                ->where('user_id', $usuario->id)
+                ->where('estado', false)
+                ->get();
+            if ($existe_entrega->count() === 0) {
+                return "productos";
             }
             $pedido = Pedido::create([
                 'cliente_id' => $usuario->id,
@@ -286,14 +297,6 @@ class ControllerPedido extends Controller
                 'nota' => $request->referencia ?? 'sin-nota',
                 'empresa_id' => $request->empresa_id,
             ]);
-
-            // Obtener los IDs de los productos de la empresa
-            $productosEmpresaIds = $empresa->productos->pluck('id');
-            // Filtrar las promociones relacionadas a los productos de la empresa
-            $existe_entrega = EntregaPromociones::whereIn('producto_id', $productosEmpresaIds)
-                ->where('user_id', $usuario->id)
-                ->where('estado', false)
-                ->get();
 
             // Obtener los producto_id de las promociones pendientes
             $productosConPromociones = EntregaPromociones::whereIn('producto_id', $productosEmpresaIds)
@@ -350,9 +353,15 @@ class ControllerPedido extends Controller
             $productos = $request->productos ?? [];
             if (empty($productos)) {
                 if (User::findOr($usuario->id)->tipo != "cliente") {
-                    return response()->json(['mensaje' => 'Sin productos enviados para procesar.'], 403);
+                    return response()->json(['mensaje' => 'Sin productos enviados para procesar.'], 412);
                 }
                 $pedido = $this->sinProductos($request, $usuario);
+                if ($pedido === "productos") {
+                    return response()->json(['mensaje' => 'Sin productos enviados para procesar.'], 412);
+                }
+                if ($pedido === "empresa") {
+                    return response()->json(['mensaje' => 'Empresa No encontrada.'], 404);
+                }
                 $empresa = Empresa::find($request->empresa_id);
             } else {
                 $pedido = Pedido::create([
@@ -498,12 +507,8 @@ class ControllerPedido extends Controller
                 $pedido_completo = Pedido::with('detalles', 'detalles.producto', 'entregaPromociones')->find($pedido->id);
                 $controlador_mensaje->crearmensaje('Nuevo Pedido para la empresa.', $admin->id, $pedido->id, $pedido_completo);
             }
-
-
             // Confirmar la transacción
             DB::commit();
-
-
             return response()->json([
                 'ruta' => route('pedido.confirmacion', ['slug' => $empresa->dominio, 'id' => $pedido->id]),
             ], 201);

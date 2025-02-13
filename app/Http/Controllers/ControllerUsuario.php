@@ -141,7 +141,7 @@ class ControllerUsuario extends Controller
                 'celular' => 'required|string|max:9|unique:users,usuario,' . $id,
                 'nombre' => 'required|string|max:255',
                 'dni' => 'required|string|min:8|max:8|unique:persona,dni,' . $id,
-                'email' => 'required|email|max:255|unique:persona,correo,' . $id,
+                'email' => 'nullable|email|max:255|unique:persona,correo,' . $id,
                 'direccion' => 'nullable|string|max:255',
                 'direccion2' => 'nullable|string|max:255',
                 'nota' => 'nullable|string|max:500',

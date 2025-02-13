@@ -38,18 +38,8 @@ export function agregarPedido(pedido, usuario) {
         return `
                 <div class="absolute -top-14 right-0">
                     <div class="relative">
-                        <div class="bg-transparent w-[150px] h-[190px] text-color-titulos-entrega group">
-                            <div class="relative">
-                                <div class="z-50 top-0 left-0 hidden absolute group-hover:flex bg-tarjetas w-[250px] min-w-[250px] text-white p-2 rounded-md text-center">
-                                    <p class="relative text-[14px] leading-[19.6px] pb-4">
-                                        <strong>¡Promo Producto Gratis!</strong><br>
-                                        Aplica un descuento equivalente al costo de 
-                                        ${promociones.length} producto(s) incluido(s) en este pedido.
-                                    </p>
-                                    <div class="absolute -bottom-[13px] left-[calc(50%-10px)] clip-v-shape h-[20px] w-[20px] bg-color-titulos-entrega">
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="bg-transparent w-[150px] h-[190px] text-color-titulos-entrega ">
+                            
                             <img src="imagenes/cajas/botella.svg" alt="" class="absolute top-[120px] left-[104px]">
                         </div>
                     </div>

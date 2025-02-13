@@ -307,8 +307,8 @@ if (form_realizar_pedido) {
         } catch (error) {
             // Mostrar mensaje de error (usando SweetAlert como ejemplo)
             Swal.fire({
-                title: "Error",
-                text: error.message,
+                title: "Ocurrió un error!",
+                text: error,
                 icon: "error",
                 timerProgressBar: true,
                 timer: 3000,
@@ -350,12 +350,8 @@ if (user) {
 }
 
 function conectarWebSocket() {
-    console.log("Intentando conectar a WebSocket...");
-
     window.Echo.private(webSocketChannel)
         .listen('MensajeEntendido', async (e) => {
-            console.log("📡 Evento recibido en WebSocket:", e);
-
             // Verificar que e.message no sea undefined
             if (!e.message) {
                 console.error("⚠️ Error: Mensaje recibido sin datos.");

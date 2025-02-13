@@ -174,21 +174,21 @@
                         <label for="dni" class="block text-color-text">Número de Dni
                             <span class="text-red-500">*</span></label>
                         <!-- Input de Dni -->
-                        <input  type="number" maxlength="8" name="dni" autocomplete="off"
+                        <input  type="number" maxlength="8" name="dni" autocomplete="off" required
                             class=" w-full border-color-text p-3 border rounded-3xl focus:outline-none focus:ring-2 focus:ring-blue-500 ">
 
                         <!-- Teléfono -->
                         <label for="telefono" class="block text-color-text">Número de Celular
                             <span class="text-red-500">*</span></label>
                         <!-- Input de teléfono -->
-                        <input type="tel" maxlength="10" name="telefono" autocomplete="off"
+                        <input type="tel" maxlength="10" name="telefono" autocomplete="off" required
                             class=" w-full border-color-text p-3 border rounded-3xl focus:outline-none focus:ring-2 focus:ring-blue-500 ">
 
                         <!-- Contraseña -->
                         <div>
                             <label for="password" class="block   text-color-text">Contraseña <span
                                     class="text-red-500">*</span></label>
-                            <input type="password" name="password" autocomplete="off"
+                            <input type="password" name="password" autocomplete="off" required
                                 class="w-full border-color-text p-3 border rounded-3xl focus:outline-none focus:ring-2 focus:ring-blue-500">
                         </div>
 
@@ -196,7 +196,7 @@
                         <div>
                             <label for="nombres" class="block   text-color-text">Nombres <span
                                     class="text-red-500">*</span></label>
-                            <input type="text" name="nombres" autocomplete="off"
+                            <input type="text" name="nombres" autocomplete="off" required
                                 class="w-full border-color-text p-3 border rounded-3xl focus:outline-none focus:ring-2 focus:ring-blue-500">
                         </div>
 
@@ -204,14 +204,15 @@
                         <div>
                             <label for="apellidos" class="block  font-medium text-color-texto">Apellidos <span
                                     class="text-red-500">*</span></label>
-                            <input type="text" name="apellidos" autocomplete="off"
+                            <input type="text" name="apellidos" autocomplete="off" required
                                 class="w-full border-color-text p-3 border rounded-3xl focus:outline-none focus:ring-2 focus:ring-blue-500">
                         </div>
 
                         <!-- Correo -->
                         <div>
                             <label for="correo" class="block  font-medium text-color-texto">Correo
-                                Electronico</label>
+                                Electronico<span
+                                class="text-color-text">(Opcional)</span></label>
                             <input type="email" name="correo" autocomplete="off"
                                 class="w-full border-color-text p-3 border rounded-3xl focus:outline-none focus:ring-2 focus:ring-blue-500">
                         </div>
@@ -220,7 +221,7 @@
                         <div>
                             <label for="direccion" class="block  font-medium text-color-texto">Dirección <span
                                     class="text-red-500">*</span></label>
-                            <input type="text" name="direccion" placeholder="Ej. Av los laureles 250"
+                            <input type="text" name="direccion" placeholder="Ej. Av los laureles 250" required
                                 autocomplete="off"
                                 class="w-full border-color-text p-3 border rounded-3xl focus:outline-none focus:ring-2 focus:ring-blue-500">
                         </div>
@@ -230,7 +231,7 @@
                         <div>
                             <label for="nota" class="block  font-medium text-color-texto">Referencia para
                                 Pedidos <span class="text-red-500">*</span></label>
-                            <textarea type="nota" name="nota" autocomplete="off"
+                            <textarea type="nota" name="nota" autocomplete="off" required
                                 placeholder="Ej. A espaldas del Coliseo Municipal |Casa color Celeste."
                                 class="w-full h-[150px] border-color-text p-3 border rounded-3xl focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
                         </div>

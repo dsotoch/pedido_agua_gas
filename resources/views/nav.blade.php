@@ -1,18 +1,19 @@
-    <div class="flex bg-white md:justify-between justify-end items-center content-end  w-full">
+    <div class="relative flex bg-white  w-full">
         <!-- Imagen al inicio -->
-        <div class="grid justify-start w-1/2 ">
+        <div class="grid justify-start md:pl-0 pl-1 w-1/2">
             <a href="{{ route('index.negocio', ['slug' => $empresa->dominio]) }}"> <img
                     src="{{ Storage::url($empresa->logo) }}" alt="Logo" class="w-[421px] h-[68px] object-contain">
             </a>
         </div>
 
         <!-- Botón al final -->
-        <div class="relative group flex  justify-end w-1/2 pr-2">
+        <div class="absolute top-0 right-0   flex group items-start pt-3 justify-end w-1/2  pr-2 h-[120px]">
 
-            <button id="btn_acceder" class="md:mr-40 mr-4 text-[16px] leading-9">Acceder&nbsp;&nbsp;<i
+            <button id="btn_acceder" class="md:mr-40 mr-4 text-[16px] leading-9 ">Acceder&nbsp;&nbsp;<i
                     class="fa-solid fa-right-to-bracket"></i></button>
             <div class="flex space-x-2">
-                <button id="btn_favorito_dis" data-dominio="{{ $empresa->dominio }}" data-logo="{{ $empresa->logo }}" data-nombre="{{ $empresa->nombre }}"
+                <button id="btn_favorito_dis" data-dominio="{{ $empresa->dominio }}" data-logo="{{ $empresa->logo }}"
+                    data-nombre="{{ $empresa->nombre }}"
                     class="text-lg text-color-titulos-entrega hover:text-yellow-500" title="Agregar a Favoritos"><i
                         class="fas fa-star"></i></button>
                 <button id="btn_predeterminado" data-dominio="{{ $empresa->dominio }}"
@@ -31,7 +32,7 @@
             </button>
             @guest
                 <div id="contenedor_login"
-                    class="absolute hidden overflow-y-auto w-[350px]  md:w-[600px] max-h-[80vh] z-50 group-hover:flex  flex-col justify-start text-start  top-12  bg-white shadow-md">
+                    class="absolute hidden overflow-y-auto w-[350px]  md:w-[600px] max-h-[80vh] z-50 group-hover:flex group-focus-within:flex  flex-col justify-start text-start  top-12  bg-white shadow-md">
 
                     <!-- Formulario de inicio de sesión -->
                     <div class="bg-white w-full p-10" id="formLogindiv">
@@ -71,21 +72,21 @@
                             <label for="dni" class="block text-color-text">Número de Dni
                                 <span class="text-red-500">*</span></label>
                             <!-- Input de Dni -->
-                            <input  type="number" maxlength="8" name="dni" autocomplete="off"
+                            <input type="number" maxlength="8" name="dni" autocomplete="off" required
                                 class=" w-full border-color-text p-3 border rounded-3xl focus:outline-none focus:ring-2 focus:ring-blue-500 ">
 
                             <!-- Teléfono -->
                             <label for="telefono" class="block text-color-text">Número de Celular
                                 <span class="text-red-500">*</span></label>
                             <!-- Input de teléfono -->
-                            <input id="telefono" type="tel" maxlength="10" name="telefono" autocomplete="off"
+                            <input id="telefono" type="tel" maxlength="10" name="telefono" autocomplete="off" required
                                 class=" w-full border-color-text p-3 border rounded-3xl focus:outline-none focus:ring-2 focus:ring-blue-500 ">
 
                             <!-- Contraseña -->
                             <div>
                                 <label for="password" class="block   text-color-text">Contraseña <span
                                         class="text-red-500">*</span></label>
-                                <input type="password" name="password" autocomplete="off"
+                                <input type="password" name="password" autocomplete="off" required
                                     class="w-full border-color-text p-3 border rounded-3xl focus:outline-none focus:ring-2 focus:ring-blue-500">
                             </div>
 
@@ -93,7 +94,7 @@
                             <div>
                                 <label for="nombres" class="block   text-color-text">Nombres <span
                                         class="text-red-500">*</span></label>
-                                <input type="text" name="nombres" autocomplete="off"
+                                <input type="text" name="nombres" autocomplete="off" required
                                     class="w-full border-color-text p-3 border rounded-3xl focus:outline-none focus:ring-2 focus:ring-blue-500">
                             </div>
 
@@ -101,14 +102,14 @@
                             <div>
                                 <label for="apellidos" class="block  font-medium text-color-texto">Apellidos <span
                                         class="text-red-500">*</span></label>
-                                <input type="text" name="apellidos" autocomplete="off"
+                                <input type="text" name="apellidos" autocomplete="off" required
                                     class="w-full border-color-text p-3 border rounded-3xl focus:outline-none focus:ring-2 focus:ring-blue-500">
                             </div>
 
                             <!-- Correo -->
                             <div>
-                                <label for="correo" class="block  font-medium text-color-texto">Correo
-                                    Electronico</label>
+                                <label for="correo" class="block w-full font-medium text-color-texto">Correo
+                                    Electronico <span class="text-color-text">(Opcional)</span></label>
                                 <input type="email" name="correo" autocomplete="off"
                                     class="w-full border-color-text p-3 border rounded-3xl focus:outline-none focus:ring-2 focus:ring-blue-500">
                             </div>
@@ -118,7 +119,7 @@
                                 <label for="direccion" class="block  font-medium text-color-texto">Dirección <span
                                         class="text-red-500">*</span></label>
                                 <input type="text" name="direccion" placeholder="Ej. Av los laureles 250"
-                                    autocomplete="off"
+                                    autocomplete="off" required
                                     class="w-full border-color-text p-3 border rounded-3xl focus:outline-none focus:ring-2 focus:ring-blue-500">
                             </div>
 
@@ -127,7 +128,7 @@
                             <div>
                                 <label for="nota" class="block  font-medium text-color-texto">Referencia para
                                     Pedidos <span class="text-red-500">*</span></label>
-                                <textarea type="nota" name="nota" autocomplete="off"
+                                <textarea type="nota" name="nota" autocomplete="off" required
                                     placeholder="Ej. A espaldas del Coliseo Municipal |Casa color Celeste."
                                     class="w-full h-[150px] border-color-text p-3 border rounded-3xl focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
                             </div>
@@ -157,7 +158,7 @@
             @endguest
             @auth
                 <div
-                    class="absolute hidden overflow-y-auto w-full  md:w-[600px] max-h-[80vh] min-h-[250px] z-50 group-hover:flex  flex-col justify-start text-start  top-12  bg-white shadow-md">
+                    class="absolute hidden overflow-y-auto w-full  md:w-[600px] max-h-[80vh] min-h-[250px] z-50 group-hover:flex group-focus-within:flex  flex-col justify-start text-start  top-12  bg-white shadow-md">
 
                     <!--Usuario ya Autenticado--->
                     <div class="absolute w-full">

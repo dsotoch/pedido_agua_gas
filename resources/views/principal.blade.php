@@ -1,22 +1,27 @@
 @extends('layout')
 @section('cuerpo')
     <div>
-        <div class="w-full flex bg-white shadow-lg items-center pl-2 pt-2 pb-2 pr-0 md:justify-normal justify-between">
+        <div
+            class="relative w-full flex bg-white shadow-lg items-center pl-2 pt-2 pb-2 pr-0 md:justify-normal justify-between">
             <div class="flex md:w-1/3 w-1/2 md:pl-28">
                 <a href="/"><img src="{{ asset('imagenes/entrega.png') }}" alt=""
                         class="object-contain  ml-auto  w-[255px] h-[68px] "></a>
             </div>
-            <div class="flex  md:w-3/5 w-1/2 justify-end items-center space-x-4 md:translate-x-20 translate-x-4">
+            <div class="flex  md:w-3/5 w-1/2 justify-end pr-52 items-center">
                 <!-- Enlace de distribuidor -->
                 <a href="#distribuidor"
-                    class="text-[16px] hidden md:block relative after:content-[''] after:absolute after:left-0 after:-bottom-4 
-                   after:w-0 after:h-[2px] after:bg-naranja after:transition-all hover:after:w-full">
+                    class="text-[16px] z-50 hidden md:block relative after:content-[''] after:absolute after:left-0 after:-bottom-4 
+             after:w-0 after:h-[2px] after:bg-naranja after:transition-all hover:after:w-full">
                     ¿Eres distribuidor?
                 </a>
+            </div>
+
+            <div
+                class="absolute top-0 right-0 h-[120px]  w-full pt-6  pr-4">
                 <!-- Contenedor del botón y el login -->
-                <div class="relative group flex items-center w-1/3">
+                <div class=" group flex justify-end items-center w-full ">
                     <button id="btn_acceder"
-                        class="hidden md:block text-[16px] leading-9 translate-x-8">Acceder&nbsp;&nbsp;<i
+                        class="hidden md:block text-[16px] leading-9 -translate-x-36">Acceder&nbsp;&nbsp;<i
                             class="fa-solid fa-right-to-bracket"></i></button>
                     <button id="openModalUsuario" class="text-white  block md:hidden p-2">
                         <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="Capa_1"
@@ -28,7 +33,7 @@
                     </button>
                     @auth
                         <div
-                            class="absolute w-full   hidden overflow-y-auto min-w-[400px] md:min-w-[600px] max-h-[80vh] min-h-[250px] z-50 group-hover:flex  flex-col justify-start text-start  top-12  -left-[350px] bg-white shadow-md">
+                            class="absolute hidden overflow-y-auto min-w-[400px] md:min-w-[600px] max-h-[80vh] min-h-[250px] z-50 group-hover:flex  flex-col justify-start text-start  top-[62px]  right-0 bg-white shadow-md">
 
                             <!--Usuario ya Autenticado--->
                             <div class="absolute w-full">
@@ -85,7 +90,7 @@
 
                                 <div class="flex flex-col justify-start text-left mt-2 space-y-4">
                                     <!-- Alineado a la izquierda -->
-                                    <button class="btn_pass text-left text-color-text" >¿Olvidaste tu Contraseña? <i
+                                    <button class="btn_pass text-left text-color-text">¿Olvidaste tu Contraseña? <i
                                             class="fas fa-arrow-right-long text-2xl  ml-2"></i></button>
                                     <button id="botonregistrarsepanelcliente" class="text-left text-color-text">Crear Una Cuenta
                                         <i class="fas fa-arrow-right-long text-2xl ml-2"></i></button>
@@ -101,21 +106,21 @@
                                     <label for="dni" class="block text-color-text">Número de Dni
                                         <span class="text-red-500">*</span></label>
                                     <!-- Input de Dni -->
-                                    <input id="dni" type="number" maxlength="8" name="dni" autocomplete="off"
+                                    <input id="dni" type="number" maxlength="8" name="dni" autocomplete="off" required
                                         class=" w-full border-color-text p-3 border rounded-3xl focus:outline-none focus:ring-2 focus:ring-blue-500 ">
 
                                     <!-- Teléfono -->
                                     <label for="telefono" class="block text-color-text">Número de Celular
                                         <span class="text-red-500">*</span></label>
                                     <!-- Input de teléfono -->
-                                    <input id="telefono" type="tel" maxlength="10" name="telefono" autocomplete="off"
+                                    <input id="telefono" type="tel" maxlength="10" name="telefono" autocomplete="off" required
                                         class=" w-full border-color-text p-3 border rounded-3xl focus:outline-none focus:ring-2 focus:ring-blue-500 ">
 
                                     <!-- Contraseña -->
                                     <div>
                                         <label for="password" class="block   text-color-text">Contraseña <span
                                                 class="text-red-500">*</span></label>
-                                        <input type="password" name="password" autocomplete="off"
+                                        <input type="password" name="password" autocomplete="off" required
                                             class="w-full border-color-text p-3 border rounded-3xl focus:outline-none focus:ring-2 focus:ring-blue-500">
                                     </div>
 
@@ -123,7 +128,7 @@
                                     <div>
                                         <label for="nombres" class="block   text-color-text">Nombres <span
                                                 class="text-red-500">*</span></label>
-                                        <input type="text" name="nombres" autocomplete="off"
+                                        <input type="text" name="nombres" autocomplete="off" required
                                             class="w-full border-color-text p-3 border rounded-3xl focus:outline-none focus:ring-2 focus:ring-blue-500">
                                     </div>
 
@@ -131,14 +136,14 @@
                                     <div>
                                         <label for="apellidos" class="block  font-medium text-color-texto">Apellidos <span
                                                 class="text-red-500">*</span></label>
-                                        <input type="text" name="apellidos" autocomplete="off"
+                                        <input type="text" name="apellidos" autocomplete="off" required
                                             class="w-full border-color-text p-3 border rounded-3xl focus:outline-none focus:ring-2 focus:ring-blue-500">
                                     </div>
 
                                     <!-- Correo -->
                                     <div>
                                         <label for="correo" class="block  font-medium text-color-texto">Correo
-                                            Electronico <span class="text-red-500">*</span></label>
+                                            Electronico <span class="text-color-text">(Opcional)</span></label>
                                         <input type="email" name="correo" autocomplete="off"
                                             class="w-full border-color-text p-3 border rounded-3xl focus:outline-none focus:ring-2 focus:ring-blue-500">
                                     </div>
@@ -147,8 +152,8 @@
                                     <div>
                                         <label for="direccion" class="block  font-medium text-color-texto">Dirección <span
                                                 class="text-red-500">*</span></label>
-                                        <input type="text" name="direccion" placeholder="Ej. Av los laureles 250"
-                                            autocomplete="off"
+                                        <input type="text" name="direccion" placeholder="Ej. Av los laureles 250" 
+                                            autocomplete="off" required
                                             class="w-full border-color-text p-3 border rounded-3xl focus:outline-none focus:ring-2 focus:ring-blue-500">
                                     </div>
 
@@ -157,7 +162,7 @@
                                     <div>
                                         <label for="nota" class="block  font-medium text-color-texto">Referencia para
                                             Pedidos <span class="text-red-500">*</span></label>
-                                        <textarea type="nota" name="nota" autocomplete="off"
+                                        <textarea type="nota" name="nota" autocomplete="off" required
                                             placeholder="Ej. A espaldas del Coliseo Municipal |Casa color Celeste."
                                             class="w-full h-[150px] border-color-text p-3 border rounded-3xl focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
                                     </div>

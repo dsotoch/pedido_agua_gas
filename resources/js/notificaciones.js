@@ -30,8 +30,6 @@ async function verificar_permisos() {
 
 export async function mostrarNotificacion(titulo, texto, tag) {
     const permiso = await verificar_permisos();
-    console.log("Permiso de notificación:", permiso);
-
     if (permiso) {
         const notification = new Notification(titulo, {
             body: texto,

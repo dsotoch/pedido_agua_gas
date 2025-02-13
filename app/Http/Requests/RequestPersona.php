@@ -31,7 +31,7 @@ class RequestPersona extends FormRequest
             'password' => 'required|string|min:6',
             'direccion' => 'required|string|max:255',
             'nota' => 'nullable|string|max:500',
-            'correo' => 'required|unique:persona,correo',
+            'correo' => 'nullable|unique:persona,correo',
 
 
         ];
@@ -67,7 +67,6 @@ class RequestPersona extends FormRequest
             'nota.string' => 'El campo nota debe ser una cadena de texto.',
             'nota.max' => 'El campo nota no puede tener mas de 500 caracteres.',
 
-            'correo.required' => 'El campo correo es obligatorio.',
             'correo.unique' => 'El correo ingresado ya existe en la base de datos.',
         ];
     }

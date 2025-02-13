@@ -32,7 +32,8 @@
                 @if ($usuario->tipo == 'admin' || $usuario->tipo == 'repartidor')
                     @if ($pedidos->count() > 0)
                         @foreach ($pedidos as $pedido)
-                            <div id="caja-{{ $pedido->id }}" class="md:p-[15px] p-0 mi_cuenta_pedido w-[95%] md:w-[363px]">
+                            <div id="caja-{{ $pedido->id }}"
+                                class="md:p-[15px] p-0 mi_cuenta_pedido w-[95%] md:w-[363px]">
                                 <div
                                     class="flex-1 h-full w-[95%] md:w-[333px] md:max-w-[333px] p-[20px] bg-color-tarjetas rounded-3xl text-color-titulos-entrega font-sans text-base">
                                     <div class="space-y-0 relative">
@@ -300,21 +301,7 @@
                                                 <div class="relative">
                                                     <div
                                                         class="bg-transparent w-[150px]  h-[190px]  text-color-titulos-entrega group ">
-                                                        <div class="relative">
-                                                            <div
-                                                                class="z-50 top-0 left-0 hidden absolute group-hover:flex bg-tarjetas w-[250px] min-w-[250px] text-white p-2 rounded-md text-center">
-                                                                <p class="relative text-[14px] leading-[19.6px] pb-4">
-                                                                    <strong>¡Promo Producto Gratis!</strong><br>
-                                                                    Aplica un descuento equivalente al costo de
-                                                                    {{ $pedido->entregaPromociones->count() }} producto(s)
-                                                                    incluido(s)
-                                                                    en este pedido.
-                                                                </p>
-                                                                <div
-                                                                    class="absolute -bottom-[13px] left-[calc(50%-10px)] clip-v-shape h-[20px] w-[20px] bg-color-titulos-entrega ">
-                                                                </div>
-                                                            </div>
-                                                        </div>
+
 
 
                                                         <img src="{{ asset('imagenes/cajas/botella.svg') }}"
@@ -630,21 +617,7 @@
                                                 <div class="relative">
                                                     <div
                                                         class="bg-transparent w-[150px]  h-[190px]  text-color-titulos-entrega group ">
-                                                        <div class="relative">
-                                                            <div
-                                                                class="z-10 top-0 left-0 hidden absolute group-hover:flex bg-tarjetas w-[250px] min-w-[250px] text-white p-2 rounded-md text-center">
-                                                                <p class="relative text-[14px] leading-[19.6px] pb-4">
-                                                                    <strong>¡Promo Producto Gratis!</strong><br>
-                                                                    Aplica un descuento equivalente al costo de
-                                                                    {{ $pedido->entregaPromociones->count() }} producto(s)
-                                                                    incluido(s)
-                                                                    en este pedido.
-                                                                </p>
-                                                                <div
-                                                                    class="absolute -bottom-[13px] left-[calc(50%-10px)] clip-v-shape h-[20px] w-[20px] bg-color-titulos-entrega ">
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                                                        
 
 
                                                         <svg xmlns="http://www.w3.org/2000/svg"
