@@ -17,11 +17,11 @@
             </div>
 
             <div
-                class="absolute top-0 right-0 h-[120px]  w-full pt-6  pr-4">
+                class="absolute top-0 right-0 h-[120px] group w-1/2 pt-6  pr-4">
                 <!-- Contenedor del botón y el login -->
-                <div class=" group flex justify-end items-center w-full ">
+                <div class="  flex justify-end items-center w-full ">
                     <button id="btn_acceder"
-                        class="hidden md:block text-[16px] leading-9 -translate-x-36 z-40">Acceder&nbsp;&nbsp;<i
+                        class="hidden md:block text-[16px] leading-9 -translate-x-36 z-50">Acceder&nbsp;&nbsp;<i
                             class="fa-solid fa-right-to-bracket"></i></button>
                     <button id="openModalUsuario" class="text-white  block md:hidden p-2">
                         <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="Capa_1"
@@ -33,7 +33,7 @@
                     </button>
                     @auth
                         <div
-                            class="absolute hidden overflow-y-auto min-w-[400px] md:min-w-[600px] max-h-[80vh] min-h-[250px] z-50 group-hover:flex  flex-col justify-start text-start  top-[62px]  right-0 bg-white shadow-md">
+                            class="absolute hidden overflow-y-auto min-w-[400px] md:min-w-[600px] max-h-[80vh] min-h-[250px] z-50 group-hover:flex  flex-col justify-start text-start  top-20  right-0 bg-white shadow-md">
 
                             <!--Usuario ya Autenticado--->
                             <div class="absolute w-full">
@@ -65,7 +65,7 @@
                     @endauth
                     @guest
                         <div id="contenedor_login"
-                            class="absolute hidden overflow-y-auto min-w-[400px] md:min-w-[600px] max-h-[80vh] min-h-[400px] z-50 group-hover:flex h-auto flex-col justify-start text-start top-12 right-0  bg-white shadow-md">
+                            class="absolute hidden overflow-y-auto min-w-[400px] md:min-w-[600px] max-h-[80vh] min-h-[400px] z-50 group-hover:flex h-auto flex-col justify-start text-start top-20 right-0  bg-white shadow-md">
                             <!-- Aquí va todo tu contenido del formulario -->
                             <!-- Formulario de inicio de sesión -->
                             <div class="bg-white w-full p-10" id="formLogindiv">
