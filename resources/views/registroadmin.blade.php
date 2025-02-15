@@ -66,7 +66,7 @@
                 <!-- Logo -->
                 <div class="mb-4">
                     <label for="logo" class="block text-gray-600 font-medium mb-1">Logo Horizontal</label>
-                    <input type="file" id="logo" name="logo" accept="image/png, image/jpeg"
+                    <input type="file" id="logo" name="logo" accept="image/png, image/jpeg , image/webp"
                         class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                     @error('logo')
                         <span class="text-red-500">{{ $message }}</span>
@@ -75,7 +75,7 @@
                 <!-- Logo Cuadrado -->
                 <div class="mb-4">
                     <label for="logo_vertical" class="block text-gray-600 font-medium mb-1">Logo Cuadrado</label>
-                    <input type="file"  name="logo_vertical" accept="image/png, image/jpeg"
+                    <input type="file"  name="logo_vertical" accept="image/png, image/jpeg, image/webp"
                         class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                     @error('logo_vertical')
                         <span class="text-red-500">{{ $message }}</span>
@@ -84,7 +84,7 @@
                 <!-- Galería de imágenes -->
                 <div class="mb-4">
                     <label for="galeria" class="block text-gray-600 font-medium mb-1">Galería de Imágenes</label>
-                    <input type="file" id="imagenes" name="imagenes[]" multiple accept="image/png, image/jpeg"
+                    <input type="file" id="imagenes" name="imagenes[]" multiple accept="image/png, image/jpeg, image/webp"
                         class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                     <p class="mb-2 text-naranja">Puedes seleccionar múltiples imágenes</p>
                     @error('imagenes')

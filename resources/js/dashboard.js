@@ -47,7 +47,7 @@ if (btn_favorito) {
     btn_favorito.addEventListener('click', () => {
         let baseUrl = window.location.origin;
         let url = `${baseUrl}/${btn_favorito.dataset.dominio}`; // Construcción correcta de la URL
-        if (agregarFavorito(url, btn_favorito.dataset.nombre ,btn_favorito.dataset.logo)) {
+        if (agregarFavorito(url, btn_favorito.dataset.nombre, btn_favorito.dataset.logo)) {
             btn_favorito.classList.add('text-yellow-500');
 
         } else {
@@ -67,7 +67,7 @@ if (esPaginaPredeterminada()) {
 }
 
 if (ruta_cliente_distribuidora) {
-    ruta_cliente_distribuidora.href = paginaPredeterminada()?? '/';
+    ruta_cliente_distribuidora.href = paginaPredeterminada() ?? '/';
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -93,7 +93,15 @@ if (select_direccion) {
     });
 }
 if (mi_cuenta_input_buscar) {
-    mi_cuenta_input_buscar.addEventListener('keyup', () => {
+    mi_cuenta_input_buscar.addEventListener('input', (e) => {
+
+        if (!e.target.value) {
+            mi_cuenta_contenedor_pedidos.querySelector('#mi_cuenta_contenedor_pedidos').querySelectorAll('.mi_cuenta_pedido').forEach(element => {
+
+                element.classList.remove('hidden'); // Quita la clase 'hidden' de todos los elementos
+            });
+            return;
+        }
         const cliente_a_filtrar = mi_cuenta_input_buscar.value.trim(); // Obtiene el valor seleccionado
         let hayResultados = false;
         if (mi_cuenta_contenedor_pedidos) {

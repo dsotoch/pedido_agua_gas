@@ -136,8 +136,8 @@
                 <input type="text" readonly
                     class="total text-[18px] border w-[328px] h-[55px] rounded-md focus:outline-none bg-secundario text-white font-bold  text-center pt-[10px] pb-[10px] "
                     value="Total: S/0.00">
-                <button type="button"
-                    class="btnproductoagregar  font-normal text-[18px]  w-[328px] h-[55px] rounded-md custom-bg-button  text-white mt-2">
+                <button type="button" disabled
+                    class="btnproductoagregar disabled:opacity-50 opacity-100  font-normal text-[18px]  w-[328px] h-[55px] rounded-md custom-bg-button  text-white mt-2">
                     Siguiente
                     <i class=" fas fa-arrow-right-long text-2xl ml-2 "></i></button>
 

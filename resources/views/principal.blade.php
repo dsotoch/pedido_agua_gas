@@ -16,8 +16,7 @@
                 </a>
             </div>
 
-            <div
-                class="absolute top-0 right-0 h-[120px] group w-1/2 pt-6  pr-4">
+            <div class="absolute top-0 right-0 h-[120px] group w-1/2 pt-6  pr-4">
                 <!-- Contenedor del botón y el login -->
                 <div class="  flex justify-end items-center w-full ">
                     <button id="btn_acceder"
@@ -106,14 +105,16 @@
                                     <label for="dni" class="block text-color-text">Número de Dni
                                         <span class="text-red-500">*</span></label>
                                     <!-- Input de Dni -->
-                                    <input id="dni" type="number" maxlength="8" name="dni" autocomplete="off" required
+                                    <input id="dni" type="number" maxlength="8" name="dni" autocomplete="off"
+                                        required
                                         class=" w-full border-color-text p-3 border rounded-3xl focus:outline-none focus:ring-2 focus:ring-blue-500 ">
 
                                     <!-- Teléfono -->
                                     <label for="telefono" class="block text-color-text">Número de Celular
                                         <span class="text-red-500">*</span></label>
                                     <!-- Input de teléfono -->
-                                    <input id="telefono" type="tel" maxlength="10" name="telefono" autocomplete="off" required
+                                    <input id="telefono" type="tel" maxlength="10" name="telefono" autocomplete="off"
+                                        required
                                         class=" w-full border-color-text p-3 border rounded-3xl focus:outline-none focus:ring-2 focus:ring-blue-500 ">
 
                                     <!-- Contraseña -->
@@ -152,7 +153,7 @@
                                     <div>
                                         <label for="direccion" class="block  font-medium text-color-texto">Dirección <span
                                                 class="text-red-500">*</span></label>
-                                        <input type="text" name="direccion" placeholder="Ej. Av los laureles 250" 
+                                        <input type="text" name="direccion" placeholder="Ej. Av los laureles 250"
                                             autocomplete="off" required
                                             class="w-full border-color-text p-3 border rounded-3xl focus:outline-none focus:ring-2 focus:ring-blue-500">
                                     </div>
@@ -210,22 +211,25 @@
                         <i class="fas fa-search"></i>
                     </button>
                 </div>
-                <div class="relative w-full bg-white  rounded-md p-2 hidden" id="contenedorResultados">
-                    <!-- Aseguramos que el div con audioBars se posicione dentro del contexto relativo -->
-                    <div id="audioBars"
-                        class="hidden  items-center space-x-1 rounded-md p-3 top-0 left-0 justify-center absolute w-full bg-white">
-                        <div class="w-2 bg-naranja h-8"></div>
-                        <div class="w-2 bg-naranja h-12"></div>
-                        <div class="w-2 bg-naranja h-6"></div>
-                        <div class="w-2 bg-naranja h-10"></div>
-                        <div class="w-2 bg-naranja h-7"></div>
+                <div class="relative " id="contenedorResultados">
+                    <div id="empresas" class="absolute flex flex-col  top-0 w-full bg-white rounded-md">
+
                     </div>
+                    <div class="absolute top-0 shadow-2xl w-full p-2 hidden" id="contenedor_bars">
+                        <!-- Aseguramos que el div con audioBars se posicione dentro del contexto relativo -->
+                        <div id="audioBars"
+                            class="absolute flex top-0 left-0   items-center space-x-1 rounded-md p-3 justify-center  w-full bg-white">
+                            <div class="w-2 bg-naranja h-8"></div>
+                            <div class="w-2 bg-naranja h-12"></div>
+                            <div class="w-2 bg-naranja h-6"></div>
+                            <div class="w-2 bg-naranja h-10"></div>
+                            <div class="w-2 bg-naranja h-7"></div>
+                        </div>
 
+                    </div>
                 </div>
-                <div class="relative  bg-white  hidden rounded-md p-2" id="contenedorResultados2">
 
 
-                </div>
 
 
 

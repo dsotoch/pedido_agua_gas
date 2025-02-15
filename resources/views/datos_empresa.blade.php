@@ -94,7 +94,7 @@
                     <!-- Logo -->
                     <div>
                         <label for="logo" class="block text-gray-600 font-medium mb-1">Logo Horizontal</label>
-                        <input type="file" id="logo" name="logo" accept="image/png, image/jpeg"
+                        <input type="file" id="logo" name="logo" accept="image/png, image/jpeg, image/webp"
                             class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                         @error('logo')
                             <span class="text-red-500">{{ $message }}</span>
@@ -104,7 +104,7 @@
                     <!-- Logo Cuadrado -->
                     <div>
                         <label for="logo_vertical" class="block text-gray-600 font-medium mb-1">Logo Cuadrado</label>
-                        <input type="file" id="logo_vertical" name="logo_vertical" accept="image/png, image/jpeg"
+                        <input type="file" id="logo_vertical" name="logo_vertical" accept="image/png, image/jpeg, image/webp"
                             class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                         @error('logo_cuadrado')
                             <span class="text-red-500">{{ $message }}</span>
@@ -114,7 +114,7 @@
                     <!-- Galería de imágenes (ocupa 2 columnas) -->
                     <div class="mt-4">
                         <label for="imagenes" class="block text-gray-600 font-medium mb-1">Galería de Imágenes</label>
-                        <input type="file" id="imagenes" name="imagenes[]" multiple accept="image/png, image/jpeg"
+                        <input type="file" id="imagenes" name="imagenes[]" multiple accept="image/png, image/jpeg, image/webp"
                             class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <p class="mb-2 text-naranja">Puedes seleccionar múltiples imágenes</p>
                         @error('imagenes')

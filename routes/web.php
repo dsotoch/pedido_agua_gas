@@ -55,6 +55,7 @@ Route::prefix('{slug}')->controller(ControllerPedido::class)->group(function () 
     Route::post('/crearpedido', 'store')->name('pedido.crear');
     Route::put('/cancelarpedido', 'cancelarPedido')->name('pedido.cancelarPedido');
     Route::get('/pedido_confirmado/{id}', 'vista_pedido_confirmado')->name("pedido.confirmacion");
+
 });
 Route::controller(ControllerPedido::class)->group(function () {
     Route::put('cambiarestadopago/{id}', 'pedidorecibidorepartidor')->name('pedido.recibididorepartidor');
@@ -62,6 +63,7 @@ Route::controller(ControllerPedido::class)->group(function () {
     Route::put('cambiarestadopago', 'cambiarestadopago')->name('pedido.cambiarestadopago');
     Route::put('anular', 'anular')->name('pedido.anular');
     Route::put('editar', 'editar')->name('pedido.editar');
+    Route::delete('eliminarPedido/{id}', 'destroy')->name("pedido.eliminar");
     Route::get('pedido/{id}', 'buscar_pedido')->name('pedido.buscar');
 });
 

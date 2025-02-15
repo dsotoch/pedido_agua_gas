@@ -14,8 +14,13 @@ const totalPedidos = document.getElementById('total_pedidos');
 const form_metodo_pago_reporte = document.getElementById('form_metodo_pago_reporte');
 const modal_pago_reporte = document.getElementById('modal_pago_reporte');
 const token = document.querySelector('meta[name="token"]').getAttribute('content');
+const contenedor_cantidad_productos = document.getElementById('contenedor_cantidad_productos');
+let cantidad_total = 0;
 
-// Filtrar filas de la tabla
+// Verificar si la tabla existe
+if (tabla_reportes) {
+    cantidad_total = tabla_reportes.querySelectorAll('tbody tr').length;
+}
 function filtrar() {
     const filtroId = orderId.value.toLowerCase();
     const filtroNombre = ClienteNombre.value.toLowerCase();
@@ -28,7 +33,16 @@ function filtrar() {
         const celdaId = fila.cells[0]?.textContent.toLowerCase();
         const celdaClienteID = fila.cells[1]?.textContent.toLowerCase();
         const celdaClienteNombre = fila.cells[2]?.textContent.toLowerCase();
-        const celdaTotal = parseFloat(fila.cells[4]?.textContent.trim()) || 0; // Obtener el valor de la columna de total
+        const ths = document.querySelectorAll("#tabla_reportes th"); // Selecciona todos los <th> de la tabla
+
+        let thTotal = null;
+        ths.forEach((th, index) => {
+
+            if (th.textContent.trim() === 'Total') {
+                thTotal = index;
+            }
+        });
+        const celdaTotal = parseFloat(fila.cells[thTotal]?.textContent.trim()) || 0; // Obtener el valor de la columna de total
 
         // Mostrar u ocultar la fila según los filtros
         if (
@@ -43,6 +57,7 @@ function filtrar() {
             fila.style.display = 'none';
         }
     });
+    cantidad_total = contador;
     actualizarPedidos(contador, total);
 
 }
@@ -62,7 +77,15 @@ function filtrarPorSelect() {
     let total = 0;
     let contador = 0;
     filas.forEach(fila => {
-        const celdaEstado = fila.cells[7]?.textContent.toLowerCase();
+        const ths = document.querySelectorAll("#tabla_reportes th"); // Selecciona todos los <th> de la tabla
+        let thEstado = null;
+        ths.forEach((th, index) => {
+            if (th.textContent.trim() === "Delivery") {
+                thEstado = index;
+            }
+
+        });
+        const celdaEstado = fila.cells[thEstado]?.textContent.toLowerCase();
         const celdaTipo = fila.cells[3]?.textContent.toLowerCase();
         const celdaTotal = parseFloat(fila.cells[4]?.textContent.trim()) || 0; // Obtener el valor de la columna de total
 
@@ -78,6 +101,7 @@ function filtrarPorSelect() {
             fila.style.display = 'none';
         }
     });
+    cantidad_total = contador;
     actualizarPedidos(contador, total);
 
 }
@@ -98,8 +122,30 @@ function filtrarPorEstadoPago() {
     let total = 0;
     let contador = 0;
     filas.forEach(fila => {
-        const celdaEstadoPago = fila.cells[6]?.textContent.toLowerCase();
-        const celdaTotal = parseFloat(fila.cells[4]?.textContent.trim()) || 0; // Obtener el valor de la columna de total
+        const ths = document.querySelectorAll("#tabla_reportes th"); // Selecciona todos los <th> de la tabla
+        let thEstado = null;
+        let thTotal = null;
+        ths.forEach((th, index) => {
+            if (th.textContent.trim() === 'Pago') {
+                thEstado = index;
+            }
+            if (th.textContent.trim() === 'Total') {
+                thTotal = index;
+            }
+
+        });
+        let celdaEstadoPago = '';
+        let celdaTotal = 0;
+
+        if (estadoSeleccionado === 'deuda pendiente') {
+            celdaEstadoPago = fila.cells[3]?.textContent?.toLowerCase() || '';
+            const celdaTotalIndex = thTotal; // Asegúrate de que `thTotal` está definido correctamente
+            celdaTotal = parseFloat(fila.cells[celdaTotalIndex]?.textContent.trim()) || 0;
+        } else {
+            celdaEstadoPago = fila.cells[thEstado]?.textContent?.toLowerCase() || '';
+            const celdaTotalIndex = thEstado - 2; // Dos celdas antes
+            celdaTotal = parseFloat(fila.cells[celdaTotalIndex]?.textContent.trim()) || 0;
+        }
 
         // Mostrar todas las filas si "Todos" está seleccionado o si coincide el estado de pago
         if (estadoSeleccionado === '' || celdaEstadoPago.includes(estadoSeleccionado)) {
@@ -109,7 +155,9 @@ function filtrarPorEstadoPago() {
         } else {
             fila.style.display = 'none';
         }
+
     });
+    cantidad_total = contador;
     actualizarPedidos(contador, total);
 }
 
@@ -137,8 +185,19 @@ function filtrarPorFecha() {
     let total = 0;
     let contador = 0;
     filas.forEach(fila => {
-        const celdaFecha = fila.cells[8]?.textContent.trim(); // Obtener el texto de la celda de fecha
-        const celdaTotal = parseFloat(fila.cells[4]?.textContent.trim()) || 0; // Obtener el valor de la columna de total
+        const ths = document.querySelectorAll("#tabla_reportes th"); // Selecciona todos los <th> de la tabla
+        let thFecha = null;
+        let thTotal = null;
+        ths.forEach((th, index) => {
+            if (th.textContent.trim() === 'Fecha') {
+                thFecha = index;
+            }
+            if (th.textContent.trim() === 'Total') {
+                thTotal = index;
+            }
+        });
+        const celdaFecha = fila.cells[thFecha]?.textContent.trim(); // Obtener el texto de la celda de fecha
+        const celdaTotal = parseFloat(fila.cells[thTotal]?.textContent.trim()) || 0; // Obtener el valor de la columna de total
 
         if (!celdaFecha) return;
 
@@ -157,16 +216,11 @@ function filtrarPorFecha() {
             fila.style.display = 'none';
         }
     });
+    cantidad_total = contador;
     actualizarPedidos(contador, total);
 }
 
-[fechaFrom, fechaTo].forEach(fecha => {
-    if (fecha) {
-        fecha.addEventListener('change', () => {
-            filtrarPorFecha();
-        })
-    }
-})
+
 
 // Asignar evento al botón de filtro
 if (botonFiltrar) {
@@ -186,8 +240,19 @@ function filtrarPorCheckbox() {
     let total = 0; // Total de los pedidos filtrados
 
     filas.forEach(fila => {
-        const celdaValor = fila.cells[5]?.textContent.trim(); // Obtener el valor de la columna
-        const celdaTotal = parseFloat(fila.cells[4]?.textContent.trim()) || 0; // Obtener el valor de la columna de total
+        const ths = document.querySelectorAll("#tabla_reportes th"); // Selecciona todos los <th> de la tabla
+        let thValor = null;
+        let thTotal = null;
+        ths.forEach((th, index) => {
+            if (th.textContent.trim() === 'PG') {
+                thValor = index;
+            }
+            if (th.textContent.trim() === 'Total') {
+                thTotal = index;
+            }
+        });
+        const celdaValor = fila.cells[thValor]?.textContent.trim(); // Obtener el valor de la columna
+        const celdaTotal = parseFloat(fila.cells[thTotal]?.textContent.trim()) || 0; // Obtener el valor de la columna de total
 
         // Si no hay checkboxes seleccionados, mostrar todas las filas
         if (valoresSeleccionados.length === 0 || valoresSeleccionados.includes(celdaValor)) {
@@ -198,7 +263,7 @@ function filtrarPorCheckbox() {
             fila.style.display = 'none';
         }
     });
-
+    cantidad_total = contador;
     actualizarPedidos(contador, total);
 }
 
@@ -211,22 +276,72 @@ document.querySelectorAll('input[name="noveno_gratis"]').forEach(checkbox => {
 });
 
 function actualizarPedidos(numero, total) {
-    if (numeroPedidos && totalPedidos) {
+    const ths = document.querySelectorAll("#tabla_reportes th"); // Selecciona todos los <th> de la tabla
+    let thMedioIndex = -1;
+    let thTotalIndex = -1;
+    let thValores = [];
+
+    ths.forEach((th, index) => {
+        const texto = th.textContent.trim();
+        if (texto === 'Medio') {
+            thMedioIndex = index;
+        } else if (texto === 'Total') {
+            thTotalIndex = index;
+        }
+    });
+
+    const thsArray = Array.from(ths);
+
+    // Ahora puedes usar el método slice
+    if (thMedioIndex !== -1 && thTotalIndex !== -1) {
+        thValores = thsArray.slice(thMedioIndex + 1, thTotalIndex).map((th, i) => ({
+            descripcion: th.textContent.trim(),
+            indice: thMedioIndex + 1 + i,
+            cantidad: 0 // 🔹 Inicializamos cantidad
+        }));
+        // Recorremos SOLO las filas visibles y sumamos los valores de cada columna
+        document.querySelectorAll("tbody tr").forEach(fila => {
+            if (fila.style.display !== "none") { // 🔹 Solo filas visibles
+                thValores.forEach(columna => {
+                    let valor = parseFloat(fila.cells[columna.indice]?.textContent.trim()) || 0;
+                    columna.cantidad += valor; // Sumamos solo las filas visibles
+                });
+            }
+        });
+    }
+    if (numeroPedidos && totalPedidos && contenedor_cantidad_productos) {
         numeroPedidos.textContent = numero;
         totalPedidos.textContent = 'S/.' + total;
+        contenedor_cantidad_productos.innerHTML = '';
+
+        // Iterar sobre el array y crear los elementos
+        thValores.forEach(({ descripcion, cantidad }) => {
+            const div = document.createElement("div");
+            div.classList.add("flex", "items-center");
+
+            div.innerHTML = `
+        <b id="cantidad_producto">${cantidad}</b>
+        <span class="ml-1" id="producto">${descripcion}</span>
+        <span class="text-naranja font-bold mx-2 text-2xl">></span>
+    `;
+
+            contenedor_cantidad_productos.appendChild(div);
+        });
     }
 }
 
 
 /* Modal para cancelar la deuda de los clientes    */
 let pedido_id;
-let columna_para_modificar;
-let columna_para_modificar_estado;
+let columna_para_modificar = null;
+let columna_para_modificar_estado = null;
+let columna_para_modificar_delivery = null;
 const modal_pago_reporte_id = document.getElementById('modal_pago_reporte_id');
 const id_pedido_modal_pago = document.getElementById('id_pedido_modal_pago');
 
 if (tabla_reportes) {
     const btn_cliente_pago_deuda = tabla_reportes.querySelectorAll('.btn_cliente_pago_deuda');
+    const btn_eliminar_pedido = tabla_reportes.querySelectorAll('.btn_eliminar_pedido');
     if (btn_cliente_pago_deuda) {
         btn_cliente_pago_deuda.forEach(element => {
             element.addEventListener('click', (e) => {
@@ -234,14 +349,89 @@ if (tabla_reportes) {
                 pedido_id = disparador.dataset.id;
                 modal_pago_reporte.classList.remove('hidden');
                 modal_pago_reporte.classList.add('flex');
-                columna_para_modificar = e.target.closest('tr').cells[3];
-                columna_para_modificar_estado = e.target.closest('tr').cells[6];
+                const ths = document.querySelectorAll("#tabla_reportes th"); // Selecciona todos los <th> de la tabla
+                let colModificar = null;
+                let colModificarEstado = null;
+                let colModificarDelivery = null;
+                ths.forEach((th, index) => {
+                    if (th.textContent.trim() === 'Medio') {
+                        colModificar = index;
+                    }
+                    if (th.textContent.trim() === 'Pago') {
+                        colModificarEstado = index;
+                    }
+                    if (th.textContent.trim() === 'Delivery') {
+                        colModificarDelivery = index;
+                    }
+                });
+                columna_para_modificar = e.target.closest('tr').cells[colModificar];
+                columna_para_modificar_estado = e.target.closest('tr').cells[colModificarEstado];
+                columna_para_modificar_delivery = e.target.closest('tr').cells[colModificarDelivery];
                 modal_pago_reporte_id.textContent = "#" + pedido_id;
                 id_pedido_modal_pago.value = pedido_id;
             })
         });
 
     }
+    if (btn_eliminar_pedido) {
+        btn_eliminar_pedido.forEach(element => {
+            element.addEventListener('click', async (e) => {
+                let disparador = e.target.closest('[data-id]');
+                let tr = disparador.closest('tr');
+                let pedido_id = disparador.dataset.id; // Usar `let` en vez de `pedido_id =`
+
+                const response = await fetch(`/eliminarPedido/${pedido_id}`, { // Agregar barra `/`
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json', // Corregido el error tipográfico
+                        'X-CSRF-TOKEN': token
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(await response.text());
+                }
+
+                const result = await response.json();
+                const mensaje = result.mensaje; // No es necesario `JSON.stringify()`
+
+                Swal.fire({
+                    title: 'Pedido Eliminado!',
+                    text: mensaje,
+                    icon: 'success',
+                    showConfirmButton: false,
+                    timerProgressBar: true,
+                    timer: 2000,
+                    customClass: {
+                        timerProgressBar: 'bg-green-500 h-2 rounded-md'
+                    }
+                });
+                tr.remove();
+                const ths = document.querySelectorAll("#tabla_reportes th"); // Selecciona todos los <th> de la tabla
+                let thTotal = 0;
+                ths.forEach((th, index) => {
+                    const texto = th.textContent.trim();
+                    if (texto === 'Total') {
+                        thTotal = index;
+                    }
+                });
+                let total = 0;
+
+                // Seleccionamos todas las filas VISIBLES del tbody
+                document.querySelectorAll("tbody tr").forEach(fila => {
+                    if (fila.style.display !== "none") { // Solo tomamos las visibles
+                        const celdaTotal = parseFloat(fila.cells[thTotal]?.textContent.trim()) || 0;
+                        total += celdaTotal;
+                    }
+                });
+
+
+                actualizarPedidos((cantidad_total - 1), total);
+
+            });
+        });
+    }
+
 }
 if (form_metodo_pago_reporte) {
     form_metodo_pago_reporte.addEventListener('submit', (e) => {
@@ -269,7 +459,6 @@ if (form_metodo_pago_reporte) {
             return response.json(); // Convertir la respuesta exitosa a JSON
         })
             .then(result => {
-
                 Swal.fire(
                     {
                         title: 'Confirmación!',
@@ -287,9 +476,10 @@ if (form_metodo_pago_reporte) {
                 modal_pago_reporte.classList.add('hidden');
                 columna_para_modificar.textContent = result.nuevo_metodo;
                 columna_para_modificar_estado.textContent = 'Pagado';
+                columna_para_modificar_delivery = 'Entregado';
             })
             .catch(error => {
-                mensajeError(error.message); // Mostrar mensaje de error
+                mensajeError("Ocurrio un error al editar el pedido."); // Mostrar mensaje de error
 
             });
 

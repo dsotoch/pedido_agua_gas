@@ -1,19 +1,18 @@
 @extends('layout-cuenta')
 @section('logica')
-    <div class="w-full container mx-auto  text-base p-6 font-sans bg-color-dashboard ">
+    <div class="w-screen md:w-full container mx-auto  text-base p-6 font-sans bg-color-dashboard">
         <h1 class="text-2xl font-cabin font-bold mb-4">Filtros de Búsqueda</h1>
-        <div class="justify-between md:flex md:space-x-2 space-x-2 grid">
-            <div class="grid  md:flex space-x-0 md:space-x-2">
-
+        <div class="w-full grid md:flex md:space-x-2">
+            <div class="w-full grid grid-cols-1 md:flex md:space-x-2">
                 <!-- Filtro por ID Pedido -->
-                <div class="mb-4">
+                <div class="w-full mb-4">
                     <label for="orderId" class="block text-base font-semibold text-color-titulos-entrega">ID Pedido</label>
                     <input id="orderId" type="text" placeholder="Buscar por ID"
                         class="w-full mt-1 p-3 border border-color-titulos-entrega rounded-[20px] focus:ring-blue-500 focus:border-blue-500">
                 </div>
 
                 <!-- Filtro por ID Cliente -->
-                <div class="mb-4">
+                <div class="w-full mb-4">
                     <label for="clientId" class="block text-base font-semibold text-color-titulos-entrega">ID
                         Cliente</label>
                     <input id="clientId" type="text" placeholder="Buscar por ID Cliente"
@@ -21,7 +20,7 @@
                 </div>
 
                 <!-- Buscar por Cliente -->
-                <div class="mb-4">
+                <div class="w-full mb-4">
                     <label for="clientName" class="block text-base font-semibold text-color-titulos-entrega">Buscar por
                         Cliente</label>
                     <input id="clientName" type="text" placeholder="Escribe un nombre"
@@ -29,9 +28,9 @@
                 </div>
             </div>
 
-            <div class="grid space-x-0 md:flex md:space-x-2">
+            <div class="w-full grid grid-cols-1 md:flex md:space-x-2">
                 <!-- Filtro por Estado Delivery -->
-                <div class="mb-4">
+                <div class="w-full mb-4">
                     <label for="deliveryStatus" class="block text-base font-semibold text-color-titulos-entrega">Estado
                         Delivery</label>
                     <select id="deliveryStatus"
@@ -45,7 +44,7 @@
                 </div>
 
                 <!-- Filtro por Medio de Pago -->
-                <div class="mb-4">
+                <div class="w-full mb-4">
                     <label for="paymentMethod" class="block text-base font-semibold text-color-titulos-entrega">Medio de
                         Pago</label>
                     <select id="paymentMethod"
@@ -54,12 +53,11 @@
                         <option value="efectivo">Efectivo</option>
                         <option value="yape">Yape</option>
                         <option value="deuda pendiente">Deuda Pendiente</option>
-
                     </select>
                 </div>
 
                 <!-- Checkbox Estado de Pago -->
-                <div class="mb-4">
+                <div class="w-full mb-4">
                     <label class="block text-base font-semibold text-color-titulos-entrega">Estado de Pago</label>
                     <div class="flex flex-col items-start space-y-2 mt-2">
                         <div class="flex items-center">
@@ -73,17 +71,21 @@
                             <label for="pendiente" class="ml-2 text-color-titulos-entrega">Pendiente de Pago</label>
                         </div>
                         <div class="flex items-center">
+                            <input id="deuda_pendiente" name="paymentStatus" type="radio" value="deuda pendiente"
+                                class="h-4 w-4 text-blue-600 border-color-titulos-entrega rounded focus:ring-blue-500">
+                            <label for="deuda_pendiente" class="ml-2 text-color-titulos-entrega">Deuda Pendiente</label>
+                        </div>
+                        <div class="flex items-center">
                             <input id="todos" name="paymentStatus" type="radio" value="" class="h-4 w-4"
                                 checked>
                             <label for="todos" class="ml-2">Todos</label>
                         </div>
-
                     </div>
                 </div>
-
             </div>
         </div>
-        <div class="p-4 flex flex-col md:flex-row justify-center  space-x-0 md:space-x-2 bg-color-dashboard">
+
+        <div class="md:p-4 w-full flex flex-col md:flex-row justify-center  space-x-0 md:space-x-2 bg-color-dashboard">
             <!-- Noveno Gratis Checkbox Filter -->
             <div class="">
                 <div class="text-lg  font-semibold mb-2">Promoción Gratis</div>
@@ -98,7 +100,7 @@
                 </fieldset>
             </div>
             <!-- Date Range Filter -->
-            <div class="font-sans tex-base">
+            <div class="font-sans tex-base ">
                 <div class="text-lg font-cabin font-semibold mb-2 text-center">Rango de Fechas</div>
                 <fieldset class="flex space-x-3">
                     <legend class="sr-only">Fecha</legend>
@@ -116,20 +118,30 @@
 
             </div>
         </div>
-        <div class="overflow-x-auto mt-4">
-            <table class="min-w-full border-collapse border border-gray-300" id="tabla_reportes">
+        <div class="mt-4 overflow-x-auto  ">
+            <table class=" w-full  table border-collapse border border-gray-300" id="tabla_reportes">
                 <thead>
                     <tr class="bg-tarjetas text-center">
-                        <th class="border border-gray-300 px-4 py-2  text-white font-semibold">ID</th>
-                        <th class="border border-gray-300 px-4 py-2  text-white font-semibold">User ID</th>
-                        <th class="border border-gray-300 px-4 py-2  text-white font-semibold">Cliente</th>
-                        <th class="border border-gray-300 px-4 py-2  text-white font-semibold">Medio</th>
-                        <th class="border border-gray-300 px-4 py-2  text-white font-semibold">Total</th>
-                        <th class="border border-gray-300 px-4 py-2  text-white font-semibold">PG</th>
-                        <th class="border border-gray-300 px-4 py-2  text-white font-semibold">Pago</th>
-                        <th class="border border-gray-300 px-4 py-2  text-white font-semibold">Delivery</th>
-                        <th class="border border-gray-300 px-4 py-2  text-white font-semibold">Fecha</th>
-                        <th class="border border-gray-300 px-4 py-2  text-white font-semibold">Acción</th>
+                        <th class="break-words w-28 border border-gray-300 px-4 py-2  text-white font-semibold">ID</th>
+                        <th class="break-words w-28 border border-gray-300 px-4 py-2  text-white font-semibold">User ID
+                        </th>
+                        <th class="break-words w-28 border border-gray-300 px-4 py-2  text-white font-semibold">Cliente
+                        </th>
+
+                        <th class="break-words w-28 border border-gray-300 px-4 py-2  text-white font-semibold">Medio</th>
+
+                        @foreach ($productos as $item)
+                            <th class="break-words w-28 border border-gray-300 px-4 py-2  text-white font-semibold">
+                                {{ $item->descripcion }}
+                            </th>
+                        @endforeach
+                        <th class="break-words w-28 border  border-gray-300 px-4 py-2  text-white font-semibold">Total</th>
+                        <th class="break-words w-28 border border-gray-300 px-4 py-2  text-white font-semibold">PG</th>
+                        <th class="break-words w-28 border border-gray-300 px-4 py-2  text-white font-semibold">Pago</th>
+                        <th class="break-words w-28 border border-gray-300 px-4 py-2  text-white font-semibold">Delivery
+                        </th>
+                        <th class="break-words w-28 border border-gray-300 px-4 py-2  text-white font-semibold">Fecha</th>
+                        <th class="break-words w-28 border border-gray-300 px-4 py-2  text-white font-semibold">Acción</th>
 
                     </tr>
                 </thead>
@@ -141,7 +153,24 @@
                             <td class="border border-gray-200">{{ $item->cliente_id }}</td>
                             <td class="border border-gray-200">{{ $item->usuario->persona->nombres }}</td>
                             <td class="border border-gray-200">
-                                {{ $item->metodo == 'account' ? 'deuda pendiente' : $item->metodo }}</td>
+                                {{ $item->metodo == 'account' ? 'deuda pendiente' : $item->metodo }}
+                            </td>
+                            @foreach ($productos as $pro)
+                                @php
+                                    if ($item->detalles->count() > 0) {
+                                        // Filtrar detalles dentro del pedido actual para obtener la cantidad total de cada producto
+                                        $cantidadTotal = $item->detalles
+                                            ->where('producto_id', $pro->id) // Verificamos por ID de producto
+                                            ->sum('cantidad'); // Sumamos todas las cantidades del mismo producto
+                                    } else {
+                                        // Filtrar detalles dentro del pedido actual para obtener la cantidad total de cada producto
+                                        $cantidadTotal = $item->entregaPromociones
+                                            ->where('producto', $pro->descripcion) // Verificamos por ID de producto
+                                            ->sum('cantidad'); // Sumamos todas las cantidades del mismo producto
+                                    }
+                                @endphp
+                                <td class="border border-gray-200 px-4 py-2">{{ $cantidadTotal }}</td>
+                            @endforeach
                             <td class="border border-gray-200">{{ $item->total }}</td>
                             <td class="border border-gray-200">{{ $item->entregapromociones->count() > 0 ? 'PG' : '' }}
                             </td>
@@ -151,38 +180,77 @@
                                 {{ \Carbon\Carbon::parse($item->fecha)->format('d-m-Y  h:i a') }}
                             </td>
                             <td class="border border-gray-200">
-                                @if ($item->metodo == 'account')
+                                <div class="flex space-x-2 justify-center">
                                     <button data-id="{{ $item->id }}"
-                                        class="btn_cliente_pago_deuda transform hover:scale-125"
-                                        title="El Cliente canceló su deuda"><i class="fas fa-edit"></i></button>
-                                @endif
+                                        class="btn_eliminar_pedido transform hover:scale-125" title="Eliminar Pedido"><i
+                                            class="fas fa-trash"></i></button>
+                                    @if ($item->metodo == 'account')
+                                        <button data-id="{{ $item->id }}"
+                                            class="btn_cliente_pago_deuda transform hover:scale-125"
+                                            title="El Cliente canceló su deuda"><i class="fas fa-edit"></i></button>
+                                    @endif
+                                </div>
                             </td>
-
-
-
-
                         </tr>
                     @endforeach
 
+
                 </tbody>
+
             </table>
         </div>
-        <div class="flex ml-2 mt-2 space-x-4 items-center">
-            <!-- Número de Pedidos -->
-            <div class="flex items-center">
-                <b id="numero_pedidos">{{ $pedidos->count() }}</b>
-                <span class="ml-1">Pedidos</span>
-                <span class="text-naranja font-bold mx-2 text-2xl">></span>
+        <!-- 🔹 Fijar el footer fuera de la tabla -->
+        <div class=" bg-white shadow-md py-2 px-4 ">
+            <div class="flex md:justify-center justify-start mt-4 space-x-2">
+                @if ($pedidos->onFirstPage())
+                    <span class="px-4 py-2 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed">
+                        ⬅️ Anterior
+                    </span>
+                @else
+                    <a href="{{ $pedidos->previousPageUrl() }}"
+                        class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-300 transition">
+                        ⬅️ Anterior
+                    </a>
+                @endif
+
+                <span class="px-4 py-2 bg-gray-100 border rounded-lg">
+                    📄 Página <b>{{ $pedidos->currentPage() }}</b> de <b>{{ $pedidos->lastPage() }}</b>
+                </span>
+
+                @if ($pedidos->hasMorePages())
+                    <a href="{{ $pedidos->nextPageUrl() }}"
+                        class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-300 transition">
+                        Siguiente ➡️
+                    </a>
+                @else
+                    <span class="px-4 py-2 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed">
+                        Siguiente ➡️
+                    </span>
+                @endif
             </div>
 
-            <!-- Total de Pedidos -->
-            <div class="flex items-center">
-                <span>Total:</span>
-                <b id="total_pedidos" class="ml-1">S/{{ $pedidos->sum('total') }}</b>
+            <div class="flex ml-2 mt-2 space-x-4 items-center overflow-x-auto">
+                <div class="flex items-center">
+                    <b id="numero_pedidos">{{ $pedidos->count() }}</b>
+                    <span class="ml-1">Pedidos</span>
+                    <span class="text-naranja font-bold mx-2 text-2xl">></span>
+                </div>
+                <div id="contenedor_cantidad_productos" class="flex items-center">
+                    @foreach ($productos_cantidades as $producto => $cantidad)
+                        <div class="flex items-center">
+                            <b id="cantidad_producto">{{ $cantidad }}</b>
+                            <span class="ml-1">{{ $producto }}</span>
+                            <span class="text-naranja font-bold mx-2 text-2xl">></span>
+                        </div>
+                    @endforeach
+                </div>
+
+                <div class="flex items-center">
+                    <span>Total:</span>
+                    <b id="total_pedidos" class="ml-1">S/{{ $pedidos->sum('total') }}</b>
+                </div>
             </div>
         </div>
-
-
     </div>
     <!-- Modal Pago Pedido Repartidor-->
     <div id="modal_pago_reporte"

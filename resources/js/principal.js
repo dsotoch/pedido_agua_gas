@@ -1,13 +1,12 @@
 import { agregarFavorito, esFavorito, esPaginaPredeterminada_Principal, guardarPaginaPredeterminada } from "./cookies";
 
 document.addEventListener('DOMContentLoaded', () => {
-    const divbars = document.getElementById('audioBars');
     const buscador = document.getElementById('buscador');
     const contenedorResultados = document.getElementById('contenedorResultados');
     const volvercolores = document.getElementById('volvercolores');
     const botonp = document.getElementById('botonp');
     const buttoncolor = document.getElementById('button-color');
-    const contenedor = document.getElementById('contenedorResultados2');
+    const contenedor_empresas =document.getElementById('empresas');
     if (volvercolores) {
         volvercolores.addEventListener('click', () => {
             window.location.reload();
@@ -27,22 +26,50 @@ document.addEventListener('DOMContentLoaded', () => {
     // Comienza la ejecución repetida
 
     if (buscador) {
-        buscador.addEventListener('keyup', (e) => {
+        buscador.addEventListener('input', (e) => {
             if (e.target.value.length >= 3) {
                 mostrarAnimacionBuscando();
-                contenedor.classList.add('hidden');
                 setTimeout(() => {
                     ocultarAnimacionBuscando();
                     buscarEmpresas(e.target.value);
                 }, duracion);
 
 
-            } else if (e.target.value.length < 3) {
-                ocultarAnimacionBuscando();
-                contenedorResultados.classList.add('hidden');
-                contenedor.classList.add('hidden');
-                contenedor.innerHTML = '';
+            } else if (!e.target.value) {
+                contenedor_empresas.classList.add('hidden');
+                contenedor_empresas.innerHTML = `
+                    <div class="absolute top-0 shadow-2xl w-full bg-white rounded-md p-2 " id="contenedor_bars">
+                        <!-- Aseguramos que el div con audioBars se posicione dentro del contexto relativo -->
+                        <div id="audioBars"
+                            class="absolute flex top-0 left-0   items-center space-x-1 rounded-md p-3 justify-center  w-full bg-white">
+                            <div class="w-2 bg-naranja h-8"></div>
+                            <div class="w-2 bg-naranja h-12"></div>
+                            <div class="w-2 bg-naranja h-6"></div>
+                            <div class="w-2 bg-naranja h-10"></div>
+                            <div class="w-2 bg-naranja h-7"></div>
+                        </div>
 
+                    </div>
+                `;
+
+            } else {
+                if (e.target.value.length <3) {
+                    contenedor_empresas.classList.add('hidden');
+                    contenedor_empresas.innerHTML = `
+                        <div class="absolute top-0 shadow-2xl w-full bg-white rounded-md p-2 " id="contenedor_bars">
+                            <!-- Aseguramos que el div con audioBars se posicione dentro del contexto relativo -->
+                            <div id="audioBars"
+                                class="absolute flex top-0 left-0   items-center space-x-1 rounded-md p-3 justify-center  w-full bg-white">
+                                <div class="w-2 bg-naranja h-8"></div>
+                                <div class="w-2 bg-naranja h-12"></div>
+                                <div class="w-2 bg-naranja h-6"></div>
+                                <div class="w-2 bg-naranja h-10"></div>
+                                <div class="w-2 bg-naranja h-7"></div>
+                            </div>
+    
+                        </div>
+                    `;
+                }
             }
         });
 
@@ -63,14 +90,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     function renderizarEmpresas(empresas) {
-        const contenedor = document.getElementById('contenedorResultados');
+        const contenedor = contenedor_empresas;
         contenedor.innerHTML = ''; // Limpia los resultados anteriores
         contenedor.classList.remove('hidden');
 
         // Crear el párrafo de resultados
         const pResultados = document.createElement('p');
         pResultados.id = 'ct_resultados';
-        pResultados.className = 'text-color-titulos-entrega text-[15px] hidden';
+        pResultados.className = 'text-color-titulos-entrega text-[15px] p-2 hidden';
 
         // Crear el span dentro del párrafo
         const spanCantidad = document.createElement('span');
@@ -85,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (empresas.length === 0) {
             // Crear el mensaje de "No se encontraron resultados"
             const mensaje = document.createElement('p');
-            mensaje.className = 'text-base text-color-titulos-entrega p-3';
+            mensaje.className = 'text-base text-color-titulos-entrega p-3 ';
             mensaje.textContent = 'No encontramos distribuidores para tu búsqueda.';
             contenedor.appendChild(mensaje);
             return;
@@ -97,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         empresas.forEach(empresa => {
             const empresaDiv = document.createElement('div');
-            empresaDiv.className = 'empresa-item flex items-center justify-between gap-4 p-4 bg-white shadow-md rounded-md cursor-pointer';
+            empresaDiv.className = 'empresa-item  flex items-center justify-between gap-4 p-4 bg-white shadow-md rounded-md cursor-pointer';
 
             // Construir la URL de destino
             const urlDestino = window.location.origin + '/' + empresa.dominio;
@@ -235,15 +262,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function ocultarAnimacionBuscando() {
-        divbars.classList.remove('flex');
-        divbars.classList.add('hidden');
-        contenedorResultados.classList.add('hidden');
+
+        contenedor_empresas.classList.add('hidden');
     }
 
     function mostrarAnimacionBuscando() {
-        contenedorResultados.classList.remove('hidden');
-        divbars.classList.remove('hidden');
-        divbars.classList.add('flex');
+        contenedor_empresas.classList.remove('hidden');
     }
 
 });

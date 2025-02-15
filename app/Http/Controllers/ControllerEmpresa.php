@@ -140,8 +140,29 @@ class ControllerEmpresa extends Controller
         $usuario = Auth::user();
         $usuario = User::find($usuario->id);
         $empresa = $usuario->empresas()->first();
-        $pedidos = $empresa->pedidos()->with('usuario', 'repartidor', 'repartidor.persona', 'entregaPromociones')->get();
-        return view('reportes', compact('usuario', 'empresa', 'pedidos'));
+        $productos = $empresa->productos->filter(function ($producto) {
+            return $producto->comercializable;
+        });
+        $pedidos = $empresa->pedidos()
+            ->with('usuario', 'repartidor', 'repartidor.persona', 'entregaPromociones', 'detalles', 'detalles.producto')
+            ->orderBy('id', 'desc')
+            ->paginate(100); // 🔹 Pagina de 20 en 20
+        $productos_cantidades = [];
+
+        foreach ($pedidos as $pedido) {
+            foreach ($pedido->detalles as $detalle) {
+                $productoId = $detalle->producto->descripcion;
+                $productos_cantidades[$productoId] = ($productos_cantidades[$productoId] ?? 0) + $detalle->cantidad;
+            }
+
+            /*  foreach ($pedido->entregaPromociones as $promocion) {
+                $productoGratis = $promocion->producto;
+                $productos_cantidades[$productoGratis] = ($productos_cantidades[$productoGratis] ?? 0) + $promocion->cantidad;
+            }
+
+            */
+        }
+        return view('reportes', compact('productos_cantidades', 'usuario', 'empresa', 'pedidos', 'productos'));
     }
     public function index_usuarios()
     {

@@ -229,6 +229,7 @@ function calcularTotalEnProducto(boton, operacion) {
 
     // Filtrar productos con cantidad cero
     window.idproductos = window.idproductos.filter(item => item.cantidad > 0);
+    logica_boton_siguiente();
 }
 
 
@@ -264,6 +265,16 @@ if (btn_atras_distribuidora) {
         contener_producto_item.classList.add('flex');
 
     });
+}
+
+function logica_boton_siguiente() {
+    if (btn_siguiente_pedido) {
+        if (window.idproductos.length > 0) {
+            btn_siguiente_pedido.removeAttribute('disabled');
+        } else {
+            btn_siguiente_pedido.setAttribute('disabled',true);
+        }
+    }
 }
 
 if (form_realizar_pedido) {
@@ -363,15 +374,15 @@ function conectarWebSocket() {
                     actualizar_Estado_delivery_panel_cliente(e.message.pedido_id, e.message.estado);
                     break;
                 case 'confirmacion':
-                    mostrarNotificacion("Tu Pedido está en Camino", 
-                        `¡Hola Estimado Usuario(a)! El repartidor ha tomado tu pedido #${e.message.pedido_id}, y está en camino para entregártelo. ¡Prepárate para recibirlo pronto!`, 
+                    mostrarNotificacion("Tu Pedido está en Camino",
+                        `¡Hola Estimado Usuario(a)! El repartidor ha tomado tu pedido #${e.message.pedido_id}, y está en camino para entregártelo. ¡Prepárate para recibirlo pronto!`,
                         'Nuevo-Pedido-Camino'
                     );
                     actualizar_Estado_delivery_panel_cliente(e.message.pedido_id, e.message.estado);
                     break;
                 case 'asignacion':
-                    mostrarNotificacion("Nuevo Pedido Asignado", 
-                        `¡Repartidor! La Distribuidora te ha asignado el Pedido #${e.message.pedido_id}, revísalo en este momento`, 
+                    mostrarNotificacion("Nuevo Pedido Asignado",
+                        `¡Repartidor! La Distribuidora te ha asignado el Pedido #${e.message.pedido_id}, revísalo en este momento`,
                         'Nuevo-Pedido-Asignado'
                     );
                     pedidoasignadoarepartidor(e.message.pedido_id, 'repartidor');
@@ -382,8 +393,8 @@ function conectarWebSocket() {
                     actualizarEstadoYPagoPanelAdministrador(e.message.pedido_id, e.message.estado);
                     break;
                 default:
-                    mostrarNotificacion("Nuevo Pedido", 
-                        `¡Administrador! La Distribuidora tiene un nuevo Pedido #${e.message.pedido_id}, revísalo en este momento`, 
+                    mostrarNotificacion("Nuevo Pedido",
+                        `¡Administrador! La Distribuidora tiene un nuevo Pedido #${e.message.pedido_id}, revísalo en este momento`,
                         'Nuevo-Pedido'
                     );
                     agregarPedido(e.message.pedido, "admin");

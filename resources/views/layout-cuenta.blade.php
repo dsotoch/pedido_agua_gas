@@ -121,7 +121,7 @@
 
         </div>
         <!----Cajas ---->
-        <div class="md:ml-[202px] md:pt-[40px] md:pl-[20px] md:pr-[20px] w-auto  min-h-screen">
+        <div class="md:ml-[202px] md:pt-[40px] md:pl-[20px] md:pr-[20px]  min-h-screen">
             <div class="w-full bg-tarjetas mb-2 md:hidden">
 
                 <button title="Abrir menú" id="btn_menu"

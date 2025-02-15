@@ -43,7 +43,7 @@
     @yield('estilos')
 </head>
 
-<body class="font-sans">
+<body class="font-sans overflow-x-hidden">
     @yield('cuerpo')
     <!-- Modal -->
     <div id="messagesModal" class="hidden fixed inset-0 bg-black bg-opacity-50  justify-center items-center z-50">

@@ -226,7 +226,9 @@ class ControllerPedido extends Controller
                 ];
 
                 // Enviar notificación al administrador
-                SendMessage::dispatch($mensaje, $admin->id);
+                if ($user_actual->tipo != 'admin') {
+                    SendMessage::dispatch($mensaje, $admin->id);
+                }
 
                 return response()->json([
                     "mensaje" => "El pedido ha sido modificado correctamente.",
@@ -236,7 +238,7 @@ class ControllerPedido extends Controller
             } catch (\Exception $th) {
                 // Manejar errores y devolver un mensaje de error
                 return response()->json([
-                    "mensaje" => "Ha ocurrido un error: " . $th->getMessage(),
+                    "mensaje" => "Ha ocurrido un error al modificar el pedido.",
                 ], 500);
             }
         } else {
@@ -540,6 +542,12 @@ class ControllerPedido extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            $pedido = Pedido::findOr($id);
+            $pedido->delete();
+            return response()->json(['mensaje' => 'Pedido' . ' ' . $id . ' ' . 'eliminado Correctamente.']);
+        } catch (\Throwable $th) {
+            return response()->json(['mensaje' => 'Ocurrio un error al eliminar el pedido']);
+        }
     }
 }
