@@ -26,7 +26,8 @@ class Empresa extends Model
         'configuraciones',
         'logo_vertical',
         'hora_inicio',
-        'hora_fin'
+        'hora_fin',
+        'orden_productos'
     ];
 
     public function cupones()

@@ -12,6 +12,7 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
 
     <style>
         :root {
@@ -174,7 +175,7 @@
                         <label for="dni" class="block text-color-text">Número de Dni
                             <span class="text-red-500">*</span></label>
                         <!-- Input de Dni -->
-                        <input  type="number" maxlength="8" name="dni" autocomplete="off" required
+                        <input type="number" maxlength="8" name="dni" autocomplete="off" required
                             class=" w-full border-color-text p-3 border rounded-3xl focus:outline-none focus:ring-2 focus:ring-blue-500 ">
 
                         <!-- Teléfono -->
@@ -211,8 +212,7 @@
                         <!-- Correo -->
                         <div>
                             <label for="correo" class="block  font-medium text-color-texto">Correo
-                                Electronico<span
-                                class="text-color-text">(Opcional)</span></label>
+                                Electronico<span class="text-color-text">(Opcional)</span></label>
                             <input type="email" name="correo" autocomplete="off"
                                 class="w-full border-color-text p-3 border rounded-3xl focus:outline-none focus:ring-2 focus:ring-blue-500">
                         </div>

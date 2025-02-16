@@ -57,7 +57,6 @@ class ControllerProducto extends Controller
                         'cantidad' => $productos_por_cada,
                         'producto_gratis' => $productos_gratis == 'mismo' ? $producto->descripcion : $productos_gratis,
                     ]);
-                    
                 }
 
                 // Validar y procesar promociones si existen
@@ -90,6 +89,74 @@ class ControllerProducto extends Controller
     }
 
 
+    public function update(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            // Buscar el producto
+            $producto = Producto::findOrFail($request->id);
+
+            // Obtener datos del request
+            $precio = $request->precio;
+            $descripcion = $request->descripcion;
+            $promociones = $request->promociones;
+            $productos_por_cada = $request->productos_por_cada;
+            $productos_gratis = $request->productos_gratis;
+            $comercializable = $request->has('estado');
+
+            // Actualizar los datos del producto
+            $producto->update([
+                'descripcion' => "{$descripcion}", // Concatenación
+                'precio' => floatval($precio),
+                'comercializable' => $comercializable
+            ]);
+
+            // Verificar si existe una promoción y actualizarla o crearla
+            $promocionUnitario = PromocionesUnitario::where('producto_id', $producto->id)->first();
+
+            if (!is_null($productos_por_cada) && !is_null($productos_gratis)) {
+                if ($promocionUnitario) {
+                    $promocionUnitario->update([
+                        'cantidad' => $productos_por_cada,
+                        'producto_gratis' => $productos_gratis == 'mismo' ? $producto->descripcion : $productos_gratis,
+                    ]);
+                } else {
+                    PromocionesUnitario::create([
+                        'producto_id' => $producto->id,
+                        'cantidad' => $productos_por_cada,
+                        'producto_gratis' => $productos_gratis == 'mismo' ? $producto->descripcion : $productos_gratis,
+                    ]);
+                }
+            }
+
+            // Procesar promociones múltiples
+            Promociones::where('producto_id', $producto->id)->delete(); // Eliminar promociones anteriores
+            if (is_array($promociones) && count($promociones) > 0) {
+                foreach ($promociones as $value) {
+                    Promociones::create([
+                        'producto_id' => $producto->id,
+                        'cantidad' => intval($value['cantidad']),
+                        'precio_promocional' => floatval($value['precio_promocional']),
+                    ]);
+                }
+            }
+
+
+            DB::commit();
+            return response()->json([
+                'mensaje' => "Producto actualizado correctamente.",
+                'id' => $producto->id,
+                'comercializable' => $producto->comercializable
+            ], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'mensaje' => 'Ocurrió un error al actualizar el producto.',
+                'error' => $e->getMessage() . " en la línea " .$request->id.''. $e->getLine()
+            ], 500);
+            
+        }
+    }
 
 
     /**
@@ -100,13 +167,7 @@ class ControllerProducto extends Controller
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+
 
     /**
      * Remove the specified resource from storage.

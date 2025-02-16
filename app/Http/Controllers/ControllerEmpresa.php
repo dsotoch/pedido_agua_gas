@@ -8,6 +8,7 @@ use App\Models\Cupones;
 use App\Models\Empresa;
 use App\Models\Pedido;
 use App\Models\Persona;
+use App\Models\Producto;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -124,16 +125,67 @@ class ControllerEmpresa extends Controller
             ]);
         }
     }
+    public function modificar_empresa_diseño(Request $request)
+    {
+        try {
+            if (!Auth::check()) {
+                abort(403, "Usuario no autenticado");
+            }
 
+            DB::beginTransaction();
+
+            // Buscar la empresa existente
+            $empresa = Empresa::findOrFail($request->empresa); // Asegura que solo devuelve un modelo
+
+            if (!$empresa) {
+                return response()->json(['mensaje' => 'La empresa no existe.']);
+            }
+
+            // Actualizar datos
+            $empresa->orden_productos = json_encode($request->orden);
+            $empresa->save();
+
+            DB::commit();
+
+            return response()->json([
+                'mensaje' => 'Datos de la distribuidora modificados correctamente.',
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'mensaje' => 'Hubo un error al procesar la solicitud. ' . $e->getMessage()
+            ]);
+        }
+    }
 
     public function index_empresa()
     {
         $usuario = Auth::user();
         $usuario = User::find($usuario->id);
         $empresa = $usuario->empresas()->first();
+        $ordenProductos = $empresa->orden_productos ? json_decode($empresa->orden_productos, true) : null;
+        $productosQuery = $empresa->productos()->where('comercializable', true);
+
+        if ($ordenProductos) {
+            // Extraer solo los IDs de los productos
+            $ordenProductosIds = array_column($ordenProductos, 'id');
+
+            // Filtrar productos solo si hay un orden definido
+            if (!empty($ordenProductosIds)) {
+                $productosQuery->whereIn('id', $ordenProductosIds);
+            }
+
+            // Obtener y ordenar los productos
+            $productos = $productosQuery->get()->sortBy(function ($producto) use ($ordenProductosIds) {
+                return array_search($producto->id, $ordenProductosIds);
+            });
+        } else {
+            // Si orden_productos es null, obtener todos los comercializables sin ordenar
+            $productos = $productosQuery->get();
+        }
         $serviciosSeleccionados = json_decode($empresa->servicios, true) ?? []; // Convertir JSON en array
 
-        return view('datos_empresa', compact('usuario', 'empresa', 'serviciosSeleccionados'));
+        return view('datos_empresa', compact('usuario', 'empresa', 'serviciosSeleccionados', 'productos'));
     }
     public function index_reportes()
     {
@@ -190,9 +242,26 @@ class ControllerEmpresa extends Controller
         }
 
         $usuario = Auth::user(); // Obtener usuario autenticado
-        $productos = $empresa->productos->filter(function ($pro) {
-            return $pro->comercializable === 1;
-        });
+        $ordenProductos = $empresa->orden_productos ? json_decode($empresa->orden_productos, true) : null;
+        $productosQuery = $empresa->productos()->where('comercializable', true);
+
+        if ($ordenProductos) {
+            // Extraer solo los IDs de los productos
+            $ordenProductosIds = array_column($ordenProductos, 'id');
+
+            // Filtrar productos solo si hay un orden definido
+            if (!empty($ordenProductosIds)) {
+                $productosQuery->whereIn('id', $ordenProductosIds);
+            }
+
+            // Obtener y ordenar los productos
+            $productos = $productosQuery->get()->sortBy(function ($producto) use ($ordenProductosIds) {
+                return array_search($producto->id, $ordenProductosIds);
+            });
+        } else {
+            // Si orden_productos es null, obtener todos los comercializables sin ordenar
+            $productos = $productosQuery->get();
+        }
         $colorsjson = $empresa->configuraciones; // Obtén colores en formato ['primary' => '#3498db', ...]
         $colors = json_decode($colorsjson, true);
         $imagenes = json_decode($empresa->imagenes, true);

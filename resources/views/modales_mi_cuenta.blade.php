@@ -4,7 +4,9 @@
          <!-- Modal Header -->
          <div class="flex justify-between items-center border-b pb-3">
              <h3 class="text-lg font-semibold text-color-titulos-entrega">Asignar Pedido a Repartidor</h3>
-             <button onclick="document.getElementById('modalasignarrepartidor').classList.add('hidden');document.getElementById('modalasignarrepartidor').classList.remove('flex');" class="text-red-500 hover:scale-150 transform" id="btncerrarmodalrepartidor">
+             <button
+                 onclick="document.getElementById('modalasignarrepartidor').classList.add('hidden');document.getElementById('modalasignarrepartidor').classList.remove('flex');"
+                 class="text-red-500 hover:scale-150 transform" id="btncerrarmodalrepartidor">
                  <i class="fas fa-times"></i>
              </button>
          </div>
@@ -67,7 +69,7 @@
              <div class="mb-4 w-full">
                  <textarea class="p-4 border w-full"
                      placeholder="Agrega notas internas sobre este pedido. Ejemplo: Le debo un vuelto de x soles, pagó con x cantidad."
-                     name="notas" ></textarea>
+                     name="notas"></textarea>
              </div>
              <!-- Botones -->
              <div class="flex justify-end mt-6 space-x-1">
@@ -75,7 +77,7 @@
                      class="px-4 py-2 bg-naranja text-white rounded hover:bg-border-red-500 hover:scale-105 transition">
                      Aceptar
                  </button>
-                 <button type="button" 
+                 <button type="button"
                      class="px-4 py-2 border border-color-titulos-entrega text-color-titulos-entrega rounded hover:scale-105 transition"
                      onclick="document.getElementById('paymentModal').classList.remove('flex');;document.getElementById('paymentModal').classList.add('hidden')">
                      Cancelar
@@ -245,6 +247,4 @@
      </div>
  </div>
 
- </form>
- </div>
- </div>
+ 

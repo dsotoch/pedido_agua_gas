@@ -50,6 +50,8 @@ Route::controller(ControllerUsuario::class)->group(function () {
 Route::controller(ControllerProducto::class)->group(function () {
     Route::post('crear', 'store')->name('crear.producto');
     Route::delete('eliminar/{id}', 'destroy')->name('eliminar.producto');
+    Route::put('modificarProducto', 'update')->name('editar.producto');
+
 });
 Route::prefix('{slug}')->controller(ControllerPedido::class)->group(function () {
     Route::post('/crearpedido', 'store')->name('pedido.crear');
@@ -82,6 +84,7 @@ Route::prefix('mi-cuenta')->controller(ControllerEmpresa::class)->group(function
     Route::get('reportes', 'index_reportes')->name('empresa.reportes');
     Route::get('empresa', 'index_empresa')->name('empresa.empresa');
     Route::put('modificar', 'modificar_empresa')->name('empresa.editar');
+    Route::put('modificarDiseño', 'modificar_empresa_diseño')->name('empresa.editar_diseño');
     Route::get('cupones', 'index_cupones')->name('empresa.cupones');
     Route::get('favoritas', 'index_favoritas')->name('empresa.favoritas');
 

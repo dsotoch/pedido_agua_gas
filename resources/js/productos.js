@@ -5,6 +5,7 @@ const divdetallespromocionesproductoadmin = document.getElementById('divdetalles
 const divdetallespromocionesadmin = document.getElementById('divdetallespromocionesadmin');
 const btnpromocionadmin = document.getElementById('btnpromocionadmin');
 let promociones = [];
+let edit_promociones_precios = [];
 const preciopromocion = document.getElementById('preciopromocion');
 const unidades = document.getElementById('unidades');
 const btnresetearpromociones = document.getElementById('btnresetearpromociones');
@@ -14,6 +15,58 @@ const contenedorproductos = document.getElementById('contenedorproductos');
 const mensaje_sin_productos_registrados = document.getElementById('mensaje_sin_productos_registrados');
 const input_productosPorCada = document.getElementById('productosPorCada');
 const select_productosGratis = document.getElementById('productosGratis');
+const btn_cerrar_modal_editar_producto = document.querySelector("#cerrarModalEditar");
+const formEditarProducto = document.getElementById('formEditarProducto');
+const btnEliminarPromociones = document.getElementById('edit-btnEliminarPromociones');
+const btnPromocion = document.getElementById('edit-btnPromocion');
+if (formEditarProducto) {
+    formEditarProducto.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const data = new FormData(formEditarProducto);
+        let body = {};
+
+        data.forEach((value, key) => {
+            body[key] = value;
+        });
+
+        body['promociones'] = edit_promociones_precios;
+        body['_method'] = 'PUT'; // Laravel espera esto cuando usamos POST en lugar de PUT
+
+        const response = await fetch(formEditarProducto.getAttribute('action'), {
+            method: 'POST', // Laravel requiere POST con _method=PUT en formularios
+            headers: {
+                'Content-Type': 'application/json', // Corregido el header
+                'X-CSRF-TOKEN': token // Corregido el nombre del token
+            },
+            body: JSON.stringify(body)
+        });
+
+        const resp = await response.json();
+
+        if (response.ok) {
+            mensajeExito(resp.mensaje);
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000);
+        } else {
+            console.log(resp.error);
+            mensajeError(resp.mensaje);
+        }
+    });
+
+}
+
+if (btn_cerrar_modal_editar_producto) {
+    // Cerrar el modal
+    btn_cerrar_modal_editar_producto.addEventListener("click", function () {
+        document.getElementById("modalEditarProducto").classList.remove("flex");
+        document.getElementById("modalEditarProducto").classList.add("hidden");
+        document.getElementById("edit-DetallesPromocionesPrecios").innerHTML = '';
+
+        edit_promociones_precios.length = 0;
+    });
+}
 if (formproductoadmincrear) {
     formproductoadmincrear.addEventListener('submit', (event) => {
         event.preventDefault();
@@ -206,6 +259,7 @@ function eliminarProductos() {
     if (productosadmin) {
         productosadmin.forEach((producto) => {
             const formulario = producto.querySelector('form');
+            const btn_editar = producto.querySelectorAll('.editar-producto');
 
             formulario.addEventListener('submit', async (event) => {
                 event.preventDefault();
@@ -242,12 +296,76 @@ function eliminarProductos() {
                     });
 
             });
+            if (btn_editar) {
+                btn_editar.forEach(button => {
+                    button.addEventListener("click", function () {
+                        document.getElementById("edit-id").value = this.dataset.id;
+                        document.getElementById("edit-descripcion").value = this.dataset.descripcion;
+                        document.getElementById("edit-precio").value = this.dataset.precio;
+                        document.getElementById("edit-comercializable").checked = this.dataset.comercializable == "1";
+                        const promociones_unitarias = JSON.parse(this.dataset.unitarios || '[]');
+                        const por_cada = promociones_unitarias.cantidad;
+                        const producto_gratis = promociones_unitarias.producto_gratis == this.dataset.descripcion ? 'mismo' : promociones_unitarias.producto_gratis;
+                        const promociones_precios = JSON.parse(this.dataset.promociones || "[]");
+                        document.getElementById('edit-productosPorCada').value = por_cada;
+                        document.getElementById('edit-productosGratis').value = producto_gratis;
+                       
+                        let nueva_promocion = null
+                        promociones_precios.forEach(element => {
+                            nueva_promocion = document.createElement('p');
+                            nueva_promocion.innerHTML = `${element.cantidad} Un.  => S/${element.precio_promocional
+                                }`;
+                            document.getElementById('edit-DetallesPromocionesPrecios').appendChild(nueva_promocion);
+                            let promocion_actual = { 'producto': element.producto_id, 'cantidad': element.cantidad, 'precio_promocional': element.precio_promocional }
+                            edit_promociones_precios.push(promocion_actual);
+
+                        });
+
+                        if (promociones_precios.length <= 0) {
+                            btnEliminarPromociones.classList.add('hidden');
+                        } else {
+                            btnEliminarPromociones.classList.remove('hidden');
+
+                        }
+                        document.getElementById("modalEditarProducto").classList.remove("hidden");
+                        document.getElementById("modalEditarProducto").classList.add("flex");
+
+                    });
+                });
+            }
+
         });
     }
 
 }
 eliminarProductos();
 
+if (btnEliminarPromociones) {
+    btnEliminarPromociones.addEventListener('click', (e) => {
+        e.target.classList.add('hidden');
+        edit_promociones_precios.length = 0;
+        document.getElementById('edit-DetallesPromocionesPrecios').innerHTML = '';
+    })
+}
+if (btnPromocion) {
+    btnPromocion.addEventListener('click', () => {
+        const edit_unidades = document.getElementById('edit-unidades');
+        const edit_preciopromocion = document.getElementById('edit-preciopromocion');
+        if (edit_unidades.value >= 2 && edit_preciopromocion.value == '') {
+            mensajeError("Por favor ingrese el precio promocional.");
+            return;
+        }
+        if (edit_unidades.value == '' && edit_preciopromocion.value != '') {
+            mensajeError("Por favor ingrese el numero de unidades para la promocion.");
+            return;
+        }
+        const nuevoProducto = { 'cantidad': edit_unidades.value, 'precio_promocional': edit_preciopromocion.value };
+        edit_promociones_precios.push(nuevoProducto);
+        const nueva_promocion = document.createElement('p');
+        nueva_promocion.innerHTML = `${edit_unidades.value} Un.  => S/${parseFloat(edit_preciopromocion.value).toFixed(2)}`;
+        document.getElementById('edit-DetallesPromocionesPrecios').appendChild(nueva_promocion);
+    })
+}
 //Mensaje de Error
 function mensajeError(texto) {
     Swal.fire({

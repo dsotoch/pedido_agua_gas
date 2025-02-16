@@ -33,13 +33,24 @@
                                         <p><i class="fa-solid fa-cart-shopping"></i> Disponible para la venta:
                                             {{ $item->comercializable ? 'SI' : 'NO' }}
                                         </p>
-                                        <form data-id="{{ $item->id }}" class="flex justify-start"
-                                            action="{{ route('eliminar.producto', ['id' => $item->id]) }}" method="post"
-                                            class="flex justify-center">
-                                            <button type="submit"
-                                                class="m-2 p-3 rounded border-2 border-color-titulos-entrega  text-color-titulos-entrega"><i
-                                                    class="fas fa-trash"></i> Eliminar</button>
-                                        </form>
+                                        <div class="flex justify-start space-x-2 w-full">
+                                            <form data-id="{{ $item->id }}" class="flex justify-start"
+                                                action="{{ route('eliminar.producto', ['id' => $item->id]) }}"
+                                                method="post" class="flex justify-center">
+                                                <button type="submit"
+                                                    class="m-2 p-3 rounded border-2 border-color-titulos-entrega  text-color-titulos-entrega"><i
+                                                        class="fas fa-trash"></i> Eliminar</button>
+                                            </form>
+                                            <button type="button"
+                                                class="editar-producto m-2 p-3 rounded border-2 border-blue-500 text-blue-500"
+                                                data-id="{{ $item->id }}" data-descripcion="{{ $item->descripcion }}"
+                                                data-promociones="{{ $item->promociones }}"
+                                                data-unitarios="{{ $item->unitarios }}" data-precio="{{ $item->precio }}"
+                                                data-comercializable="{{ $item->comercializable }}">
+                                                <i class="fas fa-edit"></i> Editar
+                                            </button>
+                                        </div>
+
                                     </div>
                                 </div>
                             @endforeach
@@ -195,4 +206,88 @@
 
 
     </div>
+    <div id="modalEditarProducto" class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden  items-center justify-center">
+        <div class="bg-white md:p-6 p-4 rounded-lg w-full md:w-1/2  h-[95vh] overflow-y-auto">
+            <h2 class="text-xl font-bold mb-4">Editar Producto</h2>
+            <form id="formEditarProducto" method="POST" action="{{ route('editar.producto') }}">
+               
+                <input type="hidden" name="id" id="edit-id">
+
+                <!-- Descripción -->
+                <label>Descripción</label>
+                <textarea id="edit-descripcion" name="descripcion" class="w-full p-2 border rounded mb-3"></textarea>
+
+                <!-- Precio -->
+                <label>Precio</label>
+                <input type="number" id="edit-precio" name="precio" class="w-full p-2 border rounded mb-3">
+
+                <!-- Configuración de Promoción -->
+                <h2 class="text-lg font-medium text-gray-800">Configuración de Promoción (Opcional)</h2>
+
+                <label for="edit-productosPorCada">Por cada cuántos productos</label>
+                <input type="number" id="edit-productosPorCada" name="productos_por_cada"
+                    class="w-full p-2 border rounded mb-3">
+
+                <label for="edit-productosGratis">Producto gratis</label>
+                <select id="edit-productosGratis" name="productos_gratis" class="w-full p-2 border rounded mb-3">
+                    <option value="" selected>Seleccione...</option>
+                    @if ($empresa->productos && $empresa->productos->isnotEmpty())
+                        <option value="mismo">Mismo Producto</option>
+                        @foreach ($empresa->productos as $item)
+                            @if (!$item->comercializable)
+                                <option value="{{ $item->descripcion }}">{{ $item->descripcion }}</option>
+                            @endif
+                        @endforeach
+                    @else
+                        <option value="mismo">Mismo Producto</option>
+                    @endif
+                </select>
+
+                <!-- Promociones -->
+                <label>Promociones</label>
+                <select name="unidades" id="edit-unidades" class="w-full p-2 border rounded mb-3">
+                    <option value="" disabled selected>Seleccione las unidades</option>
+                    <script>
+                        for (let i = 2; i <= 30; i++) {
+                            document.write(`<option value="${i}">${i} Unidades</option>`);
+                        }
+                    </script>
+                </select>
+
+                <label>Precio Promoción</label>
+                <input type="number" id="edit-preciopromocion" name="preciopromocion"
+                    class="w-full p-2 border rounded mb-3">
+                <div class="flex justify-center md:justify-end mb-2">
+                    <button type="button" id="edit-btnPromocion"
+                        class="disabled:bg-gray-500 disabled:text-white  text-base border-2 border-color-titulos-entrega text-color-titulos-entrega rounded px-4 py-3  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                        Agregar Promoción
+                    </button>
+                </div>
+                <div class=" flex-col space-y-2 ">
+                    <p class="text-md font-medium text-gray-700 mb-3">Detalles de
+                        Promociones
+                    </p>
+                    <div class='flex flex-col text-gray-700' id="edit-DetallesPromocionesPrecios">
+                    </div>
+                    <br>
+                    <button type="button" class="text-red-500  hover:text-red-400 font-medium p-4"
+                        id="edit-btnEliminarPromociones"><i class="fas fa-trash m-2"></i>Eliminar
+                        Promociones</button>
+                    <hr>
+                </div>
+                <!-- Check Comercializable -->
+                <label>
+                    <input type="checkbox" id="edit-comercializable" name="estado">
+                    Comercializable
+                </label>
+
+                <div class="flex justify-end mt-4">
+                    <button type="button" id="cerrarModalEditar"
+                        class="mr-2 px-4 py-2 bg-red-500 text-white rounded">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
 @endsection
