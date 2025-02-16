@@ -13,6 +13,34 @@ const btn_predeterminado = document.getElementById('btn_predeterminado');
 const btn_menu = document.getElementById('btn_menu');
 const menu = document.getElementById('menu');
 const ruta_cliente_distribuidora = document.querySelector('#ruta_cliente_distribuidora');
+const btn_cerrar_menu = document.querySelector('#btn_cerrar_menu');
+const mensajeConexion = document.getElementById("mensajeConexion");
+
+function mostrarMensaje(mensaje, color) {
+    mensajeConexion.textContent = mensaje;
+    mensajeConexion.classList.remove("hidden");
+    mensajeConexion.classList.remove("opacity-0");
+    mensajeConexion.classList.add("opacity-100");
+    mensajeConexion.style.backgroundColor = color;
+
+    setTimeout(() => {
+        mensajeConexion.classList.remove("opacity-100");
+        mensajeConexion.classList.add("opacity-0");
+        setTimeout(() => mensajeConexion.classList.add("hidden"), 500);
+    }, 2000);
+}
+
+function verificarConexion() {
+    if (navigator.onLine) {
+        mostrarMensaje("Se restableció la conexión", "#10B981"); // Verde
+    } else {
+        mostrarMensaje("No tienes conexión a internet", "#DC2626"); // Rojo
+    }
+}
+
+// Detectar cambios de conexión
+window.addEventListener("offline", () => mostrarMensaje("No tienes conexión a internet", "#DC2626"));
+window.addEventListener("online", () => mostrarMensaje("Se restableció la conexión", "#10B981"));
 
 if (btn_menu) {
     btn_menu.addEventListener("click", () => {
@@ -21,13 +49,14 @@ if (btn_menu) {
     });
 }
 // Cerrar menú si se hace clic fuera
-document.addEventListener("click", (e) => {
-    if (menu) {
-        if (!menu.contains(e.target) && !btn_menu.contains(e.target)) {
+if (btn_cerrar_menu) {
+    btn_cerrar_menu.addEventListener("click", (e) => {
+        if (menu) {
             menu.classList.add("-translate-x-full");
+
         }
-    }
-});
+    });
+}
 if (btn_predeterminado) {
     btn_predeterminado.addEventListener('click', () => {
         let baseUrl = window.location.origin;

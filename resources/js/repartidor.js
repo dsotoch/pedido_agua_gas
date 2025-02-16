@@ -100,8 +100,6 @@ if (mi_cuenta_contenedor_pedidos) {
             spanestadopedido = disparador.closest('.mi_cuenta_pedido')?.querySelector('.estado_pedido_span');
             spanpagado = disparador.closest('.mi_cuenta_pedido')?.querySelector('.estado_metodo_pago');
             const id_pedido_modal_pago = document.getElementById('id_pedido_modal_pago');
-    
-            disparador.disabled = true;
             paymentModal.classList.remove('hidden');
             paymentModal.classList.add('flex');
             modal_pago_pedido_id.textContent = "#" + id;

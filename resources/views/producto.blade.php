@@ -65,22 +65,36 @@
                                     ->first();
                                 // Si no falta, asignar el nombre del producto
                                 $producto_gratis = $faltante === 0 ? $promociones_inactivas?->producto : '';
+                                $ultima_promocion = collect($item->entregaPromociones)
+                                    ->filter(fn($promocion) => $promocion->estado == 1)
+                                    ->sortByDesc('created_at') // Ordena por fecha de creación (ajusta si es otro campo)
+                                    ->first();
+
+                                $pro_gratis_unitario = $ultima_promocion?->producto;
                             @endphp
 
                             @if ($usuario->tipo == 'cliente')
                                 <span class="bidones-faltan text-[14px] max-h-[55px]  text-color-text">
-                                    @if ($faltante > 0)
-                                        ¡Te faltan <span
-                                            class="resaltar-numero font-bold text-[16px]">{{ $faltante }}</span>
-                                        bidón(es) para tu {{ $ordinal }} GRATIS!
-                                    @else
+                                    @if ($promocion_actual['meta'] == 1)
                                         <p class="tex-[14px] pl-2 pr-2 promocion_producto_gratis_valida"
-                                            data-producto-id="{{ $item->id }}"> 🎉 ¡Felicidades! Ya has cumplido la
-                                            promoción
-                                            para reclamar gratis este producto:
+                                            data-producto-id="{{ $item->id }}"> 🎉 Puedes reclamar gratis este producto:
                                         </p>
-                                        <span class="font-semibold">{{ $producto_gratis }}</span>.
+                                        <span class="font-semibold">{{ $pro_gratis_unitario }}</span>.
+                                    @else
+                                        @if ($faltante > 0)
+                                            ¡Te faltan <span
+                                                class="resaltar-numero font-bold text-[16px]">{{ $faltante }}</span>
+                                            bidón(es) para tu {{ $ordinal }} GRATIS!
+                                        @else
+                                            <p class="tex-[14px] pl-2 pr-2 promocion_producto_gratis_valida"
+                                                data-producto-id="{{ $item->id }}"> 🎉 ¡Felicidades! Ya has cumplido la
+                                                promoción
+                                                para reclamar gratis este producto:
+                                            </p>
+                                            <span class="font-semibold">{{ $producto_gratis }}</span>.
+                                        @endif
                                     @endif
+
                                 </span>
                             @endif
                         @endif

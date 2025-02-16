@@ -1,8 +1,17 @@
 @extends('layout')
 @section('cuerpo')
-    <div class="bg-color-dashboard w-full h-full md:flex md:flex-col grid relative">
+    <div class=" bg-color-dashboard w-full h-full md:flex md:flex-col grid relative">
+        <div id="mensajeConexion"
+            class="hidden fixed top-0 left-0 w-full bg-red-500 z-50 text-white text-center py-2 transition-opacity duration-500">
+            No tienes conexión a internet
+        </div>
+
         <div id="menu"
-            class="overflow-y-auto absolute top-0 left-0 z-50 transform -translate-x-full transition-transform duration-300 md:translate-x-0 md:flex md:fixed  flex-col  bg-color-titulos-entrega text-white text-center hidden w-3/5 md:w-[202px] md:min-w-[202px] h-screen ">
+            class="overflow-y-auto absolute top-0 left-0 z-40 transform -translate-x-full transition-transform duration-300 md:translate-x-0 md:flex md:fixed  flex-col  bg-color-titulos-entrega text-white text-center hidden w-3/5 md:w-[202px] md:min-w-[202px] h-screen ">
+            <!-- Botón de cierre -->
+            <button id="btn_cerrar_menu" class=" md:hidden block absolute top-2 right-2 p-2 text-white hover:scale-110">
+                <i class="fa-solid fa-x text-2xl"></i>
+            </button>
             <div class="mx-auto mt-[40px] mb-4 flex flex-col items-center"> <svg xmlns="http://www.w3.org/2000/svg"
                     xmlns:xlink="http://www.w3.org/1999/xlink" id="Capa_1" x="0px" y="0px" width="100px" height="40px"
                     viewBox="0 0 200 80.25" xml:space="preserve">
@@ -21,8 +30,7 @@
                 @if (($usuario && $usuario->tipo === 'admin') || ($usuario->tipo === 'repartidor' && $usuario->empresas()->exists()))
                     <a href="{{ route('index.negocio', ['slug' => $usuario->empresas()->first()->dominio]) }}">Pedir</a>
                 @else
-                    <a id="ruta_cliente_distribuidora"
-                        href="">Pedir</a>
+                    <a id="ruta_cliente_distribuidora" href="">Pedir</a>
                 @endif
 
                 @if ($usuario && ($usuario->tipo === 'admin' || $usuario->tipo === 'repartidor'))
@@ -69,7 +77,7 @@
                             <i class="fa-solid fa-ticket"></i>&nbsp;&nbsp;Cupones
                         </a>
                     </div>
-                  
+
                     <div
                         class="{{ request()->routeIs('empresa.usuarios') ? 'btn-active-mi-cuenta' : '' }} border border-transparent p-3 rounded-md hover:bg-naranja hover:border-red-500">
                         <a href="{{ route('empresa.usuarios') }}" id="usuarios">

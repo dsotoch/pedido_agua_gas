@@ -209,9 +209,10 @@ class ControllerUsuario extends Controller
                 ], 403);
             }
         }
+        $remember = $request->has('remember'); // Revisa si el usuario marcó "recordarme"
 
         // Intentar autenticación
-        if (Auth::attempt($credentials)) {
+        if (Auth::attempt($credentials,$remember)) {
             // Regenerar sesión para proteger contra ataques de fijación de sesión
             $request->session()->regenerate();
 
@@ -245,8 +246,10 @@ class ControllerUsuario extends Controller
                 ], 403);
             }
         }
+        $remember = $request->has('remember'); // Revisa si el usuario marcó "recordarme"
+
         // Intentar autenticación
-        if (Auth::attempt($credentials)) {
+        if (Auth::attempt($credentials,$remember)) {
             // Regenerar sesión para proteger contra ataques de fijación de sesión
             $request->session()->regenerate();
 

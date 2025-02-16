@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\RequestProducto;
 use App\Http\Requests\RequestPromociones;
+use App\Models\EntregaPromociones;
 use App\Models\Producto;
 use App\Models\Promociones;
 use App\Models\PromocionesUnitario;
@@ -56,6 +57,7 @@ class ControllerProducto extends Controller
                         'cantidad' => $productos_por_cada,
                         'producto_gratis' => $productos_gratis == 'mismo' ? $producto->descripcion : $productos_gratis,
                     ]);
+                    
                 }
 
                 // Validar y procesar promociones si existen

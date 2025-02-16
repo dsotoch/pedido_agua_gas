@@ -450,34 +450,85 @@ class ControllerPedido extends Controller
                         );
 
                         $nuevaCantidad = ($cantidadPedidos->exists ? $cantidadPedidos->cantidad : 0) + $productoData['cantidad'];
-
-
-                        // Verificar si cumple con la promoción unitaria
-                        if ($promocionUnitaria && $nuevaCantidad >= $promocionUnitaria->cantidad) {
-                            $entregaPromocion = EntregaPromociones::firstOrNew(
-                                [
+                        // Verificamos si hay una promoción y si se cumple la cantidad requerida
+                        if ($promocionUnitaria) {
+                            if ($promocionUnitaria->cantidad == 1) {
+                                // Crear o actualizar promoción con estado true
+                                $entregaPromocion = EntregaPromociones::firstOrNew([
                                     'user_id' => $usuario->id,
                                     'producto_id' => $producto->id,
-                                    'estado' => false,
-                                ]
-                            );
-
-                            if (!$entregaPromocion->exists) {
-                                // Crear entrega de promoción
-                                $entregaPromocion->fill([
-                                    'pedido_id' => $pedido->id,
-                                    'cantidad' => 1,
-                                    'producto' => $promocionUnitaria->producto_gratis,
+                                    'estado' => false
                                 ]);
-                                $entregaPromocion->save();
-                                // Reducir cantidad utilizada en la promoción
-                                $cantidadPedidos->decrement('cantidad', $promocionUnitaria->cantidad);
-                            } else {
-                                // Solo actualizar el estado si ya existía
-                                $entregaPromocion->update(['estado' => true]);
+
+                                if (!$entregaPromocion->exists) {
+                                    $entregaPromocion->fill([
+                                        'pedido_id' => $pedido->id,
+                                        'cantidad' => $productoData['cantidad'], // Ajustar la cantidad de la promoción
+                                        'producto' => $promocionUnitaria->producto_gratis,
+                                        'estado' => true, // Se entrega automáticamente
+                                    ]);
+                                    $entregaPromocion->save();
+                                } else {
+                                    $entregaPromocion->update([
+                                        'pedido_id' => $pedido->id,
+                                        'cantidad' => $productoData['cantidad'],
+                                        'estado' => true
+                                    ]);
+                                }
+
+                                // Restar la cantidad utilizada en la promoción
+                                $cantidadRestante = max(0, $nuevaCantidad - $productoData['cantidad']);
+                            } elseif ($nuevaCantidad > $promocionUnitaria->cantidad) {
+                                // Buscar o crear la promoción con estado true
+                                $entregaPromocion = EntregaPromociones::firstOrNew([
+                                    'user_id' => $usuario->id,
+                                    'producto_id' => $producto->id,
+                                    'estado' => false
+                                ]);
+
+                                if (!$entregaPromocion->exists) {
+                                    $entregaPromocion->fill([
+                                        'pedido_id' => $pedido->id,
+                                        'cantidad' => 1,
+                                        'producto' => $promocionUnitaria->producto_gratis,
+                                        'estado' => true, // Se entrega de inmediato
+                                    ]);
+                                    $entregaPromocion->save();
+                                } else {
+                                    // Si ya existía, aseguramos que se activa
+                                    $entregaPromocion->update(['pedido_id' => $pedido->id, 'estado' => true]);
+                                }
+
+                                // Restar la cantidad utilizada en la promoción
+                                $cantidadRestante = max(0, $nuevaCantidad - $promocionUnitaria->cantidad);
+                            } elseif ($nuevaCantidad == $promocionUnitaria->cantidad) {
+                                // Crear una promoción pero con estado false
+                                $entregaPromocion = EntregaPromociones::firstOrNew([
+                                    'user_id' => $usuario->id,
+                                    'producto_id' => $producto->id,
+                                ]);
+
+                                if (!$entregaPromocion->exists) {
+                                    $entregaPromocion->fill([
+                                        'pedido_id' => $pedido->id,
+                                        'cantidad' => 1,
+                                        'producto' => $promocionUnitaria->producto_gratis,
+                                        'estado' => false, // No se entrega aún
+                                    ]);
+                                    $entregaPromocion->save();
+                                }
+
+                                // Nueva cantidad es igual a la cantidad de la promoción
+                                $cantidadRestante = $nuevaCantidad;
                             }
+                        } else {
+                            $cantidadRestante = $nuevaCantidad;
                         }
-                        $cantidadPedidos->cantidad = $nuevaCantidad;
+
+
+
+                        // Guardar la nueva cantidad después de aplicar la promoción
+                        $cantidadPedidos->cantidad = $cantidadRestante;
                         $cantidadPedidos->save();
                     });
                 }
@@ -518,7 +569,7 @@ class ControllerPedido extends Controller
             DB::rollBack();
             return response()->json([
                 'mensaje' => 'Ocurrio un error inesperado.',
-                'error' => $e->getMessage() . $e->getLine(),
+                'error' => 'Ocurrio un error inesperado.',
             ], 500);
         }
     }

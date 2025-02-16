@@ -82,6 +82,8 @@
                                     <input required type="password" placeholder="" name="password"
                                         class=" border-color-text p-3 border rounded-3xl focus:outline-none"
                                         autocomplete="off" />
+                                    <div class="flex space-x-1"><label for="remember">Recuérdame</label><input type="checkbox" name="remember" class="w-6"></div>
+
                                     <center><button type="submit"
                                             class="p-4  text-white text-[16px] rounded-2xl w-full bg-tarjetas transition duration-200">Acceder</button>
                                     </center>

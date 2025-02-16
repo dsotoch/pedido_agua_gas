@@ -12,6 +12,7 @@ class EncryptCookies extends Middleware
      * @var array<int, string>
      */
     protected $except = [
-        //
+        'remember_web_*', // Permite que Laravel maneje "Remember Me" sin interferencias
+
     ];
 }

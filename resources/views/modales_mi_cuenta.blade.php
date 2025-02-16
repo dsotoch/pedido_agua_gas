@@ -75,7 +75,7 @@
                      class="px-4 py-2 bg-naranja text-white rounded hover:bg-border-red-500 hover:scale-105 transition">
                      Aceptar
                  </button>
-                 <button type="button"
+                 <button type="button" 
                      class="px-4 py-2 border border-color-titulos-entrega text-color-titulos-entrega rounded hover:scale-105 transition"
                      onclick="document.getElementById('paymentModal').classList.remove('flex');;document.getElementById('paymentModal').classList.add('hidden')">
                      Cancelar
