@@ -37,3 +37,43 @@ if (cliente_input_buscar) {
 
     });
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+    const contenedorDirecciones = document.getElementById("direcciones-container");
+    const btnAgregarDireccion = document.getElementById("agregarDireccion");
+
+    // Función para agregar una nueva dirección
+    function agregarDireccion(valor = "", referencia = "") {
+        const index = document.querySelectorAll(".direccion-item").length; // Índice único
+
+        const div = document.createElement("div");
+        div.classList.add("direccion-item");
+        div.innerHTML = `
+            <input type="text" class="p-2 border-2 w-1/3" name="direcciones[${index}][direccion]" value="${valor}" placeholder="Dirección" required>
+            <input type="text" class="p-2 border-2 md:w-1/3 w-1/2" name="direcciones[${index}][referencia]" value="${referencia}" placeholder="Referencia" required>
+            <button type="button" class="editarDireccion">✏️</button>
+            <button type="button" class="eliminarDireccion">🗑️</button>
+        `;
+
+        contenedorDirecciones.appendChild(div);
+    }
+
+    if (btnAgregarDireccion) {
+        // Agregar dirección al hacer clic en el botón
+        btnAgregarDireccion.addEventListener("click", function () {
+            agregarDireccion();
+        });
+    }
+
+    if (contenedorDirecciones) {
+        // Delegación de eventos para eliminar o editar
+        contenedorDirecciones.addEventListener("click", function (e) {
+            if (e.target.classList.contains("eliminarDireccion")) {
+                e.target.parentElement.remove();
+            } else if (e.target.classList.contains("editarDireccion")) {
+                let inputDireccion = e.target.parentElement.querySelector("input[name*='direccion']");
+                inputDireccion.focus();
+            }
+        });
+    }
+});

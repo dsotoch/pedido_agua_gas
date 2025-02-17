@@ -1,10 +1,8 @@
-import { error } from "jquery";
 import Swal from "sweetalert2";
 const botonregistrarsepanelcliente = document.getElementById('botonregistrarsepanelcliente');
 const formLogindiv = document.getElementById('formLogindiv');
 const contenedor_login = document.getElementById('contenedor_login');
 const boton_regresar_a_login = document.getElementById('boton_regresar_a_login');
-const btn_acceder = document.getElementById('btn_acceder');
 const formulario_login_pagina_principal = document.getElementById('formulario_login_pagina_principal');
 const token = document.querySelector('meta[name="token"]').getAttribute('content');
 const contenedor_registrarse = document.getElementById('contenedor_registrarse');

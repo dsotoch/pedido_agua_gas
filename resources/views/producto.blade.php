@@ -186,9 +186,11 @@
                                     <option value="{{ $usuario->persona->direccion }}">🏠
                                         {{ $usuario->persona->direccion }}</option>
                                 @endif
-                                @if (!empty($usuario->persona->direccion2))
-                                    <option value="{{ $usuario->persona->direccion2 }}">🏢
-                                        {{ $usuario->persona->direccion2 }}</option>
+                                @if (!empty($usuario->direcciones))
+                                    @foreach ($usuario->direcciones as $dir)
+                                    <option value="{{ $dir->direccion }}">🏢
+                                        {{ $dir->direccion }}</option>
+                                    @endforeach
                                 @endif
                             </select>
 

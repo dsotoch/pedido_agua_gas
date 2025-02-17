@@ -41,7 +41,10 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
-
+    public function direcciones()
+    {
+        return $this->hasMany(Direcciones::class);
+    }
     public function pedido()
     {
         return $this->hasOne(Pedido::class, 'repartidor_id');
@@ -74,6 +77,6 @@ class User extends Authenticatable
     }
     public function clientepedido()
     {
-        return $this->hasMany(ClientePedidoProductos::class,'cliente_id');
+        return $this->hasMany(ClientePedidoProductos::class, 'cliente_id');
     }
 }

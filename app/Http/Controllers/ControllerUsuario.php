@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\RequestPersona;
+use App\Models\Direcciones;
 use App\Models\Empresa;
 use App\Models\Pedido;
 use App\Models\Persona;
@@ -143,7 +144,7 @@ class ControllerUsuario extends Controller
                 'dni' => 'required|string|min:8|max:8|unique:persona,dni,' . $id,
                 'email' => 'nullable|email|max:255|unique:persona,correo,' . $id,
                 'direccion' => 'nullable|string|max:255',
-                'direccion2' => 'nullable|string|max:255',
+                'direccion2' => 'nullable|array|max:255',
                 'nota' => 'nullable|string|max:500',
                 'password' => 'nullable|string|min:8',
             ]);
@@ -165,7 +166,6 @@ class ControllerUsuario extends Controller
         $persona->dni = $request->input('dni');
         $persona->direccion = $request->input('direccion');
         $persona->nota = $request->input('nota');
-        $persona->direccion2 = $request->input('direccion2');
 
         // Actualizar la contraseña solo si se proporciona
         if ($request->filled('password')) {
@@ -176,6 +176,20 @@ class ControllerUsuario extends Controller
         // Guardar cambios
         $usuario->save();
 
+        if ($request->has('direcciones')) {
+            // Eliminar direcciones previas (si aplica)
+            $usuario->direcciones()->delete();
+
+            // Guardar nuevas direcciones
+            foreach ($request->direcciones as $direccion) {
+                Direcciones::create([
+                    'user_id' => $usuario->id,
+                    'direccion' => $direccion['direccion'],
+                    'referencia' => $direccion['referencia'] ?? null,
+                ]);
+            }
+        }
+        
         // Redirigir con mensaje de éxito
         return redirect()->back()->with('success', 'Datos actualizados correctamente.');
     }
@@ -212,7 +226,7 @@ class ControllerUsuario extends Controller
         $remember = $request->has('remember'); // Revisa si el usuario marcó "recordarme"
 
         // Intentar autenticación
-        if (Auth::attempt($credentials,$remember)) {
+        if (Auth::attempt($credentials, $remember)) {
             // Regenerar sesión para proteger contra ataques de fijación de sesión
             $request->session()->regenerate();
 
@@ -249,7 +263,7 @@ class ControllerUsuario extends Controller
         $remember = $request->has('remember'); // Revisa si el usuario marcó "recordarme"
 
         // Intentar autenticación
-        if (Auth::attempt($credentials,$remember)) {
+        if (Auth::attempt($credentials, $remember)) {
             // Regenerar sesión para proteger contra ataques de fijación de sesión
             $request->session()->regenerate();
 
