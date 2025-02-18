@@ -100,29 +100,19 @@ if (closeModal) {
 if (openModalUsuario) {
     // Abrir modal Usuario
     openModalUsuario.addEventListener('click', () => {
+        modalUsuario.classList.remove('hidden');
+
         modalUsuario.classList.remove('translate-x-full');
-        divPrincipal.style.opacity = 0.5;
-        nav.style.opacity = 0.5;
-        // Habilitar todos los botones dentro del nav
-        const buttons = nav.querySelectorAll('button');
-        buttons.forEach(button => {
-            button.disabled = true;
-        });
+       
     });
 }
 
 // Cerrar modal Usuario
 if (closeModalUsuario) {
     closeModalUsuario.addEventListener('click', () => {
-
+        modalUsuario.classList.add('hidden');
         modalUsuario.classList.add('translate-x-full');
-        divPrincipal.style.opacity = 1;
-        nav.style.opacity = 1;
-        // Habilitar todos los botones dentro del nav
-        const buttons = nav.querySelectorAll('button');
-        buttons.forEach(button => {
-            button.disabled = false;
-        });
+       
     });
 }
 
@@ -132,13 +122,7 @@ if (closeModalCliente) {
     closeModalCliente.addEventListener('click', () => {
         modalCrearCliente.classList.remove("flex");
         modalCrearCliente.classList.add("hidden");
-        divPrincipal.style.opacity = 1;
-        nav.style.opacity = 1;
-        // Habilitar todos los botones dentro del nav
-        const buttons = nav.querySelectorAll('button');
-        buttons.forEach(button => {
-            button.disabled = false;
-        });
+        
     });
 }
 
