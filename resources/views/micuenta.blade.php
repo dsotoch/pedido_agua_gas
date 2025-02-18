@@ -213,7 +213,7 @@
                                             <div class="flex flex-col justify-center  ml-2">
                                                 @if ($pedido->detalles->count() > 0)
                                                     @foreach ($pedido->detalles as $item)
-                                                        <p>{{ $item->producto->descripcion }} x {{ $item->cantidad }}</p>
+                                                        <p>{{ $item->producto?->descripcion }} x {{ $item->cantidad }}</p>
                                                     @endforeach
                                                 @endif
                                                 @if ($pedido->entregaPromociones->count() > 0)
