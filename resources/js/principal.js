@@ -201,14 +201,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 const favorito = await esFavoritoPrincipal(empresaDominio);
 
                 if (!favorito) {
-                    if (guardarFavorito(id_usuario_autenticado.textContent.trim(), empresaDominio)) {
-                        btnFavorito.classList.add('text-yellow-500'); // Cambia color al activar
-                        await obtenerFavoritos();
-
+                    if (id_usuario_autenticado.textContent.trim() == '') {
+                        Swal.fire({
+                            title: 'Requerimiento faltante!',
+                            text: "Inicia sesion para realizar esta operacion.",
+                            icon: 'warning',
+                            showConfirmButton: false,
+                            timer: 2000,
+                            timerProgressBar: true,
+                            customClass: {
+                                timerProgressBar: 'bg-red-500 h2 rounded',
+                            }
+                        });
                     } else {
-                        btnFavorito.classList.remove('text-yellow-500'); // Cambia color al activar
-                        btnFavorito.classList.add('text-gray-400'); // Cambia color al activar
+                        if (guardarFavorito(id_usuario_autenticado.textContent.trim(), empresaDominio)) {
+                            btnFavorito.classList.add('text-yellow-500'); // Cambia color al activar
+                            await obtenerFavoritos();
 
+                        } else {
+                            btnFavorito.classList.remove('text-yellow-500'); // Cambia color al activar
+                            btnFavorito.classList.add('text-gray-400'); // Cambia color al activar
+
+                        }
                     }
                 } else {
                     await eliminarFavorito(empresa.dominio);

@@ -3,7 +3,7 @@ const token = document.querySelector('meta[name="token"]').getAttribute('content
 const modal = document.getElementById('modal');
 const openModal = document.getElementById('openModal');
 const closeModal = document.getElementById('closeModal');
-const modalUsuario = document.getElementById('modalUsuario');
+const modalUsuario = document.getElementById('contenedor_login');
 const openModalUsuario = document.getElementById('openModalUsuario');
 const closeModalUsuario = document.getElementById('closeModalUsuario');
 const modalCrearCliente = document.getElementById('modalCrearCliente');
