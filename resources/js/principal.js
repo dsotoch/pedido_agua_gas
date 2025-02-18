@@ -213,6 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 timerProgressBar: 'bg-red-500 h2 rounded',
                             }
                         });
+                        return;
                     } else {
                         if (guardarFavorito(id_usuario_autenticado.textContent.trim(), empresaDominio)) {
                             btnFavorito.classList.add('text-yellow-500'); // Cambia color al activar
@@ -238,7 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
             btnPredeterminado.dataset.dominio = empresa.dominio;
             btnPredeterminado.innerHTML = '<i class="fas fa-check-circle "></i>';
             btnPredeterminado.title = 'Elegir como Predeterminado';
-            btnPredeterminado.addEventListener('click', async(e) => {
+            btnPredeterminado.addEventListener('click', async (e) => {
                 e.stopPropagation(); // Evita redirección
                 document.querySelectorAll('.btn_pred').forEach(icono => {
                     if (icono !== btnPredeterminado) {  // Evita afectar el botón actual
@@ -247,13 +248,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 let baseUrl = window.location.origin;
                 let url = `${baseUrl}/${empresa.dominio}`; // Construcción correcta de la URL
-                if (!await guardarPaginaPredeterminada(url, empresa.dominio, 'principal')) {
-                    btnPredeterminado.classList.remove('text-green-500');
-                } else {
+                const cumple_condicion = await guardarPaginaPredeterminada(url, empresa.dominio, 'principal');
+                if (cumple_condicion) {
                     btnPredeterminado.classList.add('text-green-500'); // Activa este
+                } else {
+                    btnPredeterminado.classList.remove('text-green-500');
 
                 }
-                console.log('funcionando predeterminado');
             });
 
             // Agregar botones al contenedor de botones
