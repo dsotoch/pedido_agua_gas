@@ -7,7 +7,7 @@
         </div>
 
         <!-- Botón al final -->
-        <div class="absolute top-0 right-0   flex group items-start pt-3 justify-end w-1/2  pr-2 h-[120px]">
+        <div class="absolute top-0 right-0   flex  items-start pt-3 justify-end w-1/2  pr-2 h-[120px]">
 
             <button id="btn_acceder" class="md:mr-40 mr-4 text-[16px] leading-9 ">Acceder&nbsp;&nbsp;<i
                     class="fa-solid fa-right-to-bracket"></i></button>
@@ -32,7 +32,7 @@
             </button>
             @guest
                 <div id="contenedor_login"
-                    class="absolute hidden overflow-y-auto w-[350px]  md:w-[600px] max-h-[80vh] z-50 group-hover:flex group-focus-within:flex  flex-col justify-start text-start  top-12  bg-white shadow-md">
+                    class="absolute hidden overflow-y-auto w-[350px]  md:w-[600px] max-h-[80vh] z-50    flex-col justify-start text-start  top-12  bg-white shadow-md">
 
                     <!-- Formulario de inicio de sesión -->
                     <div class="bg-white w-full p-10" id="formLogindiv">
@@ -160,8 +160,8 @@
                 </div>
             @endguest
             @auth
-                <div
-                    class="absolute hidden overflow-y-auto w-full  md:w-[600px] max-h-[80vh] min-h-[250px] z-50 group-hover:flex group-focus-within:flex  flex-col justify-start text-start  top-12  bg-white shadow-md">
+                <div id="contenedor_login"
+                    class="absolute hidden overflow-y-auto w-full  md:w-[600px] max-h-[80vh] min-h-[250px] z-50  group-focus-within:flex  flex-col justify-start text-start  top-12  bg-white shadow-md">
 
                     <!--Usuario ya Autenticado--->
                     <div class="absolute w-full">

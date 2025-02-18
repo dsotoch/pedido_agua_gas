@@ -45,19 +45,25 @@ Route::controller(ControllerUsuario::class)->group(function () {
     Route::put('/update/{id}', 'update')->name('usuario.update');
     Route::post('/validar-datos', 'validateUser')->name('password.validate');
     Route::put('/restablecer-password', 'resetPassword')->name('password.reset');
+    Route::put('/predeterminada', 'datosPredeterminada')->name('usuario.predeterminada');
+    Route::get('/getpredeterminada', 'getPredeterminada')->name('usuario.getpredeterminada');
+    Route::delete('/eliminarpredeterminada', 'eliminarPredeterminada')->name('usuario.eliminarpredeterminada');
+    Route::put('/guardarFavorito', 'guardarFavorito')->name('usuario.guardarFavorito');
+    Route::get('/getFavoritos', 'getFavoritos')->name('usuario.getFavoritos');
+    Route::delete('/eliminarFavorito', 'eliminarFavorito')->name('usuario.eliminarFavorito');
+
+
 });
 
 Route::controller(ControllerProducto::class)->group(function () {
     Route::post('crear', 'store')->name('crear.producto');
     Route::delete('eliminar/{id}', 'destroy')->name('eliminar.producto');
     Route::put('modificarProducto', 'update')->name('editar.producto');
-
 });
 Route::prefix('{slug}')->controller(ControllerPedido::class)->group(function () {
     Route::post('/crearpedido', 'store')->name('pedido.crear');
     Route::put('/cancelarpedido', 'cancelarPedido')->name('pedido.cancelarPedido');
     Route::get('/pedido_confirmado/{id}', 'vista_pedido_confirmado')->name("pedido.confirmacion");
-
 });
 Route::controller(ControllerPedido::class)->group(function () {
     Route::put('cambiarestadopago/{id}', 'pedidorecibidorepartidor')->name('pedido.recibididorepartidor');
@@ -87,7 +93,6 @@ Route::prefix('mi-cuenta')->controller(ControllerEmpresa::class)->group(function
     Route::put('modificarDiseño', 'modificar_empresa_diseño')->name('empresa.editar_diseño');
     Route::get('cupones', 'index_cupones')->name('empresa.cupones');
     Route::get('favoritas', 'index_favoritas')->name('empresa.favoritas');
-
 });
 Route::controller(CuponController::class)->group(function () {
     Route::post('/aplicar-cupon', 'aplicarCupon')->name('cupones.aplicar');

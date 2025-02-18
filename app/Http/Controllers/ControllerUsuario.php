@@ -43,6 +43,128 @@ class ControllerUsuario extends Controller
     }
 
 
+    public function datosFavoritos(Request $request)
+    {
+        try {
+            $user = User::findOr($request->usuario_id);
+            $user->update([
+                'favoritos' => $request->favoritos
+            ]);
+            return response()->json(['mensaje' => 'Operacion exitosa favoritos']);
+        } catch (\Throwable $th) {
+            return response()->json(['mensaje' => 'Error al guardar favoritos ']);
+        }
+    }
+    public function datosPredeterminada(Request $request)
+    {
+        try {
+            $user = User::findOr($request->usuario_id);
+            $url = $request->predeterminado;
+            // Extraer la parte después del dominio
+            $path = ltrim(parse_url($url, PHP_URL_PATH), '/');
+            $empresa = Empresa::where('dominio', $path)->first();
+
+            $user->update([
+                'predeterminada' => $empresa->id,
+
+            ]);
+            return response()->json(['mensaje' => 'Operacion exitosa predeterminado']);
+        } catch (\Throwable $th) {
+            return response()->json(['mensaje' => 'Error al guardar predeterminado']);
+        }
+    }
+    public function guardarFavorito(Request $request)
+    {
+        try {
+            $user = User::findOr($request->usuario_id); // Buscar usuario
+            $favoritos = json_decode($user->favoritos, true) ?? []; // Convertir a array
+            $empresa = Empresa::where('dominio', $request->empresa_id)->first();
+            // Si el ID ya está en la lista, no hacer nada
+            if (in_array($empresa->id, $favoritos)) {
+                return response()->json(['mensaje' => 'Ya es un favorito']);
+            }
+
+            // Si hay 3 favoritos, eliminar el más antiguo (primer elemento)
+            if (count($favoritos) >= 3) {
+                array_shift($favoritos);
+            }
+
+            // Agregar el nuevo favorito al final
+            $favoritos[] = $empresa->id;
+
+            // Guardar la lista actualizada
+            $user->favoritos = json_encode($favoritos);
+            $user->save();
+
+            return response()->json(['mensaje' => 'Favorito guardado correctamente']);
+        } catch (\Throwable $th) {
+            return response()->json(['mensaje' => $th->getMessage()]);
+        }
+    }
+
+    public function getFavoritos()
+    {
+        try {
+            $usuario_actual = Auth::user();
+            $user = User::findOr($usuario_actual->id);
+            $favoritos = json_decode($user->favoritos, true); // Convertir JSON a array
+            if (!empty($favoritos)) {
+                $empresas = Empresa::whereIn('id', $favoritos)->get(['dominio', 'nombre', 'logo']);
+                return response()->json(['mensaje' => $empresas]);
+            }
+            return response()->json(['mensaje' => null]); // Si no hay favoritos
+
+        } catch (\Throwable $th) {
+            return response()->json(['mensaje' => null]);
+        }
+    }
+    public function eliminarFavorito(Request $request)
+    {
+        try {
+            $usuario_actual = Auth::user();
+            $user = User::findOr($usuario_actual->id); // Buscar usuario
+            $favoritos = json_decode($user->favoritos, true) ?? []; // Convertir a array
+            $empresa = Empresa::where('dominio', $request->empresa_id)->first();
+            // Buscar y eliminar el ID
+            $favoritos = array_filter($favoritos, fn($id) => $id != $empresa->id);
+
+            // Guardar nueva lista de favoritos
+            $user->favoritos = json_encode(array_values($favoritos));
+            $user->save();
+
+            return response()->json(['mensaje' => 'Favorito eliminado correctamente']);
+        } catch (\Throwable $th) {
+            return response()->json(['mensaje' => $th->getMessage(). $empresa]);
+        }
+    }
+
+    public function getPredeterminada()
+    {
+        try {
+            $usuario_actual = Auth::user();
+            $user = User::findOr($usuario_actual->id);
+            if ($user->predeterminada) {
+                $empresa = Empresa::findOr($user->predeterminada);
+                return response()->json(['mensaje' => $empresa->dominio]);
+            } else {
+                return response()->json(['mensaje' => null]);
+            }
+        } catch (\Throwable $th) {
+            return response()->json(['mensaje' => null]);
+        }
+    }
+    public function eliminarPredeterminada()
+    {
+        try {
+            $usuario_actual = Auth::user();
+            $user = User::findOr($usuario_actual->id);
+            $user->predeterminada = null;
+            $user->save();
+            return response()->json(['mensaje' => 'Empresa predeterminada eliminada']);
+        } catch (\Throwable $th) {
+            return response()->json(['mensaje' => 'Error al obtener predeterminado']);
+        }
+    }
 
     public function resetPassword(Request $request)
     {
@@ -189,7 +311,7 @@ class ControllerUsuario extends Controller
                 ]);
             }
         }
-        
+
         // Redirigir con mensaje de éxito
         return redirect()->back()->with('success', 'Datos actualizados correctamente.');
     }

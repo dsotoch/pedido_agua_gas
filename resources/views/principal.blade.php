@@ -7,6 +7,10 @@
                 <a href="/"><img src="{{ asset('imagenes/entrega.png') }}" alt=""
                         class="object-contain  ml-auto  w-[255px] h-[68px] "></a>
             </div>
+            <div id="mensajeConexion"
+                class="hidden fixed top-0 left-0 w-full bg-red-500 z-50 text-white text-center py-2 transition-opacity duration-500">
+                No tienes conexión a internet
+            </div>
             <div class="flex  md:w-3/5 w-1/2 justify-end pr-52 items-center z-50">
                 <!-- Enlace de distribuidor -->
                 <a href="#distribuidor"
@@ -16,7 +20,7 @@
                 </a>
             </div>
 
-            <div class="absolute top-0 right-0 h-[120px] group w-1/2 pt-6  pr-4">
+            <div class="absolute top-0 right-0 h-[120px]  w-1/2 pt-6  pr-4">
                 <!-- Contenedor del botón y el login -->
                 <div class="  flex justify-end items-center w-full ">
                     <button id="btn_acceder"
@@ -31,8 +35,8 @@
                         </svg>
                     </button>
                     @auth
-                        <div
-                            class="absolute hidden overflow-y-auto min-w-[400px] md:min-w-[600px] max-h-[80vh] min-h-[250px] z-50 group-hover:flex  flex-col justify-start text-start  top-20  right-0 bg-white shadow-md">
+                        <div id="contenedor_login"
+                            class="absolute hidden overflow-y-auto min-w-[400px] md:min-w-[600px] max-h-[80vh] min-h-[250px] z-50   flex-col justify-start text-start  top-20  right-0 bg-white shadow-md">
 
                             <!--Usuario ya Autenticado--->
                             <div class="absolute w-full">
@@ -64,7 +68,7 @@
                     @endauth
                     @guest
                         <div id="contenedor_login"
-                            class="absolute hidden overflow-y-auto min-w-[400px] md:min-w-[600px] max-h-[80vh] min-h-[400px] z-50 group-hover:flex h-auto flex-col justify-start text-start top-20 right-0  bg-white shadow-md">
+                            class="absolute hidden overflow-y-auto min-w-[400px] md:min-w-[600px] max-h-[80vh] min-h-[400px] z-50  h-auto flex-col justify-start text-start top-20 right-0  bg-white shadow-md">
                             <!-- Aquí va todo tu contenido del formulario -->
                             <!-- Formulario de inicio de sesión -->
                             <div class="bg-white w-full p-10" id="formLogindiv">
@@ -82,7 +86,8 @@
                                     <input required type="password" placeholder="" name="password"
                                         class=" border-color-text p-3 border rounded-3xl focus:outline-none"
                                         autocomplete="off" />
-                                    <div class="flex space-x-1"><label for="remember">Recuérdame</label><input type="checkbox" name="remember" class="w-6"></div>
+                                    <div class="flex space-x-1"><label for="remember">Recuérdame</label><input type="checkbox"
+                                            name="remember" class="w-6"></div>
 
                                     <center><button type="submit"
                                             class="p-4  text-white text-[16px] rounded-2xl w-full bg-tarjetas transition duration-200">Acceder</button>

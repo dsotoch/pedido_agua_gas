@@ -1,4 +1,4 @@
-import { agregarFavorito, deshabilitarClienteID, esFavoritoDistribuidora, esPaginaPredeterminada, esPaginaPredeterminada_Principal, guardarPaginaPredeterminada, habilitarClienteID, paginaPredeterminada } from "./cookies";
+import { deshabilitarClienteID, eliminarFavorito, esFavorito, esPaginaPredeterminada, guardarFavorito, guardarPaginaPredeterminada, habilitarClienteID, paginaPredeterminada } from "./cookies";
 
 const mi_cuenta_input_buscar = document.getElementById('mi_cuenta_input_buscar');
 const mi_cuenta_contenedor_pedidos = document.getElementById('mi_cuenta_contenedor_pedidos_super');
@@ -15,7 +15,20 @@ const menu = document.getElementById('menu');
 const ruta_cliente_distribuidora = document.querySelector('#ruta_cliente_distribuidora');
 const btn_cerrar_menu = document.querySelector('#btn_cerrar_menu');
 const mensajeConexion = document.getElementById("mensajeConexion");
+const btnAcceder = document.getElementById("btn_acceder");
+const contenedorLogin = document.getElementById("contenedor_login");
 
+if (btnAcceder) {
+    btnAcceder.addEventListener("mouseenter", function () {
+        contenedorLogin.classList.remove("hidden");
+    });
+}
+
+if (contenedorLogin) {
+    contenedorLogin.addEventListener("mouseleave", function () {
+        contenedorLogin.classList.add("hidden");
+    });
+}
 function mostrarMensaje(mensaje, color) {
     mensajeConexion.textContent = mensaje;
     mensajeConexion.classList.remove("hidden");
@@ -73,14 +86,18 @@ if (btn_predeterminado) {
 
 }
 if (btn_favorito) {
-    btn_favorito.addEventListener('click', () => {
-        let baseUrl = window.location.origin;
-        let url = `${baseUrl}/${btn_favorito.dataset.dominio}`; // Construcción correcta de la URL
-        if (agregarFavorito(url, btn_favorito.dataset.nombre, btn_favorito.dataset.logo)) {
-            btn_favorito.classList.add('text-yellow-500');
+    btn_favorito.addEventListener('click', async () => {
+        if (!await esFavorito()) {
+            if (guardarFavorito(id_usuario_autenticado.textContent.trim(), btn_favorito.dataset.dominio)) {
+                btn_favorito.classList.add('text-yellow-500');
 
+            } else {
+                btn_favorito.classList.remove('text-yellow-500');
+            }
         } else {
+            await eliminarFavorito(btn_favorito.dataset.dominio);
             btn_favorito.classList.remove('text-yellow-500');
+
         }
 
     });
@@ -99,14 +116,19 @@ if (ruta_cliente_distribuidora) {
     ruta_cliente_distribuidora.href = paginaPredeterminada() ?? '/';
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    if (esFavoritoDistribuidora()) {
+document.addEventListener('DOMContentLoaded', async () => {
+    if (await esFavorito()) {
         if (btn_favorito) {
             btn_favorito.classList.add('text-yellow-500');
         }
 
+    } else {
+        if (btn_favorito) {
+            btn_favorito.classList.remove('text-yellow-500');
+        }
     }
 })
+
 
 
 if (btn_distribuidoras_cliente) {

@@ -1,4 +1,5 @@
-import { agregarFavorito, esFavorito, esPaginaPredeterminada_Principal, guardarPaginaPredeterminada } from "./cookies";
+import Swal from "sweetalert2";
+import { eliminarFavorito, esFavoritoPrincipal, esPaginaPredeterminada_Principal, guardarFavorito, guardarPaginaPredeterminada, obtenerFavoritos } from "./cookies";
 
 document.addEventListener('DOMContentLoaded', () => {
     const buscador = document.getElementById('buscador');
@@ -6,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const volvercolores = document.getElementById('volvercolores');
     const botonp = document.getElementById('botonp');
     const buttoncolor = document.getElementById('button-color');
-    const contenedor_empresas =document.getElementById('empresas');
+    const contenedor_empresas = document.getElementById('empresas');
     if (volvercolores) {
         volvercolores.addEventListener('click', () => {
             window.location.reload();
@@ -53,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
 
             } else {
-                if (e.target.value.length <3) {
+                if (e.target.value.length < 3) {
                     contenedor_empresas.classList.add('hidden');
                     contenedor_empresas.innerHTML = `
                         <div class="absolute top-0 shadow-2xl w-full bg-white rounded-md p-2 " id="contenedor_bars">
@@ -89,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     }
-    function renderizarEmpresas(empresas) {
+    async function renderizarEmpresas(empresas) {
         const contenedor = contenedor_empresas;
         contenedor.innerHTML = ''; // Limpia los resultados anteriores
         contenedor.classList.remove('hidden');
@@ -122,7 +123,8 @@ document.addEventListener('DOMContentLoaded', () => {
         pResultados.classList.remove('hidden');
         spanCantidad.textContent = empresas.length;
 
-        empresas.forEach(empresa => {
+        for (const empresa of empresas) {
+
             const empresaDiv = document.createElement('div');
             empresaDiv.className = 'empresa-item  flex items-center justify-between gap-4 p-4 bg-white shadow-md rounded-md cursor-pointer';
 
@@ -190,18 +192,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // ⭐ Botón de Favoritos
             const btnFavorito = document.createElement('button');
-            btnFavorito.className = `hover:text-yellow-500 ${esFavorito(empresa.dominio) ? 'text-yellow-500' : 'text-gray-400'}`;
+            btnFavorito.className = `hover:text-yellow-500 ${await esFavoritoPrincipal(empresa.dominio) ? 'text-yellow-500' : 'text-gray-400'}`;
             btnFavorito.innerHTML = '<i class="fas fa-star"></i>';
-            btnFavorito.addEventListener('click', (e) => {
+            btnFavorito.addEventListener('click', async (e) => {
                 e.stopPropagation(); // Evita redirección
-                let url = window.location + empresa.dominio;
-                if (agregarFavorito(url, empresa.nombre, empresa.logo)) {
-                    btnFavorito.classList.add('text-yellow-500'); // Cambia color al activar
+                const empresaDominio = empresa.dominio; // Asegurar que empresa.dominio está disponible
 
+                const favorito = await esFavoritoPrincipal(empresaDominio);
+
+                if (!favorito) {
+                    if (guardarFavorito(id_usuario_autenticado.textContent.trim(), empresaDominio)) {
+                        btnFavorito.classList.add('text-yellow-500'); // Cambia color al activar
+                        await obtenerFavoritos();
+
+                    } else {
+                        btnFavorito.classList.remove('text-yellow-500'); // Cambia color al activar
+                        btnFavorito.classList.add('text-gray-400'); // Cambia color al activar
+
+                    }
                 } else {
+                    await eliminarFavorito(empresa.dominio);
                     btnFavorito.classList.remove('text-yellow-500'); // Cambia color al activar
                     btnFavorito.classList.add('text-gray-400'); // Cambia color al activar
-
+                    await obtenerFavoritos();
                 }
             });
 
@@ -226,6 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     btnPredeterminado.classList.add('text-green-500'); // Activa este
 
                 }
+                console.log('funcionando predeterminado');
             });
 
             // Agregar botones al contenedor de botones
@@ -237,7 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
             empresaDiv.appendChild(botonesDiv); // Botones a la derecha
 
             contenedor.appendChild(empresaDiv);
-        });
+        };
     }
 
 

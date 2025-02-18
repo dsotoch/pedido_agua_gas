@@ -1,7 +1,222 @@
 import Swal from "sweetalert2";
 
 const id_usuario_autenticado = document.getElementById('id_usuario_autenticado');
+const token = document.querySelector('meta[name="token"]').getAttribute('content');
+const btn_predeterminado = document.getElementById('btn_predeterminado');
+let favoritos = [];
 
+
+//favoritos Bd
+
+export async function esFavoritoPrincipal(dominio) {
+    if (window.location.pathname != '/') {
+        await obtenerFavoritos();
+    }
+    const urlActual = dominio;
+    // Aplanar el array y buscar el dominio
+    const favoritosLista = favoritos.flat(); // Convierte [[...], [...]] en [...]
+    if (Array.isArray(favoritosLista) && favoritosLista.length > 0 && favoritosLista.every(fav => fav !== null && fav !== undefined)) {
+    
+
+        return favoritosLista.some(fav => fav.dominio === urlActual);
+    }
+
+    return false;
+
+
+}
+obtenerFavoritos();
+export async function esFavorito() {
+    if (window.location.pathname != '/') {
+        await obtenerFavoritos();
+    }
+    const urlActual = window.location.pathname.slice(1);
+    // Aplanar el array y buscar el dominio
+    const favoritosLista = favoritos.flat(); // Convierte [[...], [...]] en [...]
+    if (Array.isArray(favoritosLista) && favoritosLista.length > 0 && favoritosLista.every(fav => fav !== null && fav !== undefined)) {
+
+        return favoritosLista.some(fav => fav.dominio === urlActual);
+    }
+
+    return false;
+
+
+}
+export async function obtenerFavoritos() {
+    favoritos.length = 0;
+    if (id_usuario_autenticado.textContent != '') {
+        try {
+            const response = await fetch(`/getFavoritos`);
+            const data = await response.json();
+
+            if (response.ok) {
+                favoritos.push(data.mensaje);
+                return data.mensaje; // Retorna la lista de favoritos
+            } else {
+                throw new Error(data.mensaje || "Error al obtener favoritos");
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            return [];
+        }
+    }
+}
+
+
+export async function guardarFavorito(usuarioId, dominio) {
+    try {
+        const response = await fetch('guardarFavorito', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'X_CSRF_TOKEN': token },
+            body: JSON.stringify({ usuario_id: usuarioId, empresa_id: dominio })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            Swal.fire({
+                title: 'Distribuidora Favorita',
+                text: "La distribuidora  se registro dentro de tus favoritas.",
+                icon: 'success',
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true,
+                customClass: {
+                    timerProgressBar: 'bg-red-500 h2 rounded',
+                }
+            });
+        } else {
+            throw new Error(data.mensaje || "Error al guardar favorito");
+        }
+    } catch (error) {
+        Swal.fire({
+            title: 'Distribuidora Favorita',
+            text: "Ocurrio un error procesando la solicitud.",
+            icon: 'error',
+            showConfirmButton: false,
+            timer: 2000,
+            timerProgressBar: true,
+            customClass: {
+                timerProgressBar: 'bg-red-500 h2 rounded',
+            }
+        });
+        console.error("Error:", error);
+    }
+}
+
+
+export async function eliminarFavorito(empresaId) {
+    try {
+        const response = await fetch('/eliminarFavorito', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json', 'X_CSRF_TOKEN': token },
+            body: JSON.stringify({ usuario_id: id_usuario_autenticado.textContent.trim(), empresa_id: empresaId })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            Swal.fire({
+                title: 'Eliminado',
+                text: "La distribuidora  se eliminó de favoritos.",
+                icon: 'success',
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true,
+                customClass: {
+                    timerProgressBar: 'bg-red-500 h2 rounded',
+                }
+            });
+        } else {
+            Swal.fire({
+                title: 'Error',
+                text: "Hubo un error al procesar la solicitud de eliminacion.",
+                icon: 'error',
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true,
+                customClass: {
+                    timerProgressBar: 'bg-red-500 h2 rounded',
+                }
+            });
+        }
+    } catch (error) {
+        Swal.fire({
+            title: 'Error',
+            text: "Hubo un error al procesar la solicitud de eliminacion.",
+            icon: 'error',
+            showConfirmButton: false,
+            timer: 2000,
+            timerProgressBar: true,
+            customClass: {
+                timerProgressBar: 'bg-red-500 h2 rounded',
+            }
+        });
+        console.error("Error:", error);
+
+    }
+}
+
+
+
+//fin favoritos BD
+async function obtenerDatosPredeterminada(url) {
+    if (id_usuario_autenticado.textContent != '') {
+        try {
+            const response = await fetch(url, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error: ${response.status}`);
+            }
+            const data = await response.json();
+            if (data && data.mensaje && data.mensaje.trim() !== null) {
+                guardarPaginaPredeterminadaDesdeBD(window.location.origin + "/" + data.mensaje);
+            } else {
+            }
+        } catch (error) {
+        }
+    }
+}
+obtenerDatosPredeterminada("/getpredeterminada");
+async function eliminarPredeterminadaBD() {
+    try {
+        const response = await fetch('eliminarpredeterminada', {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                'X_CSRF_TOKEN': token
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status}`);
+        }
+
+        const data = await response.json();
+    } catch (error) {
+        console.error("Error al eliminar:", error);
+    }
+}
+
+
+function guardarPaginaPredeterminadaDesdeBD(url) {
+    let clienteID = obtenerClienteID();
+    if (!clienteID) return '';
+
+    localStorage.setItem(`${clienteID}_paginaPredeterminada`, url);
+    document.cookie = `${clienteID}=${encodeURIComponent(url)}; path=/; max-age=${60 * 60 * 24 * 30};`;
+    if (window.location.href === url) {
+        btn_predeterminado.classList.add('text-green-500');
+    }
+    if (window.location.pathname === '/') {
+        window.location.href = url;
+    }
+}
 // Función para obtener el ID del cliente desde cookies o localStorage
 function obtenerClienteID() {
     if (sessionStorage.getItem("ignorar_cliente_id") === "true") {
@@ -45,6 +260,20 @@ export function habilitarClienteID() {
 }
 
 export function guardarPaginaPredeterminada(url, empresa, procedencia) {
+    if (id_usuario_autenticado.textContent == '') {
+        Swal.fire({
+            title: 'Requerimiento faltante',
+            text: `Inicia Sesion para realizar esta operacion.`,
+            icon: 'warning',
+            showConfirmButton: false,
+            timer: 2000,
+            timerProgressBar: true,
+            customClass: {
+                timerProgressBar: 'bg-red-500 h2 rounded'
+            }
+        });
+        return false;
+    }
     const esPrincipal = procedencia === 'principal' ? esPaginaPredeterminada_Principal(empresa.trim()) : esPaginaPredeterminada();
 
     if (esPrincipal) {
@@ -57,7 +286,6 @@ export function guardarPaginaPredeterminada(url, empresa, procedencia) {
 
     localStorage.setItem(`${clienteID}_paginaPredeterminada`, url);
     document.cookie = `${clienteID}=${encodeURIComponent(url)}; path=/; max-age=${60 * 60 * 24 * 30};`;
-
     Swal.fire({
         title: 'Confirmación',
         text: `Tu Distribuidora predeterminada ahora es ${empresa}`,
@@ -69,9 +297,34 @@ export function guardarPaginaPredeterminada(url, empresa, procedencia) {
             timerProgressBar: 'bg-green-500 h2 rounded',
         }
     });
-
+    guardarPaginaPredeterminadaBD(url);
     return true;
 }
+async function guardarPaginaPredeterminadaBD(url) {
+    try {
+        const user = id_usuario_autenticado.textContent.trim();
+        const response = await fetch('/predeterminada', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': token
+            },
+            body: JSON.stringify({
+                usuario_id: user,
+                predeterminado: url,
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status}`);
+        }
+        return true;
+    } catch (error) {
+        console.error('Error al guardar la página predeterminada:', error);
+        return false;
+    }
+}
+
 export function paginaPredeterminada() {
     let clienteID = obtenerClienteID();
     let paginaPredeterminada = localStorage.getItem(`${clienteID}_paginaPredeterminada`) || obtenerCookie(clienteID);
@@ -86,77 +339,14 @@ export function esPaginaPredeterminada_Principal(dominio) {
 export function esPaginaPredeterminada() {
     let clienteID = obtenerClienteID();
     let paginaPredeterminada = localStorage.getItem(`${clienteID}_paginaPredeterminada`) || obtenerCookie(clienteID);
+
     return paginaPredeterminada === window.location.href;
 }
 
-export function esFavorito(dominio) {
-    let clienteID = obtenerClienteID();
-    let favoritos = JSON.parse(localStorage.getItem(`${clienteID}_favoritos`)) || [];
-
-    return favoritos.some(fav => fav.url === window.location.origin + '/' + dominio);
-}
-export function esFavoritoDistribuidora() {
-    let clienteID = obtenerClienteID();
-    let favoritos = JSON.parse(localStorage.getItem(`${clienteID}_favoritos`)) || [];
-
-    return favoritos.some(fav => fav.url === window.location.href);
-}
-export function agregarFavorito(url, nombre,logo) {
-    let clienteID = obtenerClienteID();
-    let favoritos = JSON.parse(localStorage.getItem(`${clienteID}_favoritos`)) || [];
-
-    if (favoritos.some(fav => fav.url === url)) {
-        eliminarFavorito(url);
-        return false;
-    }
-
-    favoritos.push({ url, nombre , logo });
-
-    if (favoritos.length > 3) {
-        favoritos.shift();
-    }
-
-    localStorage.setItem(`${clienteID}_favoritos`, JSON.stringify(favoritos));
-
-    Swal.fire({
-        title: 'Confirmación',
-        text: `${nombre} ha sido añadido a tus favoritos.`,
-        icon: 'success',
-        showConfirmButton: false,
-        timer: 2000,
-        timerProgressBar: true,
-        customClass: {
-            timerProgressBar: 'bg-green-500 h2 rounded'
-        }
-    });
-
-    return true;
-}
-export function obtenerFavoritos() {
-    let clienteID = obtenerClienteID();
-    return JSON.parse(localStorage.getItem(`${clienteID}_favoritos`)) || [];
-}
 
 
-export function eliminarFavorito(url) {
-    let clienteID = obtenerClienteID();
-    let favoritos = JSON.parse(localStorage.getItem(`${clienteID}_favoritos`)) || [];
 
-    let nuevosFavoritos = favoritos.filter(fav => fav.url !== url);
-    localStorage.setItem(`${clienteID}_favoritos`, JSON.stringify(nuevosFavoritos));
 
-    Swal.fire({
-        title: 'Eliminado',
-        text: 'La página ha sido eliminada de tus favoritos.',
-        icon: 'success',
-        showConfirmButton: false,
-        timer: 2000,
-        timerProgressBar: true,
-        customClass: {
-            timerProgressBar: 'bg-red-500 h2 rounded'
-        }
-    });
-}
 
 export function ir_pagina_predeterminada() {
     let clienteID = obtenerClienteID();
@@ -173,7 +363,7 @@ function borrarPaginaPredeterminada() {
     let clienteID = obtenerClienteID();
     localStorage.removeItem(`${clienteID}_paginaPredeterminada`);
     document.cookie = `${clienteID}=; path=/; max-age=0;`;
-
+    eliminarPredeterminadaBD();
     Swal.fire({
         title: 'Eliminado',
         text: "La distribuidora predeterminada se eliminó correctamente.",
