@@ -496,7 +496,7 @@
                                             </div>
                                             <div class="flex flex-col justify-center  ml-2">
                                                 @foreach ($pedido->detalles as $item)
-                                                    <p>{{ $item->producto->descripcion }} x {{ $item->cantidad }}</p>
+                                                    <p>{{ $item->producto?->descripcion }} x {{ $item->cantidad }}</p>
                                                 @endforeach
                                                 @foreach ($pedido->entregaPromociones as $et)
                                                     @if ($et->estado)
