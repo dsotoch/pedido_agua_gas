@@ -8,7 +8,7 @@ export function agregarPedido(pedido, usuario) {
     const contenedor = document.getElementById("mi_cuenta_contenedor_pedidos"); // Asegúrate de que existe este div en tu HTML
 
     const divPedido = document.createElement("div");
-    divPedido.className = "p-[15px] mi_cuenta_pedido w-[363px] max-w-[363px]";
+    divPedido.className = "md:p-[15px] p-0 mi_cuenta_pedido flex flex-col justify-center items-center w-[95%] md:w-[363px]";
     divPedido.id = `caja-${pedido.id}`;
     const pedidoFecha = new Date(pedido.fecha); // Convertir la fecha a objeto Date
     const opcionesFecha = { day: '2-digit', month: '2-digit', year: 'numeric' };
@@ -124,7 +124,7 @@ export function agregarPedido(pedido, usuario) {
 
 
     divPedido.innerHTML = `
-    <div class="flex-1 h-full  w-[95%] md:w-[333px] max-w-[333px] p-[20px] bg-color-tarjetas rounded-3xl text-color-titulos-entrega font-sans text-base">
+    <div class="flex-1 h-full w-[95%] md:w-[333px] md:max-w-[333px] p-[20px] bg-color-tarjetas rounded-3xl text-color-titulos-entrega font-sans text-base">
         <div class="space-y-0 relative">
             <div class="flex justify-between">
                 <div class="flex">

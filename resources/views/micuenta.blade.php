@@ -1,7 +1,7 @@
 @extends('layout-cuenta')
 @section('logica')
     <div class="relative md:container">
-        <div class="flex flex-col md:flex-row w-full h-full gap-2 md:items-center">
+        <div class="flex flex-col md:pt-0 p-[20px] md:flex-row w-full h-full gap-2 md:items-center">
             <!-- Input de búsqueda -->
             <div class="flex w-full md:w-auto items-center gap-2 px-4">
                 <input id="mi_cuenta_input_buscar"
@@ -33,7 +33,7 @@
                     @if ($pedidos->count() > 0)
                         @foreach ($pedidos as $pedido)
                             <div id="caja-{{ $pedido->id }}"
-                                class="md:p-[15px] p-0 mi_cuenta_pedido w-[95%] md:w-[363px]">
+                                class="md:p-[15px] p-0 mi_cuenta_pedido flex flex-col justify-center items-center w-[95%] md:w-[363px]">
                                 <div
                                     class="flex-1 h-full w-[95%] md:w-[333px] md:max-w-[333px] p-[20px] bg-color-tarjetas rounded-3xl text-color-titulos-entrega font-sans text-base">
                                     <div class="space-y-0 relative">

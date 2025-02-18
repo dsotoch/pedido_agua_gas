@@ -459,6 +459,7 @@ async function SolicitudFecthFormularios_POST(formulario, tipo) {
         }
         return true;
     } catch (error) {
+        console.log(error);
         const response = JSON.parse(error.message);
         mensajeError(response.mensaje); // Mostrar mensaje de error
         return false;
