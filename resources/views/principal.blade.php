@@ -36,7 +36,7 @@
                     </button>
                     @auth
                         <div id="contenedor_login"
-                            class="absolute hidden transform md:translate-x-0 translate-x-full overflow-y-auto min-w-[400px] md:min-w-[600px] max-h-[80vh] min-h-[250px] z-50   flex-col justify-start text-start  top-20  right-0 bg-white shadow-md">
+                            class="absolute hidden transform md:translate-x-0 translate-x-full overflow-y-auto min-w-[400px] md:min-w-[600px] md:max-h-[80vh] max-h-[95vh] min-h-[250px] z-50   flex-col justify-start text-start  top-20  right-0 bg-white shadow-md">
 
                             <!--Usuario ya Autenticado--->
                             <div class="absolute w-full">
@@ -68,7 +68,7 @@
                     @endauth
                     @guest
                         <div id="contenedor_login"
-                            class="absolute hidden md:translate-x-0 translate-x-full transform  overflow-y-auto min-w-[400px] md:min-w-[600px] max-h-[80vh] min-h-[400px] z-50  h-auto flex-col justify-start text-start top-20 right-0  bg-white shadow-md">
+                            class="absolute hidden md:translate-x-0 translate-x-full transform  overflow-y-auto w-full md:p-0 p-2 md:min-w-[600px] max-h-[80vh] min-h-[400px] z-50  h-auto flex-col justify-start text-start top-20 right-0  bg-white shadow-md">
                             <!-- Aquí va todo tu contenido del formulario -->
                             <!-- Formulario de inicio de sesión -->
                             <div class="bg-white w-full p-10" id="formLogindiv">

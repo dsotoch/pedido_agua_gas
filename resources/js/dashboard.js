@@ -71,7 +71,7 @@ if (btn_cerrar_menu) {
     });
 }
 if (btn_predeterminado) {
-    btn_predeterminado.addEventListener('click', () => {
+    btn_predeterminado.addEventListener('click',async () => {
         if (id_usuario_autenticado.textContent.trim() == '') {
             Swal.fire({
                 title: 'Requerimiento faltante!',
@@ -88,7 +88,7 @@ if (btn_predeterminado) {
             let baseUrl = window.location.origin;
             let url = `${baseUrl}/${btn_predeterminado.dataset.dominio}`; // Construcción correcta de la URL
             habilitarClienteID();
-            if (!guardarPaginaPredeterminada(url, btn_predeterminado.dataset.nombre, 'distribuidora')) {
+            if (!await guardarPaginaPredeterminada(url, btn_predeterminado.dataset.nombre, 'distribuidora')) {
                 btn_predeterminado.classList.remove('text-green-500');
             } else {
                 btn_predeterminado.classList.add('text-green-500');

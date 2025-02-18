@@ -273,7 +273,7 @@ export function habilitarClienteID() {
     sessionStorage.removeItem("ignorar_cliente_id");
 }
 
-export function guardarPaginaPredeterminada(url, empresa, procedencia) {
+export async function guardarPaginaPredeterminada(url, empresa, procedencia) {
     if (id_usuario_autenticado.textContent == '') {
         Swal.fire({
             title: 'Requerimiento faltante',
@@ -311,7 +311,7 @@ export function guardarPaginaPredeterminada(url, empresa, procedencia) {
             timerProgressBar: 'bg-green-500 h2 rounded',
         }
     });
-    guardarPaginaPredeterminadaBD(url);
+    await  guardarPaginaPredeterminadaBD(url);
     return true;
 }
 async function guardarPaginaPredeterminadaBD(url) {
@@ -332,10 +332,8 @@ async function guardarPaginaPredeterminadaBD(url) {
         if (!response.ok) {
             throw new Error(`Error: ${response.status}`);
         }
-        return true;
     } catch (error) {
         console.error('Error al guardar la página predeterminada:', error);
-        return false;
     }
 }
 

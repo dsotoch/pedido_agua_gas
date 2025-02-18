@@ -238,7 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
             btnPredeterminado.dataset.dominio = empresa.dominio;
             btnPredeterminado.innerHTML = '<i class="fas fa-check-circle "></i>';
             btnPredeterminado.title = 'Elegir como Predeterminado';
-            btnPredeterminado.addEventListener('click', (e) => {
+            btnPredeterminado.addEventListener('click', async(e) => {
                 e.stopPropagation(); // Evita redirección
                 document.querySelectorAll('.btn_pred').forEach(icono => {
                     if (icono !== btnPredeterminado) {  // Evita afectar el botón actual
@@ -247,7 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 let baseUrl = window.location.origin;
                 let url = `${baseUrl}/${empresa.dominio}`; // Construcción correcta de la URL
-                if (!guardarPaginaPredeterminada(url, empresa.dominio, 'principal')) {
+                if (!await guardarPaginaPredeterminada(url, empresa.dominio, 'principal')) {
                     btnPredeterminado.classList.remove('text-green-500');
                 } else {
                     btnPredeterminado.classList.add('text-green-500'); // Activa este
