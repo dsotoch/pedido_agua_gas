@@ -72,14 +72,28 @@ if (btn_cerrar_menu) {
 }
 if (btn_predeterminado) {
     btn_predeterminado.addEventListener('click', () => {
-        let baseUrl = window.location.origin;
-        let url = `${baseUrl}/${btn_predeterminado.dataset.dominio}`; // Construcción correcta de la URL
-        habilitarClienteID();
-        if (!guardarPaginaPredeterminada(url, btn_predeterminado.dataset.nombre, 'distribuidora')) {
-            btn_predeterminado.classList.remove('text-green-500');
+        if (id_usuario_autenticado.textContent.trim() == '') {
+            Swal.fire({
+                title: 'Requerimiento faltante!',
+                text: "Inicia sesion para realizar esta operacion.",
+                icon: 'warning',
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true,
+                customClass: {
+                    timerProgressBar: 'bg-red-500 h2 rounded',
+                }
+            });
         } else {
-            btn_predeterminado.classList.add('text-green-500');
+            let baseUrl = window.location.origin;
+            let url = `${baseUrl}/${btn_predeterminado.dataset.dominio}`; // Construcción correcta de la URL
+            habilitarClienteID();
+            if (!guardarPaginaPredeterminada(url, btn_predeterminado.dataset.nombre, 'distribuidora')) {
+                btn_predeterminado.classList.remove('text-green-500');
+            } else {
+                btn_predeterminado.classList.add('text-green-500');
 
+            }
         }
     });
 
@@ -87,19 +101,33 @@ if (btn_predeterminado) {
 }
 if (btn_favorito) {
     btn_favorito.addEventListener('click', async () => {
-        if (!await esFavorito()) {
-            if (guardarFavorito(id_usuario_autenticado.textContent.trim(), btn_favorito.dataset.dominio)) {
-                btn_favorito.classList.add('text-yellow-500');
-
-            } else {
-                btn_favorito.classList.remove('text-yellow-500');
-            }
+        if (id_usuario_autenticado.textContent.trim() == '') {
+            Swal.fire({
+                title: 'Requerimiento faltante!',
+                text: "Inicia sesion para realizar esta operacion.",
+                icon: 'warning',
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true,
+                customClass: {
+                    timerProgressBar: 'bg-red-500 h2 rounded',
+                }
+            });
         } else {
-            await eliminarFavorito(btn_favorito.dataset.dominio);
-            btn_favorito.classList.remove('text-yellow-500');
+            if (!await esFavorito()) {
+                if (guardarFavorito(id_usuario_autenticado.textContent.trim(), btn_favorito.dataset.dominio)) {
+                    btn_favorito.classList.add('text-yellow-500');
+
+                } else {
+                    btn_favorito.classList.remove('text-yellow-500');
+                }
+            } else {
+                await eliminarFavorito(btn_favorito.dataset.dominio);
+                btn_favorito.classList.remove('text-yellow-500');
+
+            }
 
         }
-
     });
 
 

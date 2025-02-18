@@ -72,13 +72,7 @@ if (compraregistrarse) {
 if (openModal) {
     openModal.addEventListener('click', () => {
         modal.classList.remove('translate-x-full');
-        divPrincipal.style.opacity = 0.5;
-        nav.style.opacity = 0.5;
-        // Habilitar todos los botones dentro del nav
-        const buttons = nav.querySelectorAll('button');
-        buttons.forEach(button => {
-            button.disabled = true;
-        });
+
     });
 }
 
@@ -100,19 +94,66 @@ if (closeModal) {
 if (openModalUsuario) {
     // Abrir modal Usuario
     openModalUsuario.addEventListener('click', () => {
-        modalUsuario.classList.remove('hidden');
 
-        modalUsuario.classList.remove('translate-x-full');
-       
+        if (modalUsuario.classList.contains('hidden')) {
+            // Mostrar el modal
+            modalUsuario.classList.remove('hidden');
+            modalUsuario.classList.remove('translate-x-full');
+
+            // Cambiar el contenido del botón a "X"
+            openModalUsuario.innerHTML = 'X';  // Esto reemplaza el contenido con la "X"
+            openModalUsuario.classList.add('bg-red-500'); // Cambia el fondo a rojo
+            openModalUsuario.classList.add('px-4'); // Cambia el fondo a rojo
+            openModalUsuario.classList.add('text-white'); // Cambia el fondo a rojo
+            openModalUsuario.classList.add('font-semibold'); // Cambia el fondo a rojo
+
+
+
+
+        } else {
+            // Ocultar el modal
+            modalUsuario.classList.add('hidden');
+            modalUsuario.classList.add('translate-x-full');
+
+            // Restaurar el contenido del botón a su estado original
+            openModalUsuario.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="Capa_1"
+                class="h-[30px] w-[30px]" x="0px" y="0px" viewBox="0 0 720 720" xml:space="preserve">
+                <rect fill="#293241" width="720" height="58.5"></rect>
+                <rect y="661.5" fill="#293241" width="720" height="58.5"></rect>
+                <rect y="330.75" fill="#293241" width="720" height="58.5"></rect>
+            </svg>
+        `;
+            openModalUsuario.classList.remove('bg-red-500');  // Eliminar el fondo rojo
+        }
+
     });
 }
-
+if (modalUsuario) {
+    modalUsuario.addEventListener('mouseleave', () => {
+        // Solo cambiar si el modal está cerrado, de lo contrario, no lo hacemos
+        if (modalUsuario.classList.contains('hidden')) {
+            openModalUsuario.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="Capa_1"
+                    class="h-[30px] w-[30px]" x="0px" y="0px" viewBox="0 0 720 720" xml:space="preserve">
+                    <rect fill="#293241" width="720" height="58.5"></rect>
+                    <rect y="661.5" fill="#293241" width="720" height="58.5"></rect>
+                    <rect y="330.75" fill="#293241" width="720" height="58.5"></rect>
+                </svg>
+            `;
+            openModalUsuario.classList.remove('bg-red-500');
+            openModalUsuario.classList.remove('px-4');
+            openModalUsuario.classList.remove('text-white');
+            openModalUsuario.classList.remove('font-semibold');
+        }
+    });
+}
 // Cerrar modal Usuario
 if (closeModalUsuario) {
     closeModalUsuario.addEventListener('click', () => {
         modalUsuario.classList.add('hidden');
         modalUsuario.classList.add('translate-x-full');
-       
+
     });
 }
 
@@ -122,7 +163,7 @@ if (closeModalCliente) {
     closeModalCliente.addEventListener('click', () => {
         modalCrearCliente.classList.remove("flex");
         modalCrearCliente.classList.add("hidden");
-        
+
     });
 }
 

@@ -269,7 +269,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-
     if (buttoncolor) {
         buttoncolor.addEventListener('input', function () {
             botonp.setAttribute('style', 'background-color: ' + this.value +

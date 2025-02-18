@@ -16,7 +16,7 @@ async function cargarFavoritos() {
 
                     item.innerHTML = `
                         <img src="/storage/${fav.logo}" alt="${fav.nombre}" class="w-10 h-10 rounded-full object-cover">
-                        <a href="${fav.dominio}" class="text-color-titulos-entrega font-medium hover:underline flex-1">${fav.nombre}</a>
+                        <a href="${window.location.origin+"/"+fav.dominio}" class="text-color-titulos-entrega font-medium hover:underline flex-1">${fav.nombre}</a>
                         <button data-id="${fav.dominio}" class="btn_eliminar_favorito_panel text-red-500 hover:text-red-700 text-xl">
                             ✖ 
                         </button>

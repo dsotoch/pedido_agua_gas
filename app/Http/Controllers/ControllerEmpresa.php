@@ -203,7 +203,7 @@ class ControllerEmpresa extends Controller
 
         foreach ($pedidos as $pedido) {
             foreach ($pedido->detalles as $detalle) {
-                $productoId = $detalle->producto->descripcion;
+                $productoId = $detalle->producto?->descripcion;
                 $productos_cantidades[$productoId] = ($productos_cantidades[$productoId] ?? 0) + $detalle->cantidad;
             }
 
@@ -366,11 +366,11 @@ class ControllerEmpresa extends Controller
             // Aplanar los detalles de los pedidos
             return $pedido->detalles->filter(function ($detalle) {
                 // Filtrar los productos comercializables
-                return $detalle->producto->comercializable ?? false;
+                return $detalle->producto?->comercializable ?? false;
             })->map(function ($detalle) {
                 // Retornar descripción y cantidad del producto
                 return [
-                    'descripcion' => $detalle->producto->descripcion,
+                    'descripcion' => $detalle->producto?->descripcion,
                     'cantidad' => $detalle->cantidad,
                 ];
             });
