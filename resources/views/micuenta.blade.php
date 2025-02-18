@@ -211,14 +211,19 @@
 
                                             </div>
                                             <div class="flex flex-col justify-center  ml-2">
-                                                @foreach ($pedido->detalles as $item)
-                                                    <p>{{ $item->producto->descripcion }} x {{ $item->cantidad }}</p>
-                                                @endforeach
-                                                @foreach ($pedido->entregaPromociones as $et)
-                                                    @if ($et->estado)
-                                                        <p> {{ $et->producto }} x {{ $et->cantidad }} Gratis. </p>
-                                                    @endif
-                                                @endforeach
+                                                @if ($pedido->detalles->count() > 0)
+                                                    @foreach ($pedido->detalles as $item)
+                                                        <p>{{ $item->producto->descripcion }} x {{ $item->cantidad }}</p>
+                                                    @endforeach
+                                                @endif
+                                                @if ($pedido->entregaPromociones->count() > 0)
+                                                    @foreach ($pedido->entregaPromociones as $et)
+                                                        @if ($et->estado)
+                                                            <p> {{ $et->producto }} x {{ $et->cantidad }} Gratis. </p>
+                                                        @endif
+                                                    @endforeach
+                                                @endif
+
 
                                             </div>
                                         </div>
@@ -617,7 +622,7 @@
                                                 <div class="relative">
                                                     <div
                                                         class="bg-transparent w-[150px]  h-[190px]  text-color-titulos-entrega group ">
-                                                        
+
 
 
                                                         <svg xmlns="http://www.w3.org/2000/svg"
