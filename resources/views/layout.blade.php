@@ -151,6 +151,8 @@
                         <label for="password" class="">Contraseña <span class="text-red-500">*</span></label>
                         <input required type="password" placeholder="" name="password"
                             class=" border-color-text p-3 border rounded-3xl focus:outline-none" autocomplete="off" />
+                        <div class="flex space-x-1"><label for="remember">Recuérdame</label><input type="checkbox"
+                                name="remember" class="w-6"></div>
                         <center><button type="submit"
                                 class="p-4  text-white text-[16px] rounded-2xl w-full bg-tarjetas transition duration-200">Acceder</button>
                         </center>
@@ -171,13 +173,13 @@
                     <form action="{{ route('crear.usuario') }}" method="POST"
                         class="w-full h-full  mt-4 space-y-5 text-[16px]" id="form_registrar_usuario_no_aut">
 
-                        <!-- Dni -->
-                        <label for="dni" class="block text-color-text">Número de Dni
+                        {{-- <!-- Dni -->
+                        <label for="dni" class="block text-color-text hi">Número de Dni
                             <span class="text-red-500">*</span></label>
                         <!-- Input de Dni -->
                         <input type="number" maxlength="8" name="dni" autocomplete="off" required
                             class=" w-full border-color-text p-3 border rounded-3xl focus:outline-none focus:ring-2 focus:ring-blue-500 ">
-
+                        --}}
                         <!-- Teléfono -->
                         <label for="telefono" class="block text-color-text">Número de Celular
                             <span class="text-red-500">*</span></label>

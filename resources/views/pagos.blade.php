@@ -161,23 +161,7 @@
 
 
             </div>
-            <div class="flex items-center">
-                <div class="w-[30px] h-[40px] ">
-                    <i class="fas fa-clock text-red-500 text-2xl"></i>
-                </div>
-                <div class="text-base">S/
-                    @if ($pagosdeldia->count() > 0)
-                        {{ number_format(
-                            $pagosdeldia->filter(function ($pe) {
-                                    return $pe->metodo === 'cuenta';
-                                })->sum('total'),
-                            2,
-                        ) }}
-                    @else
-                        0.00
-                    @endif
-                </div>
-            </div>
+
         </div>
 
         <div class="grid md:flex justify-center items-center mt-5 space-x-0 md:space-y-0 space-y-2 md:space-x-6">

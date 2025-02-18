@@ -64,20 +64,36 @@ export async function obtenerFavoritos() {
 
 
 export async function guardarFavorito(usuarioId, dominio) {
-    try {
-        const response = await fetch('guardarFavorito', {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json', 'X_CSRF_TOKEN': token },
-            body: JSON.stringify({ usuario_id: usuarioId, empresa_id: dominio })
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
+    if(id_usuario_autenticado.textContent.trim()!=''){
+        try {
+            const response = await fetch('guardarFavorito', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', 'X_CSRF_TOKEN': token },
+                body: JSON.stringify({ usuario_id: usuarioId, empresa_id: dominio })
+            });
+    
+            const data = await response.json();
+    
+            if (response.ok) {
+                Swal.fire({
+                    title: 'Distribuidora Favorita',
+                    text: "La distribuidora  se registro dentro de tus favoritas.",
+                    icon: 'success',
+                    showConfirmButton: false,
+                    timer: 2000,
+                    timerProgressBar: true,
+                    customClass: {
+                        timerProgressBar: 'bg-red-500 h2 rounded',
+                    }
+                });
+            } else {
+                throw new Error(data.mensaje || "Error al guardar favorito");
+            }
+        } catch (error) {
             Swal.fire({
                 title: 'Distribuidora Favorita',
-                text: "La distribuidora  se registro dentro de tus favoritas.",
-                icon: 'success',
+                text: "Ocurrio un error procesando la solicitud.",
+                icon: 'error',
                 showConfirmButton: false,
                 timer: 2000,
                 timerProgressBar: true,
@@ -85,14 +101,13 @@ export async function guardarFavorito(usuarioId, dominio) {
                     timerProgressBar: 'bg-red-500 h2 rounded',
                 }
             });
-        } else {
-            throw new Error(data.mensaje || "Error al guardar favorito");
+            console.error("Error:", error);
         }
-    } catch (error) {
+    }else{
         Swal.fire({
-            title: 'Distribuidora Favorita',
-            text: "Ocurrio un error procesando la solicitud.",
-            icon: 'error',
+            title: 'Requerimiento faltante!',
+            text: "Inicia sesion para realizar esta operacion.",
+            icon: 'warning',
             showConfirmButton: false,
             timer: 2000,
             timerProgressBar: true,
@@ -100,7 +115,6 @@ export async function guardarFavorito(usuarioId, dominio) {
                 timerProgressBar: 'bg-red-500 h2 rounded',
             }
         });
-        console.error("Error:", error);
     }
 }
 

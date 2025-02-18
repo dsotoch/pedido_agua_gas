@@ -108,14 +108,14 @@
                                 <form action="{{ route('crear.usuario') }}" method="POST" class="mt-4 space-y-5 text-[16px]"
                                     id="form_registrar_usuario">
 
-                                    <!-- Dni -->
+                                    {{--                                    <!-- Dni -->
                                     <label for="dni" class="block text-color-text">Número de Dni
                                         <span class="text-red-500">*</span></label>
                                     <!-- Input de Dni -->
                                     <input id="dni" type="number" maxlength="8" name="dni" autocomplete="off"
                                         required
                                         class=" w-full border-color-text p-3 border rounded-3xl focus:outline-none focus:ring-2 focus:ring-blue-500 ">
-
+                                    --}}
                                     <!-- Teléfono -->
                                     <label for="telefono" class="block text-color-text">Número de Celular
                                         <span class="text-red-500">*</span></label>

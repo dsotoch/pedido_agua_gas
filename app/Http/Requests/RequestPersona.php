@@ -27,7 +27,7 @@ class RequestPersona extends FormRequest
             'nombres' => 'required|string|max:255',
             'apellidos' => 'required|string|max:255',
             'dni' => 'nullable|string|max:8|min:8|unique:persona,dni',
-            'telefono' => 'required|string|max:9|unique:users,usuario',
+            'telefono' => 'required|string|min:9|max:9|unique:users,usuario',
             'password' => 'required|string|min:6',
             'direccion' => 'required|string|max:255',
             'nota' => 'nullable|string|max:500',
@@ -53,7 +53,8 @@ class RequestPersona extends FormRequest
 
             'telefono.required' => 'El campo telefono es obligatorio.',
             'telefono.string' => 'El campo telefono debe ser una cadena de texto.',
-            'telefono.max' => 'El campo telefono no puede tener mas de 15 caracteres.',
+            'telefono.min' => 'El campo telefono debe tener 9 caracteres.',
+            'telefono.max' => 'El campo telefono no puede tener mas de 9 caracteres.',
             'telefono.unique' => 'El telefono ingresado ya existe en la base de datos.',
 
             'password.required' => 'El campo contraseña es obligatorio.',

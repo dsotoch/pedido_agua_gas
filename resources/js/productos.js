@@ -130,7 +130,12 @@ if (formproductoadmincrear) {
                 limpiardatos(formproductoadmincrear);
             })
             .catch(error => {
-                mensajeError(error.message);
+                const errorResponse = JSON.parse(error.message); // Convertir mensaje a JSON
+                const mensajes = errorResponse.errors
+                    ? Object.values(errorResponse.errors).flat()
+                    : [];
+
+                mensajeError(mensajes.join("\n")); 
                 submitButton.disabled = false;
             });
     });
@@ -309,7 +314,7 @@ function eliminarProductos() {
                         const promociones_precios = JSON.parse(this.dataset.promociones || "[]");
                         document.getElementById('edit-productosPorCada').value = por_cada;
                         document.getElementById('edit-productosGratis').value = producto_gratis;
-                       
+
                         let nueva_promocion = null
                         promociones_precios.forEach(element => {
                             nueva_promocion = document.createElement('p');

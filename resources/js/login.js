@@ -188,7 +188,7 @@ if (form_registrar_usuario_no_aut) {
             const respuesta = await response.json();
 
             if (response.status != 201) {
-                throw new Error("Ocurrió un error: " + JSON.stringify(respuesta));
+                throw new Error(JSON.stringify(respuesta));
             }
             Swal.fire({
                 title: 'Confirmación',
@@ -207,9 +207,14 @@ if (form_registrar_usuario_no_aut) {
             regresar_a_login_no_au();
 
         } catch (error) {
+            const errorResponse = JSON.parse(error.message); // Convertir mensaje a JSON
+            const mensajes = errorResponse.errors
+                ? Object.values(errorResponse.errors).flat()
+                : [];
+
             Swal.fire({
                 title: 'Ocurrio un error',
-                text: error,
+                html: mensajes.join("\n"),
                 icon: 'error',
                 timer: 3000,
                 timerProgressBar: true,
@@ -250,12 +255,14 @@ if (formulario_login_no_aut) {
             const respuesta = await response.json();
 
             if (!response.ok) {
-                throw new Error("Ocurrió un error: " + JSON.stringify(respuesta));
+                throw new Error(JSON.stringify(respuesta));
             }
             window.location.reload();
 
         } catch (error) {
-            mensajeError(error); // Asegúrate de que mensajeError está definido
+            const errorResponse = JSON.parse(error.message); // Convertir mensaje a JSON
+
+            mensajeError(errorResponse.mensaje); // Asegúrate de que mensajeError está definido
             contenedor_login_no_aut.classList.remove('after:content-[""]', 'after:absolute', 'after:inset-0', 'after:bg-white', 'after:bg-opacity-70', 'after:cursor-not-allowed', 'after:z-10');
 
         }
@@ -362,7 +369,12 @@ if (form_registrar_usuario) {
                 }
             })
             .catch(error => {
-                mensajeError(error.message); // Mostrar mensaje de error
+                const errorResponse = JSON.parse(error.message); // Convertir mensaje a JSON
+                const mensajes = errorResponse.errors
+                    ? Object.values(errorResponse.errors).flat()
+                    : [];
+
+                mensajeError(mensajes.join("\n")); // Mostrar mensaje de error
                 if (submitButton) {
                     submitButton.disabled = false;
                 }
@@ -447,7 +459,8 @@ async function SolicitudFecthFormularios_POST(formulario, tipo) {
         }
         return true;
     } catch (error) {
-        mensajeError(error.message); // Mostrar mensaje de error
+        const response = JSON.parse(error.message);
+        mensajeError(response.mensaje); // Mostrar mensaje de error
         return false;
     }
 }

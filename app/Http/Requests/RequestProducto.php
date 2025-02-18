@@ -30,9 +30,9 @@ class RequestProducto extends FormRequest
     public function messages(): array
     {
         return [
-            'descripcion.required' => 'La descripción del producto es requerida.',
-            'descripcion.string' => 'La descripción debe ser un texto válido.',
-            'descripcion.max' => 'La descripción no puede tener más de 255 caracteres.',
+            'descripcion.required' => 'La descripcion del producto es requerida.',
+            'descripcion.string' => 'La descripcion debe ser un texto valido.',
+            'descripcion.max' => 'La descripcion no puede tener más de 255 caracteres.',
             'precio.required' => 'El precio del producto es obligatorio.',
             'precio.numeric' => 'El precio debe ser un valor numérico.',
             'precio.min' => 'El precio no puede ser negativo.',
