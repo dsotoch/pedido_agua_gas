@@ -1,40 +1,86 @@
  <!---Modal para Asignar el repartidor-->
- <div id="modalasignarrepartidor" class="fixed z-50 inset-0 bg-gray-800 bg-opacity-50 items-center justify-center hidden">
-     <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+ <div id="modalasignarrepartidor"
+     class="fixed inset-0 z-50 hidden  items-center justify-center bg-gray-800 bg-opacity-50">
+     <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-3xl relative">
+
          <!-- Modal Header -->
          <div class="flex justify-between items-center border-b pb-3">
-             <h3 class="text-lg font-semibold text-color-titulos-entrega">Asignar Pedido a Repartidor</h3>
-             <button
-                 onclick="document.getElementById('modalasignarrepartidor').classList.add('hidden');document.getElementById('modalasignarrepartidor').classList.remove('flex');"
-                 class="text-red-500 hover:scale-150 transform" id="btncerrarmodalrepartidor">
+             <h3 class="text-lg font-semibold text-gray-800">Asignar Pedido a Repartidor</h3>
+             <button onclick="cerrarModalRepartidor()" class="text-red-500 hover:scale-125 transition-transform">
                  <i class="fas fa-times"></i>
              </button>
          </div>
 
          <!-- Modal Body -->
-         <form id="formAsignarRepartidor" action="{{ route('pedido.asignarrepartidor') }}" method="POST" class="mt-4">
-             @csrf
-             <input type="text" name="pedido_id" id="pedido_id" hidden>
-             <div class="mb-4">
-                 <label for="repartidor" class="block text-sm font-medium text-gray-600 mb-2">
-                     Seleccionar Repartidor
-                 </label>
-                 <select name="repartidor_id" id="repartidor" required
-                     class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-200 focus:outline-none">
-                     <option value="" disabled selected>-- Seleccionar --</option>
+         <div class="max-h-[65vh] overflow-y-auto p-4">
+             <h2 class="text-gray-800 font-semibold text-lg mb-4">Repartidores y Productos del día</h2>
+             <div class="space-y-4">
+                 @foreach ($salidas as $salida)
+                     <div class="p-4 border rounded-lg shadow-sm bg-gray-50 contenedor_salidas">
+                         <p class="text-gray-800"><strong class="repartidor_nombre_salida"
+                                 data-salida_id="{{ $salida->id }}">{{ $salida->repartidor }}</strong></p>
+                         <p class="text-gray-700">Vehículo: <span class="font-medium">{{ $salida->placa }}</span></p>
+                         <p class="text-gray-700">Productos:</p>
+                         <ul class="list-disc pl-5 text-gray-700">
+                             @php
+                                 $productos = []; // Inicializar como array vacío
+                                 foreach ($salida->stock as $value) {
+                                     $productos = array_merge($productos, json_decode($value->productos, true));
+                                 }
+                             @endphp
 
-                 </select>
+                             @foreach ($productos as $item)
+                                 @php
+                                     $producto = \App\Models\Producto::find($item['producto_id']);
+                                 @endphp
+                                 <li>
+                                     {{ $item['cantidad'] }} ×
+                                     {{ $producto ? $producto->descripcion : 'Producto no encontrado' }}
+                                 </li>
+                             @endforeach
+                         </ul>
+                     </div>
+                 @endforeach
              </div>
-             <!-- Modal Footer -->
-             <div class="flex justify-end">
-                 <button type="submit"
-                     class="border-2  bg-naranja text-white font-semibold text-base py-2 px-4 rounded hover:scale-125">
-                     Asignar
-                 </button>
-             </div>
-         </form>
+         </div>
+
+         <!-- Modal Footer -->
+         <div class="sticky bottom-0 bg-white py-4 px-6 border-t shadow-md">
+             <form id="formAsignarRepartidor" action="{{ route('pedido.asignarrepartidor') }}" method="POST">
+                 @csrf
+                 <input type="hidden" name="pedido_id" id="pedido_id">
+                 <div class="mb-4">
+                     <label for="repartidor" class="block text-gray-800 font-medium mb-2">
+                         Seleccionar Repartidor
+                     </label>
+                     <select name="repartidor_id" id="repartidor" required
+                         class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-200 focus:outline-none">
+                         <option value="" disabled selected>-- Seleccionar --</option>
+                     </select>
+                 </div>
+                 <div class="mb-4">
+                     <p class="text-color-titulos-entrega text-base font-semibold">Productos del Pedido.</p>
+                     <div id="productos_requeridos">
+
+                     </div>
+                 </div>
+                 <div class="flex justify-end">
+                     <button type="submit"
+                         class="bg-orange-500 text-white font-semibold text-base py-2 px-4 rounded-lg hover:scale-105 transition-transform">
+                         Asignar
+                     </button>
+                 </div>
+             </form>
+         </div>
      </div>
  </div>
+
+ <script>
+     function cerrarModalRepartidor() {
+         document.getElementById('modalasignarrepartidor').classList.add('hidden');
+     }
+ </script>
+
  <!-- Modal Pago Pedido Repartidor-->
  <div id="paymentModal" class="hidden fixed flex-col inset-0 bg-black bg-opacity-70  items-center justify-center z-50">
      <div class="bg-white rounded text-color-text text-base font-sans  shadow-md w-full mx-auto max-w-md p-6">
@@ -132,7 +178,8 @@
              <!-- Botón de cerrar -->
              <button type="button"
                  class="absolute top-0 right-0 mt-2 mr-2 p-2 text-red-500 hover:text-red-400 focus:outline-none"
-                 onclick="document.getElementById('modal_editar_pedido').classList.add('hidden');" aria-label="Cerrar">
+                 onclick="document.getElementById('modal_editar_pedido').classList.add('hidden');"
+                 aria-label="Cerrar">
                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                      stroke="currentColor">
                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -246,5 +293,3 @@
 
      </div>
  </div>
-
- 

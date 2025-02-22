@@ -7,7 +7,9 @@ use App\Models\Direcciones;
 use App\Models\Empresa;
 use App\Models\Pedido;
 use App\Models\Persona;
+use App\Models\Producto;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -134,7 +136,7 @@ class ControllerUsuario extends Controller
 
             return response()->json(['mensaje' => 'Favorito eliminado correctamente']);
         } catch (\Throwable $th) {
-            return response()->json(['mensaje' => $th->getMessage(). $empresa]);
+            return response()->json(['mensaje' => $th->getMessage() . $empresa]);
         }
     }
 
@@ -210,6 +212,10 @@ class ControllerUsuario extends Controller
         }
 
         $empresa = $usuario->empresas()->first() ?? null;
+        $salidas = collect();
+        if ($usuario->tipo != 'cliente') {
+            $salidas = $empresa->salidas()->with('stock')->whereDate('fecha', Carbon::now('America/Lima'))->get();
+        }
         $pedidos = $usuario->tipo === 'admin'
             ? Pedido::with('detalles', 'empresa', 'repartidor', 'repartidor.persona', 'entregaPromociones')
             ->where('empresa_id', $empresa->id ?? 0)
@@ -252,7 +258,8 @@ class ControllerUsuario extends Controller
             );
         $pedido = Pedido::where('cliente_id', $usuario->id)->latest()->first();
 
-        return view('micuenta', compact('pedido', 'pedidos', 'empresa', 'usuario'));
+
+        return view('micuenta', compact('salidas', 'pedido', 'pedidos', 'empresa', 'usuario'));
     }
 
 

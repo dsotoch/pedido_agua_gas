@@ -272,7 +272,7 @@ function logica_boton_siguiente() {
         if (window.idproductos.length > 0) {
             btn_siguiente_pedido.removeAttribute('disabled');
         } else {
-            btn_siguiente_pedido.setAttribute('disabled',true);
+            btn_siguiente_pedido.setAttribute('disabled', true);
         }
     }
 }
@@ -316,10 +316,11 @@ if (form_realizar_pedido) {
             window.location.href = respuesta.ruta;
 
         } catch (error) {
+            console.log(error);
             // Mostrar mensaje de error (usando SweetAlert como ejemplo)
             Swal.fire({
                 title: "Ocurrió un error!",
-                text: error,
+                text: error.message.mensaje,
                 icon: "error",
                 timerProgressBar: true,
                 timer: 3000,
@@ -386,7 +387,7 @@ function conectarWebSocket() {
                         'Nuevo-Pedido-Asignado'
                     );
                     pedidoasignadoarepartidor(e.message.pedido_id, 'repartidor');
-                    agregarPedido(e.message.pedido, "repartidor");
+                    agregarPedido(e.message.pedido, "repartidor",e.message.tiempo);
                     break;
                 case 'finalizado':
                 case 'anulacion':
@@ -397,7 +398,7 @@ function conectarWebSocket() {
                         `¡Administrador! La Distribuidora tiene un nuevo Pedido #${e.message.pedido_id}, revísalo en este momento`,
                         'Nuevo-Pedido'
                     );
-                    agregarPedido(e.message.pedido, "admin");
+                    agregarPedido(e.message.pedido, "admin",e.message.tiempo);
                     break;
             }
         })
@@ -804,7 +805,7 @@ const modal_editar_pedido_id = document.getElementById('modal_editar_pedido_id')
 const form_editar_pedido_repartidor = document.getElementById('form_editar_pedido_repartidor');
 let spanrepartidor;
 const mi_cuenta_contenedor_pedidos = document.getElementById('mi_cuenta_contenedor_pedidos_super');
-
+let productos_del_pedido;
 
 if (mi_cuenta_contenedor_pedidos) {
     mi_cuenta_contenedor_pedidos.addEventListener('click', (event) => {
@@ -815,9 +816,25 @@ if (mi_cuenta_contenedor_pedidos) {
                 const pedido = botonasignar.closest('.mi_cuenta_pedido');
                 spanrepartidor = pedido.querySelector('.span_repartidor_nombre');
                 const idpedido = botonasignar.dataset.id;
+                const productos_requeridos = document.getElementById('productos_requeridos');
                 modalasignarrepartidor.classList.remove('hidden');
                 modalasignarrepartidor.classList.add('flex');
                 pedido_id.value = idpedido;
+                productos_del_pedido = pedido.querySelectorAll('.productos_del_pedido span'); // Encuentra los productos
+                const productos_del_pedido_detalles = pedido.querySelectorAll('.productos_del_pedido p'); // Encuentra los productos
+                let productos_requ = Array.from(productos_del_pedido_detalles).map(element => element.textContent.trim());
+                // Limpiar la lista antes de agregar nuevos elementos
+                productos_requeridos.innerHTML = '';
+
+                // Crear un elemento <li> por cada producto
+                productos_requ.forEach(texto => {
+                    let li = document.createElement("li");
+                    li.textContent = texto;
+                    productos_requeridos.appendChild(li);
+                });
+
+
+
             })
         }
         if (btn_editar_pedido) {
@@ -834,6 +851,10 @@ if (mi_cuenta_contenedor_pedidos) {
     });
 
 }
+
+
+
+
 
 async function obtenerDatosPedido(idPedido) {
     try {
@@ -915,50 +936,210 @@ if (form_editar_pedido_repartidor) {
     });
 }
 if (formAsignarRepartidor) {
-    formAsignarRepartidor.addEventListener('submit', (e) => {
+    formAsignarRepartidor.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const dataform = new FormData(formAsignarRepartidor);
-        let data = {};
-        dataform.forEach((value, key) => {
-            data[key] = value;
-        });
-        fetch(formAsignarRepartidor.action, {
-            method: formAsignarRepartidor.method,
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': token,
-            },
-            body: JSON.stringify(data),
-        })
-            .then(response => {
-                if (response.status !== 201) {
-                    return response.text().then((text) => {
-                        throw new Error(text);
-                    });
-                }
-                return response.json();
-            })
-            .then(result => {
-                Swal.fire({
 
-                    title: 'Confirmación',
-                    text: result.mensaje,
-                    icon: 'success',
+        const repartidorNombre = repartidor.options[repartidor.selectedIndex].text.trim();
+        let repartidor_encontrado = null;
+        // Selecciona todos los elementos con la clase 'repartidor_nombre_salida'
+        let salidas_repartidores_para_asignar = document.querySelectorAll('.repartidor_nombre_salida');
+        let salida_id;
+        salidas_repartidores_para_asignar.forEach(element => {
+            if (repartidorNombre === element.textContent.trim()) {
+                repartidor_encontrado = element;
+                salida_id = element.dataset.salida_id;
+            }
+        });
+        if (!repartidor_encontrado) {
+            Swal.fire({
+                title: 'Repartidor no Encontrado',
+                text: `No se ha registrado la salida del repartidor.`,
+                icon: 'warning',
+                timerProgressBar: true,
+                timer: 2000,
+                showConfirmButton: false,
+                customClass: {
+                    timerProgressBar: 'bg-red-500 h-2 rounded'
+                }
+            })
+
+            return;
+        }
+        const productos = repartidor_encontrado.closest('.contenedor_salidas').querySelectorAll('ul li');
+        let detalles_productos = [];
+        productos.forEach(element => {
+            detalles_productos.push(element.textContent.trim());
+        });
+
+        let textos = Array.from(productos_del_pedido).map(element => element.textContent.trim());
+        let productosSeparados_requeridos = textos.map(item => {
+            let partes = item.split('/');
+            return {
+                cantidad: parseInt(partes[1].trim()),// Convertir a número
+                descripcion: partes[0].trim()
+            };
+        });
+        let productosSeparados = detalles_productos.map(item => {
+            let partes = item.split('×'); // Dividir en cantidad y descripción
+            return {
+                cantidad: parseInt(partes[0].trim()), // Convertir cantidad a número
+                descripcion: partes[1].trim()
+            };
+        });
+
+        // Crear un mapa con el stock disponible
+        let stockDisponible = new Map();
+        productosSeparados.forEach(producto => {
+            stockDisponible.set(producto.descripcion, producto.cantidad);
+        });
+
+        // Verificar si hay suficiente stock
+        let puedeVender = true;
+
+        productosSeparados_requeridos.forEach(producto => {
+            let stock = stockDisponible.get(producto.descripcion) || 0;
+            if (stock < producto.cantidad) {
+                Swal.fire({
+                    title: 'Stock Faltante',
+                    text: `No hay suficiente stock para ${producto.descripcion}. Disponible: ${stock}, Requerido: ${producto.cantidad}`,
+                    icon: 'warning',
                     timerProgressBar: true,
                     timer: 2000,
                     showConfirmButton: false,
                     customClass: {
-                        timerProgressBar: 'bg-green-500'
+                        timerProgressBar: 'bg-red-500 h-2 rounded'
                     }
                 })
-                formAsignarRepartidor.reset();
-                spanrepartidor.textContent = result.repartidor;
+                puedeVender = false;
+            }
+        });
+        let exito_repartidor = false;
 
-            })
-            .catch(error => {
-                mensajeError(error.message);
+        if (puedeVender) {
+            let datos_actualizar = repartidor_encontrado.closest('.contenedor_salidas').querySelector('ul');
+
+            // Restar el stock de los productos vendidos
+            productosSeparados_requeridos.forEach(producto => {
+                let stockActual = stockDisponible.get(producto.descripcion) || 0;
+                let nuevoStock = stockActual - producto.cantidad;
+
+                // Evitar stock negativo
+                if (nuevoStock < 0) {
+                    nuevoStock = 0;
+                }
+
+                stockDisponible.set(producto.descripcion, nuevoStock);
             });
+            const dataform = new FormData(formAsignarRepartidor);
+            let data = {};
+            dataform.forEach((value, key) => {
+                data[key] = value;
+            });
+            await fetch(formAsignarRepartidor.action, {
+                method: formAsignarRepartidor.method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': token,
+                },
+                body: JSON.stringify(data),
+            })
+                .then(response => {
+                    if (response.status !== 201) {
+                        return response.text().then((text) => {
+                            throw new Error(text);
+                        });
+                    }
+                    return response.json();
+                })
+                .then(result => {
+                    exito_repartidor = true;
+                    Swal.fire({
+
+                        title: 'Confirmación',
+                        text: result.mensaje,
+                        icon: 'success',
+                        timerProgressBar: true,
+                        timer: 2000,
+                        showConfirmButton: false,
+                        customClass: {
+                            timerProgressBar: 'bg-green-500'
+                        }
+                    })
+                    formAsignarRepartidor.reset();
+                    spanrepartidor.textContent = result.repartidor;
+
+                })
+                .catch(error => {
+                    console.error(error.message);
+                    exito_repartidor = false;
+                    mensajeError("El repartidor ya esta Asignado a este pedido.");
+                });
+            if (exito_repartidor) {
+                datos_actualizar.innerHTML = '';
+
+                // Agregar todos los productos disponibles a la lista
+                stockDisponible.forEach((cantidad, descripcion) => {
+                    let li = document.createElement('li');
+                    li.textContent = `${cantidad} × ${descripcion}`;
+                    datos_actualizar.appendChild(li);
+                });
+
+
+
+                console.log("Venta procesada. Stock actualizado:", Array.from(stockDisponible.entries()).map(([descripcion, cantidad]) => ({ descripcion, cantidad })));
+            }
+        } else {
+            Swal.fire({
+                title: 'Stock Faltante',
+                text: 'El repartidor Elegido no tiene suficiente stock para algunos productos.',
+                icon: 'warning',
+                timerProgressBar: true,
+                timer: 2000,
+                showConfirmButton: false,
+                customClass: {
+                    timerProgressBar: 'bg-red-500 h-2 rounded'
+                }
+            });
+            return;
+        }
+
+
+        if (exito_repartidor) {
+            console.log(stockDisponible);
+            await registrarNuevoStock(salida_id, Array.from(stockDisponible.entries()).map(([descripcion, cantidad]) => ({ descripcion, cantidad })));
+
+        }
+
     });
+}
+
+async function registrarNuevoStock(salida_id, prod) {
+    const data = { productos: prod, salida_id: salida_id };
+    await fetch('/procesarStock', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': token,
+        },
+        body: JSON.stringify(data),
+    })
+        .then(response => {
+            if (response.status !== 200) {
+                return response.text().then((text) => {
+                    throw new Error(text);
+                });
+            }
+            return response.json();
+        })
+        .then(result => {
+            console.log(result);
+
+        })
+        .catch(error => {
+            console.error(error.message);
+
+        });
+
 }
 
 function asignarRepartidor(pedidoId, repartidor, spanrepartidor) {

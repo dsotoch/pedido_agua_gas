@@ -1,4 +1,4 @@
-export function agregarPedido(pedido, usuario) {
+export function agregarPedido(pedido, usuario,tiempo) {
     const pedidos_vacio = document.querySelector('.pedidos_vacio');
     if (pedidos_vacio && !pedidos_vacio.classList.contains('hidden')) {
         pedidos_vacio.classList.add('hidden');
@@ -253,14 +253,14 @@ export function agregarPedido(pedido, usuario) {
 
 
     contenedor.prepend(divPedido);
-    contador(pedido.fecha, pedido.id);
+    contador(pedido.fecha, pedido.id,tiempo);
 }
 
 
 
-export function contador(fecha, id) {
+export function contador(fecha, id,tiempo) {
     const pedidoFecha = new Date(fecha);
-    const duracionMaxima = 20 * 60; // 20 minutos en segundos
+    const duracionMaxima = tiempo * 60; // 20 minutos en segundos
     const interval = setInterval(() => {
         const ahora = new Date();
         const diferencia = Math.floor((ahora - pedidoFecha) / 1000); // Diferencia en segundos

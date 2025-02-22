@@ -50,7 +50,7 @@ class ControllerMensajes extends Controller
 
 
 
-    public function crearmensaje($message, $receiver_id, $pedido_id, $pedido)
+    public function crearmensaje($message, $receiver_id, $pedido_id, $pedido,$tiempo)
     {
 
         try {
@@ -60,7 +60,7 @@ class ControllerMensajes extends Controller
                 'pedido_id' => $pedido_id,
                 'mensaje' => $message,
             ]);
-            $mensaje = ['operacion' => 'nuevopedido', 'mensaje' => 'Nuevo Pedido para la Empresa.', 'pedido_id' => $pedido_id, 'pedido' => $pedido];
+            $mensaje = ['operacion' => 'nuevopedido', 'mensaje' => 'Nuevo Pedido para la Empresa.', 'pedido_id' => $pedido_id, 'pedido' => $pedido,'tiempo'=>$tiempo];
 
             SendMessage::dispatch($mensaje, $receiver_id);
 

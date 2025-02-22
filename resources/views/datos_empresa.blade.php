@@ -159,7 +159,13 @@
 
                     </div>
                 </div>
-
+                <div class="mt-4">
+                    <label for="minutos" class="block text-gray-600 font-medium mb-1">Tiempo de Entrega (minutos)</label>
+                    <input type="number" id="minutos_empresa" name="minutos" class="border rounded p-2 text-center" value="{{ $empresa->tiempo ?? 20 }}">
+                    @error('minutos')
+                        <span class="text-red-500">{{ $message }}</span>
+                    @enderror
+                </div>
                 <!-- Descripción (ocupa 2 columnas) -->
                 <div class="mt-4">
                     <label for="descripcion" class="block text-gray-600 font-medium mb-1">Descripción</label>
@@ -169,6 +175,7 @@
                         <span class="text-red-500">{{ $message }}</span>
                     @enderror
                 </div>
+
 
 
                 <input type="text" value="{{ $empresa->id }}" id="empresa_id" name="empresa_id" class="hidden">
@@ -203,7 +210,7 @@
             </button>
         </div>
 
-      
+
 
     </div>
 @endsection

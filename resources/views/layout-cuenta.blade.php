@@ -55,6 +55,12 @@
 
                     </div>
                     <div
+                        class="{{ request()->routeIs('empresa.salidas') ? 'btn-active-mi-cuenta' : '' }} border border-transparent p-3 rounded-md hover:bg-naranja hover:border-red-500">
+                        <a class="" href="{{ route('empresa.salidas') }}" id="btn_salidas"><i
+                                class="fa-solid fa-car"></i>&nbsp;&nbsp;Salidas del día</a>
+
+                    </div>
+                    <div
                         class="{{ request()->routeIs('empresa.index_pagos') ? 'btn-active-mi-cuenta' : '' }} border border-transparent p-3 rounded-md hover:bg-naranja hover:border-red-500">
                         <a class="" href="{{ route('empresa.index_pagos') }}" id="btn_boton_pagos"><i
                                 class="fa-solid fa-cash-register"></i>&nbsp;&nbsp;Pagos del día</a>

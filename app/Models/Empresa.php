@@ -27,9 +27,18 @@ class Empresa extends Model
         'logo_vertical',
         'hora_inicio',
         'hora_fin',
-        'orden_productos'
+        'orden_productos',
+        'tiempo'
     ];
 
+    public function vehiculos()
+    {
+        return $this->hasMany(Vehiculo::class);
+    }
+    public function salidas()
+    {
+        return $this->hasMany(Salidas::class);
+    }
     public function cupones()
     {
         return $this->belongsTo(cupones::class, 'empresa_id');

@@ -5,6 +5,7 @@ use App\Http\Controllers\ControllerEmpresa;
 use App\Http\Controllers\ControllerMensajes;
 use App\Http\Controllers\ControllerPedido;
 use App\Http\Controllers\ControllerProducto;
+use App\Http\Controllers\ControllerSalidas;
 use App\Http\Controllers\ControllerUsuario;
 use App\Http\Controllers\CuponController;
 use Illuminate\Support\Facades\Auth;
@@ -54,7 +55,11 @@ Route::controller(ControllerUsuario::class)->group(function () {
 
 
 });
+Route::controller(ControllerSalidas::class)->group(function () {
+    Route::post('crearSalida', 'store')->name('salidas.crear');
+    Route::post('procesarStock', 'procesarStockJson')->name('salidas.procesarStock');
 
+});
 Route::controller(ControllerProducto::class)->group(function () {
     Route::post('crear', 'store')->name('crear.producto');
     Route::delete('eliminar/{id}', 'destroy')->name('eliminar.producto');
@@ -93,6 +98,8 @@ Route::prefix('mi-cuenta')->controller(ControllerEmpresa::class)->group(function
     Route::put('modificarDiseño', 'modificar_empresa_diseño')->name('empresa.editar_diseño');
     Route::get('cupones', 'index_cupones')->name('empresa.cupones');
     Route::get('favoritas', 'index_favoritas')->name('empresa.favoritas');
+    Route::get('salidas', 'index_salidas')->name('empresa.salidas');
+
 });
 Route::controller(CuponController::class)->group(function () {
     Route::post('/aplicar-cupon', 'aplicarCupon')->name('cupones.aplicar');

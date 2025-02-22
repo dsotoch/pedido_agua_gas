@@ -43,6 +43,11 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function vehiculo()
+    {
+        return $this->hasOne(Vehiculo::class);
+    }
     public function direcciones()
     {
         return $this->hasMany(Direcciones::class);

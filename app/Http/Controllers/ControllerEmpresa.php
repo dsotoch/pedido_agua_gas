@@ -28,6 +28,25 @@ class ControllerEmpresa extends Controller
         $empresa = $usuario->empresas()->first();
         return view('favoritas', compact('usuario', 'empresa'));
     }
+
+    public function index_salidas()
+    {
+        if (!Auth::check()) {
+            abort(403, "Usuario no autenticado");
+        }
+        $usuario = Auth::user();
+        $usuario = User::find($usuario->id);
+        $empresa = $usuario->empresas()->first();
+        $productos = $empresa->productos;
+        $vehiculos = $empresa->vehiculos;
+        $repartidores = $empresa->usuarios()->where('tipo', 'repartidor')->get();
+
+        $salidas = $empresa->salidas()->with('stock')->whereDate('fecha',Carbon::now('America/Lima'))->get();
+       
+
+        return view('salidas', compact('usuario', 'empresa', 'vehiculos', 'productos', 'salidas', 'repartidores'));
+    }
+
     public function index_cupones()
     {
         if (!Auth::check()) {
@@ -62,6 +81,7 @@ class ControllerEmpresa extends Controller
             $empresa->descripcion = e($request->descripcion);
             $empresa->hora_inicio = date('H:i:s', strtotime($request->hora_inicio));
             $empresa->hora_fin = date('H:i:s', strtotime($request->hora_fin));
+            $empresa->tiempo= intval($request->minutos);
 
             // Actualizar logo
             if ($request->hasFile('logo')) {

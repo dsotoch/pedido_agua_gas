@@ -100,6 +100,7 @@ class ControllerPedido extends Controller
         try {
             // Buscar el pedido y el repartidor
             $pedido = Pedido::findOrFail($validated['pedido_id']);
+            $empresa = Empresa::where('id', $pedido->empresa_id)->first();
             $repartidor = User::findOrFail($validated['repartidor_id']);
 
             // Verificar si el repartidor ya está asignado a este pedido
@@ -113,7 +114,7 @@ class ControllerPedido extends Controller
                 'repartidor_id' => $repartidor->id,
             ]);
             $pedido_completo = Pedido::with('detalles', 'detalles.producto', 'entregaPromociones')->find($pedido->id);
-            $mensaje = ['operacion' => 'asignacion', 'mensaje' => 'Pedido Asignado.', 'pedido_id' => $validated['pedido_id'], 'pedido' => $pedido_completo];
+            $mensaje = ['operacion' => 'asignacion', 'mensaje' => 'Pedido Asignado.', 'pedido_id' => $validated['pedido_id'], 'pedido' => $pedido_completo, 'tiempo' => $empresa->tiempo];
 
             SendMessage::dispatch($mensaje, $repartidor->id);
 
@@ -136,11 +137,13 @@ class ControllerPedido extends Controller
     {
         try {
             $pedido = Pedido::find($id);
+            $empresa = Empresa::where('id', $pedido->empresa_id)->first();
+
             if ($pedido) {
                 $pedido->update([
                     "estado" => 'En Camino'
                 ]);
-                $mensaje = ['operacion' => 'confirmacion', 'mensaje' => 'Tu pedido ha sido tomado por el repartidor y está en camino.', 'pedido_id' => $pedido->id, 'estado' => $pedido->estado];
+                $mensaje = ['operacion' => 'confirmacion', 'mensaje' => 'Tu pedido ha sido tomado por el repartidor y está en camino.', 'pedido_id' => $pedido->id, 'estado' => $pedido->estado, 'tiempo' => $empresa->id];
                 $mensaje2 = ['operacion' => 'pedido_tomado', 'mensaje' => '', 'pedido_id' => $pedido->id, 'estado' => $pedido->estado];
 
                 $cliente = $pedido->usuario->id;
@@ -449,6 +452,7 @@ class ControllerPedido extends Controller
 
                         $nuevaCantidad = ($cantidadPedidos->exists ? $cantidadPedidos->cantidad : 0) + $productoData['cantidad'];
                         // Verificamos si hay una promoción y si se cumple la cantidad requerida
+                        $cantidadRestante = $nuevaCantidad; // Valor predeterminado
                         if ($promocionUnitaria) {
                             if ($promocionUnitaria->cantidad == 1) {
                                 // Crear o actualizar promoción con estado true
@@ -556,7 +560,7 @@ class ControllerPedido extends Controller
                 // Llamar al método que necesitas
 
                 $pedido_completo = Pedido::with('detalles', 'detalles.producto', 'entregaPromociones')->find($pedido->id);
-                $controlador_mensaje->crearmensaje('Nuevo Pedido para la empresa.', $admin->id, $pedido->id, $pedido_completo);
+                $controlador_mensaje->crearmensaje('Nuevo Pedido para la empresa.', $admin->id, $pedido->id, $pedido_completo, $empresa->tiempo);
             }
             // Confirmar la transacción
             DB::commit();
@@ -566,8 +570,7 @@ class ControllerPedido extends Controller
         } catch (\Throwable $e) {
             DB::rollBack();
             return response()->json([
-                'mensaje' => 'Ocurrio un error inesperado.',
-                'error' => 'Ocurrio un error inesperado.',
+                'mensaje' => $e->getMessage()  . ' ' . $e->getLine(),
             ], 500);
         }
     }
