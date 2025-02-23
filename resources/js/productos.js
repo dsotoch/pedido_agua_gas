@@ -304,6 +304,7 @@ function eliminarProductos() {
                         document.getElementById("edit-id").value = this.dataset.id;
                         document.getElementById("edit-descripcion").value = this.dataset.descripcion;
                         document.getElementById("edit-precio").value = this.dataset.precio;
+                        document.getElementById("edit-nombre").value = this.dataset.nombre;
                         document.getElementById("edit-comercializable").checked = this.dataset.comercializable == "1";
                         const promociones_unitarias = JSON.parse(this.dataset.unitarios || '[]');
                         const por_cada = promociones_unitarias.cantidad;

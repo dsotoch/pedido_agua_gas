@@ -18,7 +18,7 @@
                                         </h3>
                                         <p class="">
                                             <i class="fas fa-tags"></i>
-                                            {{ $item->nombre .' '.$item->descripcion }}
+                                            {{ $item->nombre . ' ' . $item->descripcion }}
                                         </p>
                                         <p class=" font-bold">
                                             <i class="fas fa-dollar-sign "></i> Precio:
@@ -44,6 +44,7 @@
                                             <button type="button"
                                                 class="editar-producto m-2 p-3 rounded border-2 border-blue-500 text-blue-500"
                                                 data-id="{{ $item->id }}" data-descripcion="{{ $item->descripcion }}"
+                                                data-nombre="{{ $item->nombre }}"
                                                 data-promociones="{{ $item->promociones }}"
                                                 data-unitarios="{{ $item->unitarios }}" data-precio="{{ $item->precio }}"
                                                 data-comercializable="{{ $item->comercializable }}">
@@ -83,7 +84,7 @@
                         <div>
                             <label class="block text-base font-medium text-color-titulos-entrega">Imagen del
                                 Producto</label>
-                            <input type="file" name="imagen" accept="image/png; image/jpg; image/webp;"
+                            <input type="file" name="imagen" accept="image/png, image/jpeg, image/webp" required
                                 class="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                                 placeholder="Producto">
                         </div>
@@ -96,12 +97,13 @@
                                 class="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                                 placeholder="Producto">
                                 <option value="otros" selected>Bebidas</option>
+                                <option value="gratis" >Gratis</option>
                                 <option value="gas">Gas</option>
 
                             </select>
                         </div>
 
-                        
+
                         <!-- Descripción -->
                         <div>
                             <label class="block text-base font-medium text-gray-700">Descripción</label>
@@ -238,6 +240,9 @@
 
                 <input type="hidden" name="id" id="edit-id">
 
+                <!-- Descripción -->
+                <label>Nombre</label>
+                <input type="text" id="edit-nombre" name="nombre" class="w-full p-2 border rounded mb-3">
                 <!-- Descripción -->
                 <label>Descripción</label>
                 <textarea id="edit-descripcion" name="descripcion" class="w-full p-2 border rounded mb-3"></textarea>

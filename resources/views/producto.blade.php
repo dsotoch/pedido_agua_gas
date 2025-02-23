@@ -2,7 +2,7 @@
 
 
     @if ($productos->count() > 0)
-        <div id="contener_producto_item" class="flex flex-col">
+        <div id="contener_producto_item" class="flex flex-col w-full">
             <div class="flex flex-col mx-auto h-auto text-color-text  items-center justify-center rounded-3xl p-[10px] bg-transparent text-center w-full md:w-[520px]"
                 data-index="">
                 @foreach ($productos as $item)
@@ -11,7 +11,7 @@
                         <div class="w-[79px] h-[145px] my-auto flex items-center">
                             <img src="{{ asset('storage/' . $item->imagen) }}" alt="" class=" object-contain">
                         </div>
-                        <div class="flex flex-col w-[398px] ml-4 space-y-2 padre_productos">
+                        <div class="flex flex-col w-full  md:w-[398px] ml-4 space-y-2 padre_productos">
                             <div class="flex items-center">
                                 <div class="w-1/2 pt-4 text-start">
                                     <p class="producto_descripcion  text-base ">
@@ -191,8 +191,9 @@
                     <i class=" fas fa-arrow-right-long text-2xl ml-2 "></i></button>
 
             </div>
-        @else
-            <p class="text-gray-700 mx-auto font-medium text-md m-2">Sin Productos Registrados.</p>
+        </div>
+    @else
+        <p class="text-gray-700 mx-auto font-medium text-md m-2">Sin Productos Registrados.</p>
     @endif
 </div>
 

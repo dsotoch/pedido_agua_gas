@@ -34,12 +34,12 @@ class ControllerProducto extends Controller
             $nombre = $request->input('nombre');
             $precio = $request->input('precio');
             $descripcion = $request->input('descripcion');
-            $promociones = $request->input('promociones');
+            $promociones = json_decode($request->input('promociones'), true);
             $productos_por_cada = $request->input('productos_por_cada');
             $productos_gratis = $request->input('productos_gratis');
             $comercializable = $request->has('estado');
             $categoria = $request->input('categoria');
-           
+
             $imagen = null;
             if ($request->hasFile('imagen')) {
                 $logo = $request->file('imagen');
@@ -111,6 +111,7 @@ class ControllerProducto extends Controller
 
             // Obtener datos del request
             $precio = $request->precio;
+            $nombre = $request->nombre;
             $descripcion = $request->descripcion;
             $promociones = $request->promociones;
             $productos_por_cada = $request->productos_por_cada;
@@ -119,6 +120,7 @@ class ControllerProducto extends Controller
 
             // Actualizar los datos del producto
             $producto->update([
+                'nombre' => $nombre,
                 'descripcion' => "{$descripcion}", // Concatenación
                 'precio' => floatval($precio),
                 'comercializable' => $comercializable
