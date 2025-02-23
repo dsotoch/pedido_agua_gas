@@ -1,4 +1,4 @@
-export function agregarPedido(pedido, usuario,tiempo) {
+export function agregarPedido(pedido, usuario, tiempo) {
     const pedidos_vacio = document.querySelector('.pedidos_vacio');
     if (pedidos_vacio && !pedidos_vacio.classList.contains('hidden')) {
         pedidos_vacio.classList.add('hidden');
@@ -17,9 +17,13 @@ export function agregarPedido(pedido, usuario,tiempo) {
     const fechaFormateada = pedidoFecha.toLocaleDateString('es-PE', opcionesFecha); // Formato dd/mm/yyyy
     const horaFormateada = pedidoFecha.toLocaleTimeString('es-PE', opcionesHora); // Formato hh:mm:ss am/pm
     const detallesHTML = Array.isArray(pedido.detalles) && pedido.detalles.length > 0
-        ? pedido.detalles.map(item =>
-            `<p>${item.producto?.descripcion || "Producto desconocido"} x ${item.cantidad}</p>`
-        ).join('')
+        ? pedido.detalles.map(item => `
+            <p>
+                ${item.producto?.nombre || ''} ${item.producto?.descripcion || ''}
+                ${item.producto?.tipo ? `_${item.producto.tipo}` : ''}
+                x ${item.cantidad}
+            </p>
+        `).join('')
         : '';
 
 
@@ -253,12 +257,12 @@ export function agregarPedido(pedido, usuario,tiempo) {
 
 
     contenedor.prepend(divPedido);
-    contador(pedido.fecha, pedido.id,tiempo);
+    contador(pedido.fecha, pedido.id, tiempo);
 }
 
 
 
-export function contador(fecha, id,tiempo) {
+export function contador(fecha, id, tiempo) {
     const pedidoFecha = new Date(fecha);
     const duracionMaxima = tiempo * 60; // 20 minutos en segundos
     const interval = setInterval(() => {

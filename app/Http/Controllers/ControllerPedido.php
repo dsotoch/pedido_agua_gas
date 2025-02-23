@@ -407,6 +407,7 @@ class ControllerPedido extends Controller
                     Detalles::create([
                         'pedido_id' => $pedido->id,
                         'producto_id' => $producto->id,
+                        'tipo' => $productoData['tipo'],
                         'cantidad' => $productoData['cantidad'],
                         'precioUnitario' => $precioFinal,
                         'total' => $totalProducto,

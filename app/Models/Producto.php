@@ -15,7 +15,11 @@ class Producto extends Model
         'descripcion',
         'precio',
         'empresa_id',
-        'comercializable'
+        'comercializable',
+        'categoria',
+        'imagen',
+        'nombre',
+        'tipo'
     ];
     public function scopeFilter($query, $filters)
     {

@@ -18,7 +18,7 @@
                                         </h3>
                                         <p class="">
                                             <i class="fas fa-tags"></i>
-                                            {{ $item->descripcion }}
+                                            {{ $item->nombre .' '.$item->descripcion }}
                                         </p>
                                         <p class=" font-bold">
                                             <i class="fas fa-dollar-sign "></i> Precio:
@@ -69,7 +69,7 @@
                     <h2 class="text-2xl font-bold text-color-titulos-entrega font-cabin mb-4">Crear Nuevo Producto</h2>
                     <form id="formproductoadmincrear" class="space-y-4" action="{{ route('crear.producto') }}"
                         method="POST">
-
+                        @csrf
                         <!-- Nombre del producto -->
                         <div>
                             <label class="block text-base font-medium text-color-titulos-entrega">Nombre del
@@ -78,6 +78,30 @@
                                 class="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                                 placeholder="Producto">
                         </div>
+                        <!-- Imagen del producto -->
+
+                        <div>
+                            <label class="block text-base font-medium text-color-titulos-entrega">Imagen del
+                                Producto</label>
+                            <input type="file" name="imagen" accept="image/png; image/jpg; image/webp;"
+                                class="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                placeholder="Producto">
+                        </div>
+                        <!-- Categoria del producto -->
+
+                        <div>
+                            <label class="block text-base font-medium text-color-titulos-entrega">Categoria
+                            </label>
+                            <select id="select_categoria" name="categoria"
+                                class="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                placeholder="Producto">
+                                <option value="otros" selected>Bebidas</option>
+                                <option value="gas">Gas</option>
+
+                            </select>
+                        </div>
+
+                        
                         <!-- Descripción -->
                         <div>
                             <label class="block text-base font-medium text-gray-700">Descripción</label>
@@ -118,7 +142,8 @@
                                         <option value="mismo">Mismo Producto a Registrar</option>
                                         @foreach ($empresa->productos as $item)
                                             @if (!$item->comercializable)
-                                                <option value="{{ $item->descripcion }}">{{ $item->descripcion }}</option>
+                                                <option value="{{ $item->descripcion }}">{{ $item->descripcion }}
+                                                </option>
                                             @endif
                                         @endforeach
                                     @else
@@ -210,7 +235,7 @@
         <div class="bg-white md:p-6 p-4 rounded-lg w-full md:w-1/2  h-[95vh] overflow-y-auto">
             <h2 class="text-xl font-bold mb-4">Editar Producto</h2>
             <form id="formEditarProducto" method="POST" action="{{ route('editar.producto') }}">
-               
+
                 <input type="hidden" name="id" id="edit-id">
 
                 <!-- Descripción -->

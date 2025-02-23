@@ -19,6 +19,8 @@ const btn_cerrar_modal_editar_producto = document.querySelector("#cerrarModalEdi
 const formEditarProducto = document.getElementById('formEditarProducto');
 const btnEliminarPromociones = document.getElementById('edit-btnEliminarPromociones');
 const btnPromocion = document.getElementById('edit-btnPromocion');
+
+
 if (formEditarProducto) {
     formEditarProducto.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -76,12 +78,10 @@ if (formproductoadmincrear) {
                 return '';
             }
         }
-        const datas = new FormData(formproductoadmincrear);
-        var data = {};
-        datas.forEach((value, key) => {
-            data[key] = value;
-        });
-        data['promociones'] = promociones;
+        const data = new FormData(formproductoadmincrear);
+
+        // Agregar datos extra
+        data.append('promociones', JSON.stringify(promociones));
         const actionURL = formproductoadmincrear.getAttribute('action');
         const submitButton = formproductoadmincrear.querySelector('button[type="submit"]');
 
@@ -89,11 +89,7 @@ if (formproductoadmincrear) {
 
         fetch(actionURL, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': token,
-            },
-            body: JSON.stringify(data),
+            body: data,
         })
             .then(response => {
                 if (response.status !== 201) {
@@ -112,8 +108,8 @@ if (formproductoadmincrear) {
                 submitButton.disabled = false;
 
                 // Extraer los valores necesarios de "data"
-                const descripcion = data['nombre'] + " " + data['descripcion'];
-                const precio = data['precio'];
+                const descripcion = data.get('nombre') + " " + data.get('descripcion');
+                const precio = data.get('precio');
                 // Llamar a agregarProductoDOM con los valores correctos
                 agregarProductoDOM(
                     result.id,
@@ -135,7 +131,7 @@ if (formproductoadmincrear) {
                     ? Object.values(errorResponse.errors).flat()
                     : [];
 
-                mensajeError(mensajes.join("\n")); 
+                mensajeError(mensajes.join("\n"));
                 submitButton.disabled = false;
             });
     });
@@ -180,6 +176,7 @@ function agregarProductoDOM(id, descripcion, precio, comercializable) {
                   <i class="fas fa-trash"></i> Eliminar
               </button>
           </form>
+          
       </div>
   `;
     // Agregar el elemento al contenedor

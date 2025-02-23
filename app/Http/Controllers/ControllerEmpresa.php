@@ -41,8 +41,8 @@ class ControllerEmpresa extends Controller
         $vehiculos = $empresa->vehiculos;
         $repartidores = $empresa->usuarios()->where('tipo', 'repartidor')->get();
 
-        $salidas = $empresa->salidas()->with('stock')->whereDate('fecha',Carbon::now('America/Lima'))->get();
-       
+        $salidas = $empresa->salidas()->with('stock')->whereDate('fecha', Carbon::now('America/Lima'))->get();
+
 
         return view('salidas', compact('usuario', 'empresa', 'vehiculos', 'productos', 'salidas', 'repartidores'));
     }
@@ -81,7 +81,7 @@ class ControllerEmpresa extends Controller
             $empresa->descripcion = e($request->descripcion);
             $empresa->hora_inicio = date('H:i:s', strtotime($request->hora_inicio));
             $empresa->hora_fin = date('H:i:s', strtotime($request->hora_fin));
-            $empresa->tiempo= intval($request->minutos);
+            $empresa->tiempo = intval($request->minutos);
 
             // Actualizar logo
             if ($request->hasFile('logo')) {
@@ -183,11 +183,12 @@ class ControllerEmpresa extends Controller
         $usuario = Auth::user();
         $usuario = User::find($usuario->id);
         $empresa = $usuario->empresas()->first();
+        $productosQuery = $empresa->productos()->where('comercializable', true)->get();
+
         $ordenProductos = $empresa->orden_productos ? json_decode($empresa->orden_productos, true) : null;
-        $productosQuery = $empresa->productos()->where('comercializable', true);
 
         if ($ordenProductos) {
-            // Extraer solo los IDs de los productos
+            // Extraer solo los IDs de los productos en el orden correcto
             $ordenProductosIds = array_column($ordenProductos, 'id');
 
             // Filtrar productos solo si hay un orden definido
@@ -195,13 +196,18 @@ class ControllerEmpresa extends Controller
                 $productosQuery->whereIn('id', $ordenProductosIds);
             }
 
-            // Obtener y ordenar los productos
-            $productos = $productosQuery->get()->sortBy(function ($producto) use ($ordenProductosIds) {
-                return array_search($producto->id, $ordenProductosIds);
-            });
+            // Obtener los productos desde la base de datos
+            $productos = $productosQuery;
+
+            // Ordenar los productos según el orden de IDs
+            $productos = $productos->sortBy(function ($producto) use ($ordenProductosIds) {
+                return array_search($producto->id, $ordenProductosIds) !== false
+                    ? array_search($producto->id, $ordenProductosIds)
+                    : PHP_INT_MAX; // Empujar los productos no encontrados al final
+            })->values(); // Resetear índices
         } else {
             // Si orden_productos es null, obtener todos los comercializables sin ordenar
-            $productos = $productosQuery->get();
+            $productos = $productosQuery;
         }
         $serviciosSeleccionados = json_decode($empresa->servicios, true) ?? []; // Convertir JSON en array
 
@@ -263,7 +269,7 @@ class ControllerEmpresa extends Controller
 
         $usuario = Auth::user(); // Obtener usuario autenticado
         $ordenProductos = $empresa->orden_productos ? json_decode($empresa->orden_productos, true) : null;
-        $productosQuery = $empresa->productos()->where('comercializable', true);
+        $productosQuery = $empresa->productos()->where('comercializable', true)->get();
 
         if ($ordenProductos) {
             // Extraer solo los IDs de los productos
@@ -274,13 +280,18 @@ class ControllerEmpresa extends Controller
                 $productosQuery->whereIn('id', $ordenProductosIds);
             }
 
-            // Obtener y ordenar los productos
-            $productos = $productosQuery->get()->sortBy(function ($producto) use ($ordenProductosIds) {
-                return array_search($producto->id, $ordenProductosIds);
-            });
+            // Obtener los productos desde la base de datos
+            $productos = $productosQuery;
+
+            // Ordenar los productos según el orden de IDs
+            $productos = $productos->sortBy(function ($producto) use ($ordenProductosIds) {
+                return array_search($producto->id, $ordenProductosIds) !== false
+                    ? array_search($producto->id, $ordenProductosIds)
+                    : PHP_INT_MAX; // Empujar los productos no encontrados al final
+            })->values(); // Resetear índices
         } else {
             // Si orden_productos es null, obtener todos los comercializables sin ordenar
-            $productos = $productosQuery->get();
+            $productos = $productosQuery;
         }
         $colorsjson = $empresa->configuraciones; // Obtén colores en formato ['primary' => '#3498db', ...]
         $colors = json_decode($colorsjson, true);
@@ -324,6 +335,7 @@ class ControllerEmpresa extends Controller
 
         // Retornar la vista con los datos
         return view('negocio', compact(
+            'productos_con_promociones',
             'promociones_faltantes',
             'empresa',
             'usuario',

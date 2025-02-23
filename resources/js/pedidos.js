@@ -156,10 +156,16 @@ function calcularTotalEnProducto(boton, operacion) {
     const contenedor = boton.closest('.item-container');
     const cantidadInput = contenedor.querySelector('.cantidad');
     const precioElement = contenedor.parentElement.querySelector('.precioprincipal');
+    const padre_productos = boton.closest('.padre_productos');
+    const valvulas = padre_productos.querySelector('.valvulas');
+    let checkboxSeleccionado = null;
+    if (valvulas) {
+        checkboxSeleccionado = valvulas.querySelector('input[name="valvula"]:checked');
+    }
 
     // Obtener el precio base normal
     const precioNormal = parseFloat(contenedor.querySelector('.precionormal').textContent.replace('S/', '').trim());
-    let cantidad = parseInt(cantidadInput.value) || 0;
+    let cantidad = parseInt(cantidadInput.textContent) || 0;
 
     // Determinar la cantidad anterior del producto
     const productoId = contenedor.getAttribute('data-producto-id'); // Identificador único por producto
@@ -188,7 +194,7 @@ function calcularTotalEnProducto(boton, operacion) {
     }
 
     // Actualiza el input de cantidad
-    cantidadInput.value = cantidad;
+    cantidadInput.textContent = cantidad;
 
     // Determinar el precio aplicado basado en la cantidad actual
     let precioActualAplicado = precioNormal;
@@ -217,15 +223,26 @@ function calcularTotalEnProducto(boton, operacion) {
     const contenedorTotal = document.querySelector('.total');
     contenedorTotal.value = `Total: S/${window.totalPedidoAcumulado.toFixed(2)}`;
 
-    // Guardar el producto y cantidad en idproductos
-    const index = window.idproductos.findIndex(item => item.id === productoId);
+    // Buscar el índice del producto en el array
+    // Buscar si el producto ya existe con el mismo id y tipo
+    const index = window.idproductos.findIndex(item => item.id === productoId && item.tipo === (checkboxSeleccionado ? checkboxSeleccionado.value : ''));
+
+    // Obtener el checkbox seleccionado
+    const tipoSeleccionado = checkboxSeleccionado ? checkboxSeleccionado.value : '';
+
+    // Si el producto con el mismo tipo no existe, agregarlo como un nuevo registro
     if (index === -1) {
-        // Si el producto no está en el array, agregarlo
-        window.idproductos.push({ id: productoId, cantidad });
+        window.idproductos.push({
+            id: productoId,
+            cantidad:1,
+            tipo: tipoSeleccionado
+        });
     } else {
-        // Si el producto ya existe, actualizar la cantidad
+        // Si el producto ya existe con el mismo tipo, actualizar solo la cantidad
         window.idproductos[index].cantidad = cantidad;
     }
+
+
 
     // Filtrar productos con cantidad cero
     window.idproductos = window.idproductos.filter(item => item.cantidad > 0);
@@ -387,7 +404,7 @@ function conectarWebSocket() {
                         'Nuevo-Pedido-Asignado'
                     );
                     pedidoasignadoarepartidor(e.message.pedido_id, 'repartidor');
-                    agregarPedido(e.message.pedido, "repartidor",e.message.tiempo);
+                    agregarPedido(e.message.pedido, "repartidor", e.message.tiempo);
                     break;
                 case 'finalizado':
                 case 'anulacion':
@@ -398,7 +415,7 @@ function conectarWebSocket() {
                         `¡Administrador! La Distribuidora tiene un nuevo Pedido #${e.message.pedido_id}, revísalo en este momento`,
                         'Nuevo-Pedido'
                     );
-                    agregarPedido(e.message.pedido, "admin",e.message.tiempo);
+                    agregarPedido(e.message.pedido, "admin", e.message.tiempo);
                     break;
             }
         })

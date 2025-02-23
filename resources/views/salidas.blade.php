@@ -15,9 +15,7 @@
                     @endforeach
                 </ul>
             </div>
-       
         @endif
-
 
         <h2 class="text-2xl font-bold mb-4">Registrar Salida de Productos</h2>
 
@@ -102,11 +100,30 @@
                 <label class="block font-semibold">Productos</label>
                 <div id="productos-container">
                     <div class="flex gap-2 mb-2">
-                        <select name="productos[]" required class="w-3/5 p-2 border rounded-lg">
+                        <select id="select_productos_salidas" name="productos[]" required
+                            class="w-3/5 p-2 border rounded-lg">
                             @foreach ($productos as $producto)
-                                <option value="{{ $producto->id }}">{{ $producto->descripcion }} </option>
+                                @if ($producto->categoria === 'gas')
+                                    <option value="{{ $producto->id . '_normal' }}" data-tipo="gas"
+                                        data-id="{{ $producto->id }}">
+                                        {{ $producto->nombre . ' ' . $producto->descripcion . ' - Normal' }}
+                                    </option>
+                                    <option value="{{ $producto->id . '_premium' }}" data-tipo="gas"
+                                        data-id="{{ $producto->id }}">
+                                        {{ $producto->nombre . ' ' . $producto->descripcion . ' - Premium' }}
+                                    </option>
+                                @else
+                                    <option value="{{ $producto->id }}" data-tipo="{{ $producto->categoria }}"
+                                        data-id="{{ $producto->id }}">
+                                        {{ $producto->nombre . ' ' . $producto->descripcion }}
+                                    </option>
+                                @endif
                             @endforeach
+
                         </select>
+
+
+
                         <input type="number" name="cantidades[]" min="1" required
                             class="w-2/5 p-2 border rounded-lg" placeholder="Cantidad">
                     </div>
@@ -149,10 +166,14 @@
                                         @php
                                             // Buscar el producto en la base de datos por su ID
                                             $producto = \App\Models\Producto::find($item['producto_id']);
-                                        @endphp
+                                            $tipo = '';
+                                            if (strpos($item['producto_id'], '_') !== false) {
+                                                $tipo = substr($item['producto_id'], strpos($item['producto_id'], '_'));
+                                        } @endphp
 
                                         @if ($producto)
-                                            <li>{{ $item['cantidad'] }} * {{ $producto->descripcion }}</li>
+                                            <li>{{ $item['cantidad'] }} *
+                                                {{ $producto->nombre . ' ' . $producto->descripcion . $tipo }}</li>
                                         @else
                                             <li>{{ $item['cantidad'] }} * Producto no encontrado</li>
                                         @endif

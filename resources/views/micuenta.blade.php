@@ -213,9 +213,15 @@
                                             <div class="productos_del_pedido flex flex-col justify-center  ml-2">
                                                 @if ($pedido->detalles->count() > 0)
                                                     @foreach ($pedido->detalles as $item)
-                                                        <span
-                                                            hidden>{{ $item->producto?->descripcion }}/{{ $item->cantidad }}</span>
-                                                        <p>{{ $item->producto?->descripcion }} x {{ $item->cantidad }}</p>
+                                                        <span hidden>
+                                                            {{ $item->producto?->nombre . ' ' . $item->producto?->descripcion }}{{ $item->producto?->tipo ? '_' . $item->producto?->tipo : '' }}/{{ $item->cantidad }}
+                                                        </span>
+
+                                                        <p>
+                                                            {{ $item->producto?->nombre . ' ' . $item->producto?->descripcion }}
+                                                            {{ $item->producto?->tipo ? '_' . $item->producto?->tipo : '' }}
+                                                            x {{ $item->cantidad }}
+                                                        </p>
                                                     @endforeach
                                                 @endif
                                                 @if ($pedido->entregaPromociones->count() > 0)
@@ -451,14 +457,14 @@
                                                     class="text-start p-2 text-naranja text-base font-semibold"></div>
                                                 <div id="contador_fin-{{ $pedido->id }}"
                                                     class=" hidden  flex-col justify-end h-[35px]  text-[13px]  ">
-                                                    <p>El contador de 20
-                                                        min. llegó a cero.</p>
+                                                    <p>El contador de
+                                                        tiempo. llegó a cero.</p>
                                                 </div>
                                             </div>
                                             <script>
                                                 (function() {
                                                     const pedidoFecha = new Date("{{ $pedido->fecha }}");
-                                                    const duracionMaxima = 20 * 60; // 20 minutos en segundos
+                                                    const duracionMaxima = {{ $pedido->empresa->tiempo ?? 20 }} * 60; // 20 minutos en segundos
 
                                                     const interval = setInterval(() => {
                                                         const ahora = new Date();
@@ -499,7 +505,11 @@
                                             </div>
                                             <div class="flex flex-col justify-center  ml-2">
                                                 @foreach ($pedido->detalles as $item)
-                                                    <p>{{ $item->producto?->descripcion }} x {{ $item->cantidad }}</p>
+                                                    <p>
+                                                        {{ $item->producto?->nombre . ' ' . $item->producto?->descripcion }}
+                                                        {{ $item->producto?->tipo ? '_' . $item->producto?->tipo : '' }}
+                                                        x {{ $item->cantidad }}
+                                                    </p>
                                                 @endforeach
                                                 @foreach ($pedido->entregaPromociones as $et)
                                                     @if ($et->estado)

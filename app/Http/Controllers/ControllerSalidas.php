@@ -91,8 +91,12 @@ class ControllerSalidas extends Controller
 
             foreach ($productosRecibidos as $producto) {
                 // Buscar el producto por su descripción
-                $productoEncontrado = Producto::where('descripcion', $producto['descripcion'])->first();
+                $nombreProducto = strpos($producto['descripcion'], '_') !== false
+                    ? explode('_', $producto['descripcion'], 2)[0]
+                    : $producto['descripcion'];
 
+                // Buscar el producto basado en el nombre extraído
+                $productoEncontrado = Producto::whereRaw("CONCAT(nombre, ' ', descripcion) = ?", [$nombreProducto])->first();
                 if ($productoEncontrado) {
                     $productosConIds[] = [
                         'cantidad' => $producto['cantidad'],

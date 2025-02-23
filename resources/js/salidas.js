@@ -10,6 +10,7 @@ const modalRepartidor = document.getElementById("modal-repartidor");
 const nuevoRepartidor = document.getElementById("nuevo-repartidor");
 const btnCerrar = document.getElementById("cerrar-modal");
 const btnGuardar = document.getElementById("guardar-cambio");
+
 let vehiculoActual = "";
 
 if (btn_editar_vehiculo) {

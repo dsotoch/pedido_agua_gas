@@ -24,7 +24,12 @@
                 @if ($detalles->count() > 0)
                     @foreach ($detalles as $dt)
                         <div>
-                            <p>{{ $dt->producto->descripcion }} {{ $dt->cantidad }}Un.</p>
+                            <p>
+                                {{ $dt->producto->nombre . ' ' . $dt->producto->descripcion }} 
+                                {{ $dt->producto->tipo ? ' Válvula ' . $dt->producto->tipo : '' }} 
+                                {{ $dt->cantidad }} Un.
+                            </p>
+                            
                         </div>
                     @endforeach
                 @endif

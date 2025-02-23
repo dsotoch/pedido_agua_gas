@@ -31,21 +31,34 @@ class ControllerProducto extends Controller
         DB::beginTransaction();
         try {
             // Obtener los datos del request
-            $nombre = $request->nombre;
-            $precio = $request->precio;
-            $descripcion = $request->descripcion;
-            $promociones = $request->promociones;
-            $productos_por_cada = $request->productos_por_cada;
-            $productos_gratis = $request->productos_gratis;
+            $nombre = $request->input('nombre');
+            $precio = $request->input('precio');
+            $descripcion = $request->input('descripcion');
+            $promociones = $request->input('promociones');
+            $productos_por_cada = $request->input('productos_por_cada');
+            $productos_gratis = $request->input('productos_gratis');
             $comercializable = $request->has('estado');
-
+            $categoria = $request->input('categoria');
+           
+            $imagen = null;
+            if ($request->hasFile('imagen')) {
+                $logo = $request->file('imagen');
+                $uniqueLogoName = uniqid() . '_' . $logo->getClientOriginalName();
+                $imagen = $logo->storeAs('productos', $uniqueLogoName, 'public');
+            }
             // Crear el producto con los datos combinados
             $producto = Producto::create([
-                'descripcion' => "{$nombre} {$descripcion}", // Concatenación con comillas dobles
+                'nombre' => $nombre,
+                'categoria' => $categoria,
+                'tipo' => $categoria == 'gas' ? $request->tipo : null,
+                'imagen' => $imagen,
+                'descripcion' => $descripcion, // Concatenación con comillas dobles
                 'precio' => floatval($precio),              // Asegurar conversión a float
                 'empresa_id' => $user->empresas->first()->id,
-                'comercializable' => $comercializable
+                'comercializable' => $comercializable,
+
             ]);
+
 
             if ($comercializable) {
                 // Verificar si hay datos para la promoción
@@ -152,9 +165,8 @@ class ControllerProducto extends Controller
             DB::rollBack();
             return response()->json([
                 'mensaje' => 'Ocurrió un error al actualizar el producto.',
-                'error' => $e->getMessage() . " en la línea " .$request->id.''. $e->getLine()
+                'error' => $e->getMessage() . " en la línea " . $request->id . '' . $e->getLine()
             ], 500);
-            
         }
     }
 

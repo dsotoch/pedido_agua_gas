@@ -1,7 +1,7 @@
  <!---Modal para Asignar el repartidor-->
  <div id="modalasignarrepartidor"
-     class="fixed inset-0 z-50 hidden  items-center justify-center bg-gray-800 bg-opacity-50">
-     <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-3xl relative">
+     class="fixed inset-0 z-50 hidden h-full  items-center justify-center bg-gray-800 bg-opacity-50">
+     <div class="bg-white rounded-lg shadow-lg h-full mt-2 p-6 w-full max-w-3xl relative">
 
          <!-- Modal Header -->
          <div class="flex justify-between items-center border-b pb-3">
@@ -12,7 +12,7 @@
          </div>
 
          <!-- Modal Body -->
-         <div class="max-h-[65vh] overflow-y-auto p-4">
+         <div class="max-h-[50vh] overflow-y-auto p-4">
              <h2 class="text-gray-800 font-semibold text-lg mb-4">Repartidores y Productos del día</h2>
              <div class="space-y-4">
                  @foreach ($salidas as $salida)
@@ -32,10 +32,14 @@
                              @foreach ($productos as $item)
                                  @php
                                      $producto = \App\Models\Producto::find($item['producto_id']);
+                                     $tipo = '';
+                                     if (strpos($item['producto_id'], '_') !== false) {
+                                         $tipo = substr($item['producto_id'], strpos($item['producto_id'], '_'));
+                                     };
                                  @endphp
                                  <li>
                                      {{ $item['cantidad'] }} ×
-                                     {{ $producto ? $producto->descripcion : 'Producto no encontrado' }}
+                                     {{ $producto ? $producto->nombre.' '.$producto->descripcion. $tipo : 'Producto no encontrado' }}
                                  </li>
                              @endforeach
                          </ul>
