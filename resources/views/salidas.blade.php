@@ -137,7 +137,7 @@
         </form>
 
         {{-- Historial de Salidas --}}
-        <h2 class="text-2xl font-bold mt-8 mb-4">Historial de Salidas</h2>
+        <h2 class="text-2xl font-bold mt-8 mb-4">Historial de Salidas del dia</h2>
         <div class="overflow-x-auto">
             <table class="w-full border-collapse border border-gray-200">
                 <thead>
@@ -146,6 +146,8 @@
                         <th class="border p-2">Vehículo</th>
                         <th class="border p-2">Repartidor</th>
                         <th class="border p-2">Productos</th>
+                        <th class="border p-2">Opciones</th>
+
                     </tr>
                 </thead>
                 <tbody>
@@ -165,7 +167,15 @@
                                     @foreach ($productos as $item)
                                         @php
                                             // Buscar el producto en la base de datos por su ID
-                                            $producto = \App\Models\Producto::find($item['producto_id']);
+
+                                            $id = '';
+                                            if (strpos($item['producto_id'], '_') !== false) {
+                                                $id = explode('_', $item['producto_id'])[0];
+                                            } else {
+                                                $id = $item['producto_id'];
+                                            }
+
+                                            $producto = \App\Models\Producto::find($id);
                                             $tipo = '';
                                             if (strpos($item['producto_id'], '_') !== false) {
                                                 $tipo = substr($item['producto_id'], strpos($item['producto_id'], '_'));
@@ -180,7 +190,17 @@
                                     @endforeach
                                 </ul>
                             </td>
+                            <td class="p-2">
+                                <div class="flex justify-center">
+                                    <form action="{{ route('salidas.eliminar') }}" method="post">
+                                        @csrf
+                                        @method('DELETE')
+                                        <input type="text" hidden name='salida_id' value="{{ $salida->id }}">
+                                        <button type="submit"> <i class="fas fa-trash"></i></button>
 
+                                    </form>
+                                </div>
+                            </td>
 
                         </tr>
                     @endforeach

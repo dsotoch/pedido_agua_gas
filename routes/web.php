@@ -58,6 +58,7 @@ Route::controller(ControllerUsuario::class)->group(function () {
 Route::controller(ControllerSalidas::class)->group(function () {
     Route::post('crearSalida', 'store')->name('salidas.crear');
     Route::post('procesarStock', 'procesarStockJson')->name('salidas.procesarStock');
+    Route::delete('eliminarSalida', 'delete')->name('salidas.eliminar');
 
 });
 Route::controller(ControllerProducto::class)->group(function () {

@@ -214,12 +214,11 @@
                                                 @if ($pedido->detalles->count() > 0)
                                                     @foreach ($pedido->detalles as $item)
                                                         <span hidden>
-                                                            {{ $item->producto?->nombre . ' ' . $item->producto?->descripcion }}{{ $item->producto?->tipo ? '_' . $item->producto?->tipo : '' }}/{{ $item->cantidad }}
+                                                            {{ $item->producto?->nombre . ' ' . $item->producto?->descripcion }}{{ $item->tipo ?'_'.$item->tipo : '' }}/{{ $item->cantidad }}
                                                         </span>
 
                                                         <p>
-                                                            {{ $item->producto?->nombre . ' ' . $item->producto?->descripcion }}
-                                                            {{ $item->producto?->tipo ? '_' . $item->producto?->tipo : '' }}
+                                                            {{ $item->producto?->nombre . ' ' . $item->producto?->descripcion }}{{ $item->tipo ?'_'.$item->tipo : '' }}
                                                             x {{ $item->cantidad }}
                                                         </p>
                                                     @endforeach
@@ -507,7 +506,7 @@
                                                 @foreach ($pedido->detalles as $item)
                                                     <p>
                                                         {{ $item->producto?->nombre . ' ' . $item->producto?->descripcion }}
-                                                        {{ $item->producto?->tipo ? '_' . $item->producto?->tipo : '' }}
+                                                        {{ $item->tipo ? '_' . $item->tipo : '' }}
                                                         x {{ $item->cantidad }}
                                                     </p>
                                                 @endforeach

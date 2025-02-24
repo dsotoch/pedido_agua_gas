@@ -31,15 +31,23 @@
 
                              @foreach ($productos as $item)
                                  @php
-                                     $producto = \App\Models\Producto::find($item['producto_id']);
+                                     $id = '';
+                                     if (strpos($item['producto_id'], '_') !== false) {
+                                         $id = explode('_', $item['producto_id'])[0];
+                                     } else {
+                                         $id = $item['producto_id'];
+                                     }
+
+                                     $producto = \App\Models\Producto::find($id);
+
                                      $tipo = '';
                                      if (strpos($item['producto_id'], '_') !== false) {
                                          $tipo = substr($item['producto_id'], strpos($item['producto_id'], '_'));
-                                     };
+                                     }
                                  @endphp
                                  <li>
                                      {{ $item['cantidad'] }} ×
-                                     {{ $producto ? $producto->nombre.' '.$producto->descripcion. $tipo : 'Producto no encontrado' }}
+                                     {{ $producto ? $producto->nombre . ' ' . $producto->descripcion . $tipo : 'Producto no encontrado' }}
                                  </li>
                              @endforeach
                          </ul>

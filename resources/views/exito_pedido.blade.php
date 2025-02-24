@@ -25,8 +25,8 @@
                     @foreach ($detalles as $dt)
                         <div>
                             <p>
-                                {{ $dt->producto->nombre . ' ' . $dt->producto->descripcion }} 
-                                {{ $dt->producto->tipo ? ' Válvula ' . $dt->producto->tipo : '' }} 
+                                {{ $dt->producto->nombre . ' ' . $dt->producto->descripcion}} 
+                                {{ $dt->tipo ? ' Válvula ' . $dt->tipo : '' }} 
                                 {{ $dt->cantidad }} Un.
                             </p>
                             

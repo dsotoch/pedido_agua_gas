@@ -23,7 +23,7 @@
                                                 class="text-[15px]  precioprincipal">S/{{ number_format($item->precio ?? 0, 2, '.', '') }}</span>
                                         </p>
                                     </div>
-                                    <div class="item-container p-1 opacity-80 justify-center space-x-2  border-color-text rounded-[3px] flex w-[76px] h-[37px] max-h-[37px] items-center  border "
+                                    <div class="item-container p-1 opacity-80 justify-center space-x-2  border-color-text rounded-[3px] flex  w-[80px] md:w-[76px] h-[37px] max-h-[37px] items-center  border "
                                         data-producto-id="{{ $item->id }}">
                                         <p class="hidden precionormal">
                                             {{ number_format($item->precio ?? 0, 2, '.', '') }}
@@ -118,17 +118,15 @@
                                 @endauth
                             </div>
                             @if ($item->categoria == 'gas')
-                                <div class="w-full flex  space-x-4 valvulas">
-                                    <label class="flex items-center gap-2 cursor-pointer  text-[13px]">
-                                        <input type="checkbox" value="normal" name="valvula" checked
-                                            class="rounded-full appearance-none border border-gray-600 h-4 w-4 checked:border-gray-600 checked:bg-gray-600">
-
+                                <div class="w-full flex space-x-4 valvulas">
+                                    <label class="flex items-center gap-2 cursor-pointer text-[13px]">
+                                        <input type="radio" value="normal" name="valvula_{{ $item->id }}" checked
+                                            class="rounded-full border">
                                         Válvula Normal
                                     </label>
                                     <label class="flex items-center gap-2 cursor-pointer text-[13px]">
-                                        <input type="checkbox" value="premium" name="valvula"
-                                            class="rounded-full appearance-none border border-gray-600 h-4 w-4 checked:border-gray-600 checked:bg-gray-600">
-
+                                        <input type="radio" value="premium" name="valvula_{{ $item->id }}"
+                                            class="rounded-full border">
                                         Válvula Premium
                                     </label>
                                 </div>

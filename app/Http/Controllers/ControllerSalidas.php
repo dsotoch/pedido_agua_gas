@@ -7,12 +7,35 @@ use App\Models\Salidas;
 use App\Models\Stock;
 use App\Models\Vehiculo;
 use Carbon\Carbon;
+use Doctrine\DBAL\Query\QueryException;
 use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class ControllerSalidas extends Controller
 {
+    public function delete(Request $request)
+    {
+        try {
+            // Validar que el ID sea válido
+            $request->validate([
+                'salida_id' => 'required|integer|exists:salidas,id'
+            ]);
+
+            // Buscar y eliminar la salida
+            $salida = Salidas::findOrFail($request->salida_id);
+            $salida->delete();
+
+            return redirect()->back()->with(['mensaje' => "Salida Eliminada Correctamente."]);
+        } catch (ModelNotFoundException $e) {
+            return redirect()->back()->withErrors(["La salida no fue encontrada."]);
+        } catch (QueryException $e) {
+            return redirect()->back()->withErrors(["Error de base de datos al eliminar la salida."]);
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(["Ocurrió un error inesperado al eliminar la salida."]);
+        }
+    }
     public function store(Request $request)
     {
         DB::beginTransaction();

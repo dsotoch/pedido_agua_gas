@@ -157,10 +157,11 @@ function calcularTotalEnProducto(boton, operacion) {
     const cantidadInput = contenedor.querySelector('.cantidad');
     const precioElement = contenedor.parentElement.querySelector('.precioprincipal');
     const padre_productos = boton.closest('.padre_productos');
-    const valvulas = padre_productos.querySelector('.valvulas');
+    const valvulas = padre_productos?.querySelector('.valvulas');
     let checkboxSeleccionado = null;
+
     if (valvulas) {
-        checkboxSeleccionado = valvulas.querySelector('input[name="valvula"]:checked');
+        checkboxSeleccionado = valvulas.querySelector('input[type="radio"]:checked');
     }
 
     // Obtener el precio base normal
@@ -234,7 +235,7 @@ function calcularTotalEnProducto(boton, operacion) {
     if (index === -1) {
         window.idproductos.push({
             id: productoId,
-            cantidad:1,
+            cantidad: 1,
             tipo: tipoSeleccionado
         });
     } else {
