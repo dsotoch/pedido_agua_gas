@@ -40,10 +40,10 @@
 
                             <!--Usuario ya Autenticado--->
                             <div class="absolute w-full">
-                                <div class="pt-7 w-full mx-auto ">
-                                    <div class="text-center grid space-y-8 pt-2 pb-2 pl-2 p-2">
+                                <div class="pt-7 w-full mx-auto">
+                                    <div class="text-center grid space-y-8  p-2">
 
-                                        <h1 class="font-cabin font-[500px] text-[25px] text-color-titulos-entrega">
+                                        <h1 class="font-cabin font-[500px] text-wrap text-[25px] text-color-titulos-entrega">
                                             {{ $usuario->persona->nombres }}👋</h1>
 
                                         <div class="" data-id="4c7b7b9" data-element_type="widget"

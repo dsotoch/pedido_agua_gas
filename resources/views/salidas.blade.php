@@ -286,7 +286,7 @@
                 <!-- Encabezado -->
                 <div class="bg-tarjetas text-white p-4 flex justify-between items-center">
                     <h2 class="text-lg font-semibold">Detalles de la Salida</h2>
-                    <button id="cerrar_modal" class="text-white text-2xl font-bold hover:text-gray-300">&times;</button>
+                    <button id="cerrar_modal" onclick="document.getElementById('modal_ver_salida').classList.add('hidden');" class="text-white text-2xl font-bold hover:text-gray-300">&times;</button>
                 </div>
 
                 <!-- Contenido -->

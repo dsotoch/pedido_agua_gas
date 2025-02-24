@@ -23,6 +23,16 @@ if (btnAcceder) {
         contenedorLogin.classList.remove("hidden");
     });
 }
+document.addEventListener("click", function (event) {
+    const contenedorLogin = document.getElementById("contenedorLogin");
+    if (contenedorLogin) {
+
+        // Verifica si el contenedorLogin está visible y si el clic fue fuera de él
+        if (!contenedorLogin.classList.contains("hidden") && !contenedorLogin.contains(event.target)) {
+            contenedorLogin.classList.add("hidden"); // Oculta el contenedor
+        }
+    }
+});
 
 if (contenedorLogin) {
     contenedorLogin.addEventListener("mouseleave", function () {
@@ -71,7 +81,7 @@ if (btn_cerrar_menu) {
     });
 }
 if (btn_predeterminado) {
-    btn_predeterminado.addEventListener('click',async () => {
+    btn_predeterminado.addEventListener('click', async () => {
         if (id_usuario_autenticado.textContent.trim() == '') {
             Swal.fire({
                 title: 'Requerimiento faltante!',
