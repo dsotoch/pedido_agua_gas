@@ -23,20 +23,7 @@ if (btnAcceder) {
         contenedorLogin.classList.remove("hidden");
     });
 }
-if (btnAcceder) {
-    btnAcceder.addEventListener("click", function () {
-        contenedorLogin.classList.remove("hidden");
-    });
-}
-document.addEventListener("click", function (event) {
-    if (contenedorLogin) {
 
-        // Verifica si el contenedorLogin está visible y si el clic fue fuera de él
-        if (!contenedorLogin.classList.contains("hidden") && !contenedorLogin.contains(event.target)) {
-            contenedorLogin.classList.add("hidden"); // Oculta el contenedor
-        }
-    }
-});
 
 if (contenedorLogin) {
     contenedorLogin.addEventListener("mouseleave", function () {
