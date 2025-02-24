@@ -68,7 +68,7 @@ class ControllerProducto extends Controller
                     PromocionesUnitario::create([
                         'producto_id' => $producto->id,
                         'cantidad' => $productos_por_cada,
-                        'producto_gratis' => $productos_gratis == 'mismo' ? $producto->descripcion : $productos_gratis,
+                        'producto_gratis' => $productos_gratis == 'mismo' ?  $producto->nombre.' '.$producto->descripcion : $productos_gratis,
                     ]);
                 }
 
@@ -133,13 +133,13 @@ class ControllerProducto extends Controller
                 if ($promocionUnitario) {
                     $promocionUnitario->update([
                         'cantidad' => $productos_por_cada,
-                        'producto_gratis' => $productos_gratis == 'mismo' ? $producto->descripcion : $productos_gratis,
+                        'producto_gratis' => $productos_gratis == 'mismo' ? $producto->nombre.' '.$producto->descripcion : $productos_gratis,
                     ]);
                 } else {
                     PromocionesUnitario::create([
                         'producto_id' => $producto->id,
                         'cantidad' => $productos_por_cada,
-                        'producto_gratis' => $productos_gratis == 'mismo' ? $producto->descripcion : $productos_gratis,
+                        'producto_gratis' => $productos_gratis == 'mismo' ?  $producto->nombre.' '.$producto->descripcion : $productos_gratis,
                     ]);
                 }
             }
