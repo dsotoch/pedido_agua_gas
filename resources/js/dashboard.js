@@ -24,7 +24,6 @@ if (btnAcceder) {
     });
 }
 document.addEventListener("click", function (event) {
-    const contenedorLogin = document.getElementById("contenedorLogin");
     if (contenedorLogin) {
 
         // Verifica si el contenedorLogin está visible y si el clic fue fuera de él

@@ -259,7 +259,7 @@
                 <!-- Encabezado -->
                 <div class="bg-tarjetas text-white p-4 flex justify-between items-center">
                     <h2 class="text-lg font-semibold">Editar Salida de Productos</h2>
-                    <button id="cerrar-modal" class="text-white text-2xl font-bold hover:text-gray-300">&times;</button>
+                    <button id="cerrar-modal" onclick="document.getElementById('modal_editar_salida').classList.add('hidden');" class="text-white text-2xl font-bold hover:text-gray-300">&times;</button>
                 </div>
 
                 <!-- Contenido del modal -->

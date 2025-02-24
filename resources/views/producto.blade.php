@@ -17,13 +17,13 @@
                                     <p class="producto_descripcion  text-base ">
                                         {{ $item->nombre }}</p>
                                 </div>
-                                <div class="flex w-1/2 items-center  pt-4">
+                                <div class="flex w-full md:w-1/2 items-center space-x-2 md:space-x-1  pt-4">
                                     <div class="w-1/2">
                                         <p class=""> <span
                                                 class="text-[15px]  precioprincipal">S/{{ number_format($item->precio ?? 0, 2, '.', '') }}</span>
                                         </p>
                                     </div>
-                                    <div class="item-container p-1 opacity-80 justify-center space-x-2  border-color-text rounded-[3px] flex  w-full md:w-[76px] h-[37px] max-h-[37px] items-center  border "
+                                    <div class="item-container p-1 opacity-80 justify-center space-x-2  border-color-text rounded-[3px] flex w-[76px] h-[37px] max-h-[37px] items-center  border "
                                         data-producto-id="{{ $item->id }}">
                                         <p class="hidden precionormal">
                                             {{ number_format($item->precio ?? 0, 2, '.', '') }}
