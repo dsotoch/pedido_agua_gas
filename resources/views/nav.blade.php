@@ -162,7 +162,7 @@
             @endguest
             @auth
                 <div id="contenedor_login"
-                    class="absolute hidden overflow-y-auto w-full  md:w-[600px] max-h-[80vh] min-h-[250px] z-50  group-focus-within:flex  flex-col justify-start text-start  top-12  bg-white shadow-md">
+                    class="absolute hidden overflow-y-auto w-full  md:w-[600px] max-h-[80vh] md:min-h-[250px] min-h-[300px] z-50  group-focus-within:flex  flex-col justify-start text-start  top-12  bg-white shadow-md">
 
                     <!--Usuario ya Autenticado--->
                     <div class="absolute w-full">

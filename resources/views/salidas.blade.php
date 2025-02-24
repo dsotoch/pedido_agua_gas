@@ -1,6 +1,6 @@
 @extends('layout-cuenta')
 @section('logica')
-    <div class=" container mx-auto  font-sans p-[20px] bg-white shadow-lg rounded-lg text-color-titulos-entrega">
+    <div class="container mx-auto md:w-full w-screen font-sans p-4 md:p-[20px] bg-white shadow-lg rounded-lg text-color-titulos-entrega">
         @if (session('mensaje'))
             <div id="mensaje" class=" p-3 w-full border-2 border-green-500  text-center text-green-500 font-semibold">
                 <p class="text-base text-center">{{ session('mensaje') }}</p>
@@ -23,11 +23,11 @@
         <form action="{{ route('salidas.crear') }}" method="POST">
             @csrf
 
-            <div class="mb-4 flex flex-col space-y-3 mt-1">
+            <div class="mb-4 w-full flex flex-col space-y-3 mt-1">
                 <label class="block font-semibold">Vehículo</label>
 
-                <div id="vehiculo-container ">
-                    <div class="flex items-center space-x-1">
+                <div id="vehiculo-container w-full">
+                    <div class="flex items-center space-x-1 w-3/4">
                         <select name="vehiculo_id" id="vehiculo-select" required class="w-full p-2 border rounded-lg">
                             @if (count($vehiculos) > 0)
                                 <option value="" disabled selected>Seleccione un vehiculo </option>
@@ -40,12 +40,12 @@
                                 <option value="" disabled selected>No hay vehículos registrados</option>
                             @endif
                         </select>
-                        <div><button type="button" class="transform hover:scale-105" id="btn_editar_vehiculo"><i
+                        <div class="w-[15%]"><button type="button" class="transform hover:scale-105" id="btn_editar_vehiculo"><i
                                     class="fas fa-edit text-2xl"></i></button></div>
                     </div>
                     <!-- Modal -->
                     <div id="modal_vehiculos"
-                        class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center hidden">
+                        class="fixed inset-0  bg-gray-900 bg-opacity-50 flex items-center justify-center hidden">
                         <div class="bg-white p-6 rounded-lg shadow-lg w-1/3">
                             <h2 class="text-xl font-bold mb-4">Cambiar Repartidor</h2>
 
@@ -96,12 +96,12 @@
                 </div>
             </div>
 
-            <div class="mb-4">
+            <div class="mb-4 w-full">
                 <label class="block font-semibold">Productos</label>
-                <div id="productos-container">
-                    <div class="flex gap-2 mb-2">
+                <div id="productos-container" class="w-full">
+                    <div class="flex gap-2 mb-2 w-full">
                         <select id="select_productos_salidas" name="productos[]" required
-                            class="w-3/5 p-2 border rounded-lg">
+                            class="w-1/2 md:w-3/5 p-2 border rounded-lg">
                             @foreach ($productos as $producto)
                                 @if ($producto->categoria === 'gas')
                                     <option value="{{ $producto->id . '_normal' }}" data-tipo="gas"
@@ -121,11 +121,8 @@
                             @endforeach
 
                         </select>
-
-
-
                         <input type="number" name="cantidades[]" min="1" required
-                            class="w-2/5 p-2 border rounded-lg" placeholder="Cantidad">
+                            class="w-1/2 md:w-2/5 p-2 border rounded-lg" placeholder="Cantidad">
                     </div>
                 </div>
                 <button type="button" onclick="agregarProducto()"
@@ -138,8 +135,8 @@
 
         {{-- Historial de Salidas --}}
         <h2 class="text-2xl font-bold mt-8 mb-4">Historial de Salidas del dia</h2>
-        <div class="overflow-x-auto">
-            <table class="w-full border-collapse border border-gray-200">
+        <div class="overflow-x-auto w-full">
+            <table class="w-full border whitespace-nowrap border-gray-200">
                 <thead>
                     <tr class="bg-tarjetas text-white">
                         <th class="border p-2">Fecha</th>

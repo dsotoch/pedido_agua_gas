@@ -127,8 +127,8 @@
         </div>
         <div class="mb-[40px] mt-4">
             <p class="text-[15px]">Copyright © 2024 <span class="text-naranja font-bold">
-                    <a href="https://entrega.pe">Entrega.pe</a></span> Todos los Derechos Reservados. |
-                Desarrollo de Techub - Diego Soto</p>
+                    <a href="https://entrega.pe">Entrega.pe</a></span> Todos los Derechos Reservados. 
+                </p>
         </div>
 
     </div>

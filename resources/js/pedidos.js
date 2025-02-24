@@ -192,6 +192,13 @@ function calcularTotalEnProducto(boton, operacion) {
         cantidad++;
     } else if (operacion === 'resta') {
         cantidad = Math.max(0, cantidad - 1);
+        if (cantidad == 0) {
+            window.idproductos = [];
+            logica_boton_siguiente();
+            cantidadInput.textContent = cantidad;
+
+            return '';
+        }
     }
 
     // Actualiza el input de cantidad

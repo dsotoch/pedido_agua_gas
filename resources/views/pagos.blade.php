@@ -17,10 +17,10 @@
             @endif
         </b>
         <!---Nombres de Productos-->
-        <div class="flex justify-center mt-3.5 space-x-3 md:space-x-7 text-wrap">
+        <div class="flex justify-center mt-3.5 ml-2 md:ml-0 mr-2 md:mr-0 space-x-3 md:space-x-7 text-wrap">
             @if ($productosVendidos->count() > 0)
                 @foreach ($productosVendidos as $descripcion => $cantidadTotal)
-                    <p class="font-sans items-center flex text-base text-wrap">
+                    <p class="font-sans items-center  flex text-base text-wrap">
                         <b class="m-1"> {{ $cantidadTotal }}</b>
                         {{ $descripcion }}
                     </p>
@@ -29,7 +29,7 @@
                 @if ($usuario->tipo !== 'cliente')
                     @if ($usuario->empresas() && $usuario->empresas()->first()->productos->isNotEmpty())
                         @foreach ($usuario->empresas()->first()->productos->where('comercializable', true) as $item)
-                            <p class="font-sans text-base text-wrap">
+                            <p class="font-sans  text-base text-wrap">
                                 <b class="m-1">0</b>{{ $item->descripcion }}.
                             </p>
                         @endforeach
@@ -213,12 +213,12 @@
 
 
         @if ($pagosdeldia->count() > 0)
-            <div id="contenedor_pedido" class="mt-8 grid md:grid-cols-3 grid-cols-1   mx-auto w-full">
+            <div id="contenedor_pedido" class="mt-8 grid md:grid-cols-3 grid-cols-1  justify-center mx-auto w-full">
                 @foreach ($pagosdeldia as $pedido)
                     <div
-                        class="pedidos flex w-[368px] max-w[368px] max-h-[285px] h-[285px] text-base text-color-titulos-entrega">
+                        class="pedidos md:p-0 p-4 flex justify-center w-full md:w-[368px] md:max-w[368px] max-h-[285px] h-[285px] text-base text-color-titulos-entrega">
                         <div
-                            class="ml-[20px] grid  w-[338px] max-w[338px]  max-h-[255px] h-[255px] rounded-[20px] bg-white pl-[20px] pt-[27px]">
+                            class="md:ml-[20px] grid  w-full md:w-[338px] md:max-w[338px]  max-h-[255px] h-[255px] rounded-[20px] bg-white p-4 md:pl-[20px] pt-[27px]">
                             <div class="flex space-x-2">
                                 <div class=""><svg class="w-[18px] h-[18px]" aria-hidden="true"
                                         viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">

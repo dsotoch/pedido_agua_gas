@@ -12,12 +12,12 @@
                             <img src="{{ asset('storage/' . $item->imagen) }}" alt="" class=" object-contain">
                         </div>
                         <div class="flex flex-col w-full  md:w-[398px] ml-4 space-y-2 padre_productos">
-                            <div class="flex items-center">
-                                <div class="w-1/2 pt-4 text-start">
+                            <div class="md:flex grid items-center ">
+                                <div class="w-1/2 pt-4  text-start">
                                     <p class="producto_descripcion  text-base ">
                                         {{ $item->nombre }}</p>
                                 </div>
-                                <div class="flex w-1/2 items-center pt-4">
+                                <div class="flex w-1/2 items-center  pt-4">
                                     <div class="w-1/2">
                                         <p class=""> <span
                                                 class="text-[15px]  precioprincipal">S/{{ number_format($item->precio ?? 0, 2, '.', '') }}</span>
