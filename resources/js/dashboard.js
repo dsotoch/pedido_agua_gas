@@ -23,6 +23,11 @@ if (btnAcceder) {
         contenedorLogin.classList.remove("hidden");
     });
 }
+if (btnAcceder) {
+    btnAcceder.addEventListener("click", function () {
+        contenedorLogin.classList.remove("hidden");
+    });
+}
 document.addEventListener("click", function (event) {
     if (contenedorLogin) {
 
