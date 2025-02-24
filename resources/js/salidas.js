@@ -10,6 +10,54 @@ const modalRepartidor = document.getElementById("modal-repartidor");
 const nuevoRepartidor = document.getElementById("nuevo-repartidor");
 const btnCerrar = document.getElementById("cerrar-modal");
 const btnGuardar = document.getElementById("guardar-cambio");
+const modalVerSalida = document.getElementById('modal_ver_salida');
+const cerrarModalBtns = document.querySelectorAll('#cerrar_modal, #cerrar_modal_footer');
+const tablaProductos = document.getElementById('tabla_productos');
+const btnVerSalida = document.getElementById('btn_ver_salida'); // Asegúrate de tener este botón en tu HTML
+if (btnVerSalida) {
+
+    btnVerSalida.addEventListener('click', () => {
+        const salidaId = btnVerSalida.getAttribute('data-id');
+
+        fetch(`/salidas/${salidaId}`)
+            .then(response => response.json())
+            .then(data => {
+                tablaProductos.innerHTML = ''; // Limpiar la tabla antes de insertar nuevos datos
+
+                if (data.error) {
+                    console.error("Error:", data.error);
+                    return;
+                }
+
+                // `data.productos` ya es un array de objetos, NO necesitas hacer JSON.parse()
+                data.productos.forEach(producto => {
+                    const fila = document.createElement('tr');
+                    fila.innerHTML = `
+                    <td class="border p-2 text-center">${producto.nombre} ${producto.descripcion}</td>
+                   
+                    <td class="border p-2 text-center">${producto.cantidad}</td>
+                `;
+                    tablaProductos.appendChild(fila);
+                });
+
+                modalVerSalida.classList.remove('hidden'); // Mostrar el modal
+                modalVerSalida.classList.add('flex'); // Mostrar el modal
+
+            })
+            .catch(error => console.error('Error al obtener los productos:', error));
+    });
+}
+
+
+// Cerrar el modal cuando se presione el botón de cerrar
+if (cerrarModalBtns) {
+    cerrarModalBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            modalVerSalida.classList.remove('flex'); // Mostrar el modal
+            modalVerSalida.classList.add('hidden');
+        });
+    });
+}
 
 let vehiculoActual = "";
 
@@ -131,3 +179,84 @@ function exitoMensaje(texto, titulo) {
         }
     })
 }
+
+
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    const modal_editar_salida = document.getElementById('modal_editar_salida');
+    document.querySelectorAll("button[data-productos]").forEach((boton) => {
+        boton.addEventListener("click", function () {
+            modal_editar_salida.classList.remove('hidden');
+            modal_editar_salida.classList.add('flex');
+            const productosData = this.getAttribute("data-productos");
+            const salidaId = this.getAttribute("data-id"); // Obtener salida_id
+            let productos = [];
+
+            try {
+                productos = JSON.parse(productosData);
+            } catch (error) {
+                console.error("Error al parsear JSON de productos:", error);
+                return;
+            }
+
+            const formContainer = document.getElementById("formulario-edicion-productos");
+            formContainer.innerHTML = ""; // Limpiar contenido previo
+
+            // Input oculto con salida_id
+            let inputSalidaId = document.createElement("input");
+            inputSalidaId.type = "text";
+            inputSalidaId.name = "salida_id";
+            inputSalidaId.value = salidaId;
+            inputSalidaId.hidden = true;
+            formContainer.appendChild(inputSalidaId);
+
+            productos.forEach((item) => {
+                // Crear un select para producto
+                let selectProducto = document.createElement("select");
+                selectProducto.name = "productos[]";
+                selectProducto.classList.add("border", "p-2", "rounded", "w-full", "mt-4");
+
+                // Opción predeterminada con el producto seleccionado
+                let optionSelected = document.createElement("option");
+                optionSelected.value = item.id;
+                optionSelected.textContent = item.nombre;
+                optionSelected.selected = true;
+                selectProducto.appendChild(optionSelected);
+
+                let divContainer = document.createElement("div");
+                divContainer.classList.add("flex", "flex-col", "space-y-2");
+
+                // Crear el texto descriptivo
+                let labelText = document.createElement("span");
+                labelText.textContent = "Cantidad a agregar:";
+                labelText.classList.add("text-gray-700", "text-base");
+
+                // Crear input para cantidad
+                let inputCantidad = document.createElement("input");
+                inputCantidad.type = "number";
+                inputCantidad.name = "cantidades[]";
+                inputCantidad.value = '0';
+                inputCantidad.classList.add("border", "p-2", "rounded", "w-full");
+
+                // Agregar el texto y el input al contenedor
+                divContainer.appendChild(labelText);
+                divContainer.appendChild(inputCantidad);
+
+                // Contenedor de inputs
+                let div = document.createElement("div");
+                div.classList.add("flex", "space-x-2", "mb-2", "items-center");
+
+
+                // Agregar los elementos al div contenedor
+                div.appendChild(selectProducto);
+                div.appendChild(divContainer);
+
+                formContainer.appendChild(div);
+            });
+
+        });
+    });
+});
+
+

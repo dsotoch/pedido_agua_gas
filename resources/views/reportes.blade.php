@@ -131,8 +131,9 @@
                         <th class="break-words w-28 border border-gray-300 px-4 py-2  text-white font-semibold">Medio</th>
 
                         @foreach ($productos as $item)
+                        
                             <th class="break-words w-28 border border-gray-300 px-4 py-2  text-white font-semibold">
-                                {{ $item->descripcion }}
+                                {{$item->nombre .' '. $item->descripcion }}
                             </th>
                         @endforeach
                         <th class="break-words w-28 border  border-gray-300 px-4 py-2  text-white font-semibold">Total</th>

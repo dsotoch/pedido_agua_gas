@@ -576,7 +576,139 @@ class ControllerPedido extends Controller
         }
     }
 
+    public function pedido_rapido(Request $request)
+    {
+        DB::beginTransaction();
+        try {
 
+            $usuario = Auth::user();
+            $usuario = User::findOr($usuario->id);
+            $totalPedido = 0.00;
+            $pedido = null;
+            $empresa = collect();
+            // Validar y procesar productos o promociones
+            $productos = $request->productos ?? [];
+            $pedido = Pedido::create([
+                'cliente_id' => $usuario->id ?? null,
+                'fecha' => Carbon::now('America/Lima'),
+                'nombres' => $request->nombres ?? 'Venta Rapida',
+                'direccion' => $request->direccion ?? 'Venta Rapida',
+                'celular' => $request->celular ?? 123456789,
+                'pago' => true,
+                'metodo' => $request->paymentMethod,
+                'actor' => $usuario->persona->nombres,
+                'total' => 0,
+                'estado' => 'Entregado',
+                'nota' => $request->referencia ?? 'sin-nota',
+                'empresa_id' => $request->empresa_id,
+            ]);
+            $productos = collect($request->productos); // Convertir en colección para operaciones masivas
+
+            // Verificar productos inválidos o con cantidad <= 0
+            if ($productos->isEmpty() || $productos->contains(fn($producto) => !$producto['id'] || $producto['cantidad'] <= 0)) {
+                throw new \Exception("Producto inválido o cantidad incorrecta.");
+            }
+
+            // Calcular precios y procesar productos
+            $preciosYDetalles = $productos->map(function ($productoData) use ($pedido, &$totalPedido) {
+                $producto = Producto::find($productoData['id']);
+                if (!$producto) {
+                    throw new \Exception("Producto no encontrado.");
+                }
+
+                // Calcular precio final
+                $precioFinal = $producto->promociones()
+                    ->orderBy('cantidad', 'asc')
+                    ->get()
+                    ->reduce(function ($carry, $promocion) use ($productoData) {
+                        return $productoData['cantidad'] >= $promocion->cantidad ? $promocion->precio_promocional : $carry;
+                    }, $producto->precio);
+
+                $totalProducto = $precioFinal * $productoData['cantidad'];
+                $totalPedido += $totalProducto;
+
+                // Registrar detalles del pedido
+                Detalles::create([
+                    'pedido_id' => $pedido->id,
+                    'producto_id' => $producto->id,
+                    'tipo' => $productoData['tipo'],
+                    'cantidad' => $productoData['cantidad'],
+                    'precioUnitario' => $precioFinal,
+                    'total' => $totalProducto,
+                ]);
+
+                return [
+                    'producto' => $producto,
+                    'cantidad' => $productoData['cantidad'],
+                    'precioFinal' => $precioFinal,
+                ];
+            });
+
+            // Procesar promociones de empresa y actualizar registros
+            $empresa = Empresa::find($request->empresa_id);
+            if (!$empresa) {
+                throw new \Exception("Empresa no encontrada.");
+            }
+
+
+            // Procesar promociones unitarias y actualizar cantidades
+            $productos->each(function ($productoData) use ($usuario, $pedido, $empresa) {
+                $producto = Producto::find($productoData['id']);
+                if (!$producto || $productoData['cantidad'] <= 0) {
+                    throw new \Exception("Producto inválido o cantidad incorrecta.");
+                }
+
+                $promocionUnitaria = PromocionesUnitario::where('producto_id', $producto->id)->first();
+
+
+
+
+
+                $nuevaCantidad = $productoData['cantidad'];
+                // Verificamos si hay una promoción y si se cumple la cantidad requerida
+                if ($promocionUnitaria) {
+                    if ($nuevaCantidad >= $promocionUnitaria->cantidad) {
+                        // Crear una promoción pero con estado false
+                        $entregaPromocion = EntregaPromociones::firstOrNew([
+                            'user_id' => $usuario->id,
+                            'producto_id' => $producto->id,
+                            'pedido_id'=>$pedido->id
+                        ]);
+
+                        if (!$entregaPromocion->exists) {
+                            $entregaPromocion->fill([
+                                'cantidad' => 1,
+                                'producto' => $promocionUnitaria->producto_gratis,
+                                'estado' => true, // No se entrega aún
+                            ]);
+                            $entregaPromocion->save();
+                        }
+                    }
+                }
+            });
+
+
+            $pedido->update(['total' => $totalPedido]);
+
+
+
+
+            $pedido_completo = Pedido::with('entregaPromociones')->find($pedido->id);
+            $promocion = optional($pedido_completo->entregaPromociones)
+                ->where('pedido_id', $pedido->id)
+                ->where('estado', true)
+                ->first()
+                ->producto ?? null;
+            // Confirmar la transacción
+            DB::commit();
+            return response()->json(['mensaje' => 'Pedido Finalizado Correctamente', 'promocion' => $promocion], 201);
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return response()->json([
+                'mensaje' => $e->getMessage()  . ' ' . $e->getLine(),
+            ], 500);
+        }
+    }
     /**
      * Display the specified resource.
      */

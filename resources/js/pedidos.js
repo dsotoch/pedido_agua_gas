@@ -15,6 +15,84 @@ const copyButton = document.getElementById('copy-button');
 const numberToCopy = document.getElementById('number-to-copy');
 const formAsignarRepartidor = document.getElementById('formAsignarRepartidor');
 const modal_editar_pedido = document.getElementById('modal_editar_pedido');
+const btn_venta_rapida = document.querySelector(".btn_venta_rapida");
+const paymentModalVentaRapida = document.getElementById('paymentModalVentaRapida');
+const form_metodo_pago_venta_rapida = document.getElementById('form_metodo_pago_venta_rapida');
+if (btn_venta_rapida) {
+    btn_venta_rapida.addEventListener('click', () => {
+        paymentModalVentaRapida.classList.remove('hidden');
+    });
+}
+
+if (form_metodo_pago_venta_rapida) {
+    form_metodo_pago_venta_rapida.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        paymentModalVentaRapida.classList.add('opacity-50');
+
+        const data = new FormData(form_metodo_pago_venta_rapida);
+        let datos = {};
+        data.forEach((value, key) => {
+            datos[key] = value;
+        });
+        datos['productos'] = window.idproductos || [];
+        try {
+            // Realizar la solicitud Fetch
+            const response = await fetch(form_metodo_pago_venta_rapida.getAttribute('action'), {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": token,
+                },
+                body: JSON.stringify(datos), // Convertir datos a JSON
+            });
+
+            // Manejar la respuesta
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(errorText);
+            }
+
+            const respuesta = await response.json();
+            window.idproductos = [];
+            paymentModalVentaRapida.classList.remove('opacity-50');
+
+            paymentModalVentaRapida.classList.add('hidden');
+            let promocion = '';
+            if (respuesta.promocion) {
+                promocion = '|| Producto Gratis 1'+" "+ respuesta.promocion;
+            }
+
+            Swal.fire({
+                title: "Pedido Finalizado!",
+                text: respuesta.mensaje + " " + promocion,
+                icon: "success",
+                timerProgressBar: true,
+                timer: 4000,
+                showConfirmButton: false,
+                customClass: {
+                    timerProgressBar: "bg-green-500 h-2 rounded-lg"
+                }
+            });
+        } catch (error) {
+            console.log(error);
+            // Mostrar mensaje de error (usando SweetAlert como ejemplo)
+            Swal.fire({
+                title: "Ocurrió un error!",
+                text: 'Hubo un error al Procesar el pedido. Recarga la pagina y vuelve a intentarlo.',
+                icon: "error",
+                timerProgressBar: true,
+                timer: 3000,
+                showConfirmButton: false,
+                customClass: {
+                    timerProgressBar: "bg-red-500 h-2 rounded-lg"
+                }
+            });
+
+            paymentModalVentaRapida.classList.remove('opacity-50');
+
+        }
+    })
+}
 // Añadimos el evento al botón
 if (copyButton) {
     copyButton.addEventListener('click', (event) => {
@@ -296,8 +374,16 @@ function logica_boton_siguiente() {
     if (btn_siguiente_pedido) {
         if (window.idproductos.length > 0) {
             btn_siguiente_pedido.removeAttribute('disabled');
+            if (btn_venta_rapida) {
+                btn_venta_rapida.removeAttribute('disabled');
+
+            }
         } else {
             btn_siguiente_pedido.setAttribute('disabled', true);
+            if (btn_venta_rapida) {
+                btn_venta_rapida.setAttribute('disabled', true);
+
+            }
         }
     }
 }

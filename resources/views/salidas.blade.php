@@ -1,6 +1,7 @@
 @extends('layout-cuenta')
 @section('logica')
-    <div class="container mx-auto md:w-full w-screen font-sans p-4 md:p-[20px] bg-white shadow-lg rounded-lg text-color-titulos-entrega">
+    <div
+        class="container mx-auto md:w-full w-screen font-sans p-4 md:p-[20px] bg-white shadow-lg rounded-lg text-color-titulos-entrega">
         @if (session('mensaje'))
             <div id="mensaje" class=" p-3 w-full border-2 border-green-500  text-center text-green-500 font-semibold">
                 <p class="text-base text-center">{{ session('mensaje') }}</p>
@@ -40,8 +41,8 @@
                                 <option value="" disabled selected>No hay vehículos registrados</option>
                             @endif
                         </select>
-                        <div class="w-[15%]"><button type="button" class="transform hover:scale-105" id="btn_editar_vehiculo"><i
-                                    class="fas fa-edit text-2xl"></i></button></div>
+                        <div class="w-[15%]"><button type="button" class="transform hover:scale-105"
+                                id="btn_editar_vehiculo"><i class="fas fa-edit text-2xl"></i></button></div>
                     </div>
                     <!-- Modal -->
                     <div id="modal_vehiculos"
@@ -134,7 +135,7 @@
         </form>
 
         {{-- Historial de Salidas --}}
-        <h2 class="text-2xl font-bold mt-8 mb-4">Historial de Salidas del dia</h2>
+        <h2 class="text-2xl font-bold mt-8 mb-4">Stock Actual de Repartidores del dia</h2>
         <div class="overflow-x-auto w-full">
             <table class="w-full border whitespace-nowrap border-gray-200">
                 <thead>
@@ -148,23 +149,20 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($salidas as $salida)
-                        <tr class="border text-center">
-                            <td class="p-2">{{ $salida->fecha }}</td>
-                            <td class="p-2">{{ $salida->placa }}</td>
-                            <td class="p-2">{{ $salida->repartidor }}</td>
+                    @foreach ($salidas as $item)
+                        @foreach ($item->stock as $salida)
+                            <tr class="border text-center">
+                                <td class="p-2">{{ $item->fecha }}</td>
+                                <td class="p-2">{{ $item->placa }}</td>
+                                <td class="p-2">{{ $item->repartidor }}</td>
 
-                            <td class="p-2">
-                                @php
-                                    // Decodificar el JSON de productos
-                                    $productos = json_decode($salida->productos, true);
-                                @endphp
+                                <td class="p-2">
+                                    @php
+                                        // Decodificar el JSON de productos
+                                        $productos = json_decode($salida->productos, true);
+                                        $productos_formateados = []; // Nuevo array para almacenar los productos formateados
 
-                                <ul>
-                                    @foreach ($productos as $item)
-                                        @php
-                                            // Buscar el producto en la base de datos por su ID
-
+                                        foreach ($productos as $item) {
                                             $id = '';
                                             if (strpos($item['producto_id'], '_') !== false) {
                                                 $id = explode('_', $item['producto_id'])[0];
@@ -174,37 +172,154 @@
 
                                             $producto = \App\Models\Producto::find($id);
                                             $tipo = '';
+
                                             if (strpos($item['producto_id'], '_') !== false) {
                                                 $tipo = substr($item['producto_id'], strpos($item['producto_id'], '_'));
-                                        } @endphp
+                                            }
 
-                                        @if ($producto)
-                                            <li>{{ $item['cantidad'] }} *
-                                                {{ $producto->nombre . ' ' . $producto->descripcion . $tipo }}</li>
-                                        @else
-                                            <li>{{ $item['cantidad'] }} * Producto no encontrado</li>
-                                        @endif
-                                    @endforeach
-                                </ul>
-                            </td>
-                            <td class="p-2">
-                                <div class="flex justify-center">
-                                    <form action="{{ route('salidas.eliminar') }}" method="post">
-                                        @csrf
-                                        @method('DELETE')
-                                        <input type="text" hidden name='salida_id' value="{{ $salida->id }}">
-                                        <button type="submit"> <i class="fas fa-trash"></i></button>
+                                            if ($producto) {
+                                                $productos_formateados[] = [
+                                                    'id' => $item['producto_id'],
+                                                    'nombre' =>
+                                                        $producto->nombre . ' ' . $producto->descripcion . $tipo,
+                                                    'cantidad' => $item['cantidad'],
+                                                ];
+                                            } else {
+                                                $productos_formateados[] = [
+                                                    'id' => 'null',
+                                                    'nombre' => 'Producto no encontrado',
+                                                    'cantidad' => $item['cantidad'],
+                                                ];
+                                            }
+                                        }
+                                        $productos_formateados = json_encode(
+                                            $productos_formateados,
+                                            JSON_UNESCAPED_UNICODE,
+                                        );
+                                    @endphp
 
-                                    </form>
-                                </div>
-                            </td>
+                                    <ul>
+                                        @foreach ($productos as $item)
+                                            @php
+                                                // Buscar el producto en la base de datos por su ID
 
-                        </tr>
+                                                $id = '';
+                                                if (strpos($item['producto_id'], '_') !== false) {
+                                                    $id = explode('_', $item['producto_id'])[0];
+                                                } else {
+                                                    $id = $item['producto_id'];
+                                                }
+
+                                                $producto = \App\Models\Producto::find($id);
+                                                $tipo = '';
+                                                if (strpos($item['producto_id'], '_') !== false) {
+                                                    $tipo = substr(
+                                                        $item['producto_id'],
+                                                        strpos($item['producto_id'], '_'),
+                                                    );
+                                            } @endphp
+
+                                            @if ($producto)
+                                                <li>{{ $item['cantidad'] }} *
+                                                    {{ $producto->nombre . ' ' . $producto->descripcion . $tipo }}</li>
+                                            @else
+                                                <li>{{ $item['cantidad'] }} * Producto no encontrado</li>
+                                            @endif
+                                        @endforeach
+                                    </ul>
+                                </td>
+                                <td class="p-2">
+                                    <div class="flex justify-center space-x-2">
+                                        <button type="button" id="btn_ver_salida" data-id="{{ $salida->salida_id }}">
+                                            <i class="fas fa-eye"></i></button>
+                                        <button type="button" data-id="{{ $salida->salida_id }}"
+                                            data-productos="{{ $productos_formateados }}"> <i
+                                                class="fas fa-edit"></i></button>
+
+                                        <form action="{{ route('salidas.eliminar') }}" method="post">
+                                            @csrf
+                                            @method('DELETE')
+                                            <input type="text" hidden name='salida_id'
+                                                value="{{ $salida->salida_id }}">
+                                            <button type="submit"> <i class="fas fa-trash"></i></button>
+
+                                        </form>
+                                    </div>
+                                </td>
+
+                            </tr>
+                        @endforeach
                     @endforeach
                 </tbody>
             </table>
         </div>
+        <div id="modal_editar_salida"
+            class="fixed inset-0  justify-center items-center w-full h-full z-50 bg-black bg-opacity-50 hidden">
+            <div class="md:w-1/2 w-11/12 bg-white rounded-lg shadow-lg overflow-hidden transform transition-all">
+                <!-- Encabezado -->
+                <div class="bg-tarjetas text-white p-4 flex justify-between items-center">
+                    <h2 class="text-lg font-semibold">Editar Salida de Productos</h2>
+                    <button id="cerrar-modal" class="text-white text-2xl font-bold hover:text-gray-300">&times;</button>
+                </div>
+
+                <!-- Contenido del modal -->
+                <div class="p-4 space-y-4">
+                    <form action="{{ route('salidas.editar') }}" method="post">
+                        @csrf
+                        <div id="formulario-edicion-productos"></div>
+
+                        <!-- Pie del modal -->
+                        <div class="bg-gray-100 p-4 flex justify-end space-x-2">
+
+                            <button type="submit" class="px-4 py-2 bg-naranja text-white rounded-lg ">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+
+
+            </div>
+        </div>
+        <!-- Modal -->
+        <div id="modal_ver_salida"
+            class="fixed inset-0  items-center justify-center w-full h-full bg-black bg-opacity-50 hidden z-50">
+            <div class="bg-white w-11/12 md:w-1/2 rounded-lg shadow-lg overflow-hidden">
+                <!-- Encabezado -->
+                <div class="bg-tarjetas text-white p-4 flex justify-between items-center">
+                    <h2 class="text-lg font-semibold">Detalles de la Salida</h2>
+                    <button id="cerrar_modal" class="text-white text-2xl font-bold hover:text-gray-300">&times;</button>
+                </div>
+
+                <!-- Contenido -->
+                <div class="p-4 space-y-4">
+                    <h3 class="text-gray-700 font-semibold">Stock Total de Productos en la Salida
+
+                    </h3>
+                    <table class="w-full border-collapse border border-gray-300">
+                        <thead>
+                            <tr class="bg-gray-200">
+                                <th class="border p-2">Producto</th>
+                                <th class="border p-2">Cantidad</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla_productos">
+                            <!-- Aquí se insertarán dinámicamente los productos -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pie del modal -->
+                <div class="bg-gray-100 p-4 flex justify-end">
+                    <button id="cerrar_modal_footer"
+                        class="px-4 py-2 bg-naranja text-white rounded-lg transform hover:scale-105">
+                        Cerrar
+                    </button>
+                </div>
+            </div>
+        </div>
+
     </div>
+
+
 
     {{-- Script para añadir más productos dinámicamente --}}
     <script>

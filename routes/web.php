@@ -55,12 +55,7 @@ Route::controller(ControllerUsuario::class)->group(function () {
 
 
 });
-Route::controller(ControllerSalidas::class)->group(function () {
-    Route::post('crearSalida', 'store')->name('salidas.crear');
-    Route::post('procesarStock', 'procesarStockJson')->name('salidas.procesarStock');
-    Route::delete('eliminarSalida', 'delete')->name('salidas.eliminar');
 
-});
 Route::controller(ControllerProducto::class)->group(function () {
     Route::post('crear', 'store')->name('crear.producto');
     Route::delete('eliminar/{id}', 'destroy')->name('eliminar.producto');
@@ -70,6 +65,8 @@ Route::prefix('{slug}')->controller(ControllerPedido::class)->group(function () 
     Route::post('/crearpedido', 'store')->name('pedido.crear');
     Route::put('/cancelarpedido', 'cancelarPedido')->name('pedido.cancelarPedido');
     Route::get('/pedido_confirmado/{id}', 'vista_pedido_confirmado')->name("pedido.confirmacion");
+    Route::post('/crearpedidorapido', 'pedido_rapido')->name('pedido.pedidorapido');
+
 });
 Route::controller(ControllerPedido::class)->group(function () {
     Route::put('cambiarestadopago/{id}', 'pedidorecibidorepartidor')->name('pedido.recibididorepartidor');
@@ -100,6 +97,15 @@ Route::prefix('mi-cuenta')->controller(ControllerEmpresa::class)->group(function
     Route::get('cupones', 'index_cupones')->name('empresa.cupones');
     Route::get('favoritas', 'index_favoritas')->name('empresa.favoritas');
     Route::get('salidas', 'index_salidas')->name('empresa.salidas');
+
+});
+
+Route::controller(ControllerSalidas::class)->group(function () {
+    Route::get('salidas/{id}', 'show')->name('salidas.ver');
+    Route::post('crearSalida', 'store')->name('salidas.crear');
+    Route::post('procesarStock', 'procesarStockJson')->name('salidas.procesarStock');
+    Route::delete('eliminarSalida', 'delete')->name('salidas.eliminar');
+    Route::post('modificarSalida', 'update')->name('salidas.editar');
 
 });
 Route::controller(CuponController::class)->group(function () {

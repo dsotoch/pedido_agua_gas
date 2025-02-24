@@ -187,6 +187,14 @@
                     class="btnproductoagregar disabled:opacity-50 opacity-100  font-normal text-[18px]  w-[328px] h-[55px] rounded-md custom-bg-button  text-white  mb-2">
                     Siguiente
                     <i class=" fas fa-arrow-right-long text-2xl ml-2 "></i></button>
+                @auth
+                    @if ($usuario->tipo != 'cliente')
+                        <button type="button" disabled
+                            class="btn_venta_rapida disabled:opacity-50 opacity-100 mt-2 font-normal text-[18px]  w-[328px] h-[55px] rounded-md custom-bg-button  text-white  mb-2">
+                            Venta Rapida
+                            <i class=" fas fa-arrow-right-long text-2xl ml-2 "></i></button>
+                    @endif
+                @endauth
 
             </div>
         </div>
@@ -194,7 +202,53 @@
         <p class="text-gray-700 mx-auto font-medium text-md m-2">Sin Productos Registrados.</p>
     @endif
 </div>
+<!-- Modal Pago Pedido -->
+<div id="paymentModalVentaRapida"
+    class="hidden fixed flex-col inset-0 bg-black bg-opacity-70 my-auto  items-center justify-center z-50">
+    <div class="bg-white rounded text-color-text text-base font-sans  shadow-md w-full mx-auto max-w-md p-6">
+        <h2 class="text-xl font-semibold text-center mb-4 font-cabin">Finalizar Pedido <span
+                id="modal_pago_pedido_id"></span></h2>
+        <form id="form_metodo_pago_venta_rapida" method="post"
+            action="{{ route('pedido.pedidorapido', ['slug' => $empresa->dominio]) }}">
+            <input type="text" name="empresa_id" value="{{ $empresa->id }}" hidden>
+            <!-- Opciones de pago -->
+            <div class="mb-4">
+                <label class="flex items-center space-x-2">
+                    <input type="radio" name="paymentMethod" value="yape"
+                        class="text-blue-500 focus:ring-blue-500">
+                    <span>Pagó con Yape</span>
+                </label>
+            </div>
+            <div class="mb-4">
+                <label class="flex items-center space-x-2">
+                    <input type="radio" name="paymentMethod" value="efectivo"
+                        class="text-blue-500 focus:ring-blue-500" checked>
+                    <span>Pagó en Efectivo</span>
+                </label>
+            </div>
+            <div class="mb-4">
+                <label class="flex items-center space-x-2">
+                    <input type="radio" name="paymentMethod" value="account"
+                        class="text-blue-500 focus:ring-blue-500">
+                    <span>Deuda Pendiente</span>
+                </label>
+            </div>
 
+            <!-- Botones -->
+            <div class="flex justify-end mt-6 space-x-1">
+                <button type="submit"
+                    class="px-4 py-2 bg-naranja text-white rounded hover:bg-border-red-500 hover:scale-105 transition">
+                    Aceptar
+                </button>
+                <button type="button"
+                    class="px-4 py-2 border border-color-titulos-entrega text-color-titulos-entrega rounded hover:scale-105 transition"
+                    onclick="document.getElementById('paymentModalVentaRapida').classList.remove('flex');document.getElementById('paymentModalVentaRapida').classList.add('hidden')">
+                    Cancelar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 <div id="contenedor_form_realizar_pedido" class="hidden justify-center  mx-auto w-full text-[15px] text-color-text">
     @if ($usuario && $usuario->tipo == 'cliente')
         <form action="{{ route('pedido.crear', ['slug' => $empresa->dominio]) }}" id="form_realizar_pedido"

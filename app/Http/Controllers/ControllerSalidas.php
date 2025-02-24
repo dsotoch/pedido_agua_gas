@@ -145,4 +145,128 @@ class ControllerSalidas extends Controller
             return response()->json(['mensaje' => 'Error al procesar el stock: ' . $th->getMessage() . 'Linea: ' . $th->getLine()]);
         }
     }
+
+    public function update(Request $request)
+    {
+        try {
+            // Validación de los datos
+            $request->validate([
+                'salida_id' => 'required|exists:salidas,id',
+                'productos' => 'required|array',
+                'productos.*' => 'exists:productos,id',
+                'cantidades' => 'required|array',
+                'cantidades.*' => 'integer|min:0'
+            ]);
+
+            // Obtener la salida
+            $salida = Stock::where('salida_id', $request->salida_id)->first();
+
+            // Decodificar el JSON actual de productos en el stock
+            $productosStock = json_decode($salida->productos, true) ?? [];
+
+            // Crear un mapa para acceder rápidamente a los productos existentes
+            $productosMap = [];
+            foreach ($productosStock as &$producto) {
+                $productosMap[$producto['producto_id']] = &$producto;
+            }
+
+            // Recorrer los productos del request
+            foreach ($request->productos as $index => $producto_id) {
+                $cantidadNueva = $request->cantidades[$index] ?? 0;
+
+                if (isset($productosMap[$producto_id])) {
+                    // Si el producto ya existe en el stock, sumamos la cantidad
+                    $productosMap[$producto_id]['cantidad'] += $cantidadNueva;
+                } else {
+                    // Si el producto no existe, lo agregamos al array
+                    $productosStock[] = [
+                        'cantidad' => $cantidadNueva,
+                        'producto_id' => $producto_id,
+
+                    ];
+                }
+            }
+
+            // Guardar los productos en formato JSON
+            $salida->productos = json_encode($productosStock);
+            $salida->save(); // Guardar en la BD
+            $this->sumarStockActual($request->salida_id, $request->productos, $request->cantidades);
+            return redirect()->back()->with('mensaje', 'Salida actualizada correctamente');
+        } catch (\Throwable $th) {
+            return redirect()->back()->withErrors(['mensaje' => 'Error: ' . $th->getMessage()]);
+        }
+    }
+
+    private function sumarStockActual($salida_id, $productos, $cantidades)
+    {
+        try {
+            $salida = Salidas::findOrFail($salida_id);
+            // Decodificar el JSON actual de productos en el stock
+            $productosStock = json_decode($salida->productos, true) ?? [];
+
+            // Crear un mapa para acceder rápidamente a los productos existentes
+            $productosMap = [];
+            foreach ($productosStock as &$producto) {
+                $productosMap[$producto['producto_id']] = &$producto;
+            }
+
+            // Recorrer los productos del request
+            foreach ($productos as $index => $producto_id) {
+                $cantidadNueva = $cantidades[$index] ?? 0;
+
+                if (isset($productosMap[$producto_id])) {
+                    // Si el producto ya existe en el stock, sumamos la cantidad
+                    $productosMap[$producto_id]['cantidad'] += $cantidadNueva;
+                } else {
+                    // Si el producto no existe, lo agregamos al array
+                    $productosStock[] = [
+                        'cantidad' => $cantidadNueva,
+                        'producto_id' => $producto_id,
+                    ];
+                }
+            }
+
+            // Guardar el JSON actualizado
+            $salida->productos = json_encode($productosStock);
+            $salida->save();
+        } catch (\Throwable $th) {
+            throw new Exception($th->getMessage()); // Lanza la excepción para poder depurar
+        }
+    }
+
+    public function show($id)
+    {
+        try {
+            $salida = Salidas::findOrFail($id);
+            $productosSalida = json_decode($salida->productos, true) ?? [];
+
+            foreach ($productosSalida as &$item) {
+                // Extraer el ID del producto
+                $productoId = strpos($item['producto_id'], '_') !== false
+                    ? explode('_', $item['producto_id'])[0]
+                    : $item['producto_id'];
+
+                $tipo = '';
+                if (strpos($item['producto_id'], '_') !== false) {
+                    $tipo = substr($item['producto_id'], strpos($item['producto_id'], '_'));
+                }
+                // Buscar el producto en la base de datos
+                $producto = Producto::find($productoId);
+
+                // Si se encuentra el producto, agregar su información
+                if ($producto) {
+                    $item['nombre'] = $producto->nombre;
+                    $item['descripcion'] = $producto->descripcion.$tipo;
+                } else {
+                    $item['nombre'] = 'Producto no encontrado';
+                    $item['descripcion'] = '';
+                }
+            }
+
+            // Retornar los productos como JSON
+            return response()->json(['productos' => $productosSalida], 200);
+        } catch (\Throwable $th) {
+            return response()->json(['error' => $th->getMessage()], 500);
+        }
+    }
 }
