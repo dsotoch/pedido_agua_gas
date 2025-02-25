@@ -20,7 +20,7 @@ export function agregarPedido(pedido, usuario, tiempo) {
         ? pedido.detalles.map(item => `
             <p>
                 ${item.producto?.nombre || ''} ${item.producto?.descripcion || ''}
-                ${item.producto?.tipo ? `_${item.producto.tipo}` : ''}
+                ${item.tipo ? `_${item.tipo}` : ''}
                 x ${item.cantidad}
             </p>
         `).join('')
