@@ -59,7 +59,7 @@ if (form_metodo_pago_venta_rapida) {
             paymentModalVentaRapida.classList.add('hidden');
             let promocion = '';
             if (respuesta.promocion) {
-                promocion = '|| Producto Gratis 1'+" "+ respuesta.promocion;
+                promocion = '|| Producto Gratis 1' + " " + respuesta.promocion;
             }
 
             Swal.fire({
@@ -239,7 +239,7 @@ function calcularTotalEnProducto(boton, operacion) {
     let checkboxSeleccionado = null;
 
     if (valvulas) {
-        checkboxSeleccionado = valvulas.querySelector('input[type="radio"]:checked');
+        checkboxSeleccionado = valvulas.querySelectorAll('input[type="radio"]');
     }
 
     // Obtener el precio base normal
@@ -313,22 +313,33 @@ function calcularTotalEnProducto(boton, operacion) {
     // Buscar si el producto ya existe con el mismo id y tipo
     const index = window.idproductos.findIndex(item => item.id === productoId && item.tipo === (checkboxSeleccionado ? checkboxSeleccionado.value : ''));
 
-    // Obtener el checkbox seleccionado
-    const tipoSeleccionado = checkboxSeleccionado ? checkboxSeleccionado.value : '';
 
+    let tipoSeleccionado = valvulas?.querySelector('input[type="radio"]:checked');
+
+    // Verificamos si tipoSeleccionado es nulo y establecemos un valor predeterminado
+    let tipoValor = tipoSeleccionado ? tipoSeleccionado.value : null;
     // Si el producto con el mismo tipo no existe, agregarlo como un nuevo registro
     if (index === -1) {
         window.idproductos.push({
             id: productoId,
             cantidad: 1,
-            tipo: tipoSeleccionado
+            tipo: tipoValor
         });
     } else {
         // Si el producto ya existe con el mismo tipo, actualizar solo la cantidad
         window.idproductos[index].cantidad = cantidad;
     }
 
+    valvulas?.querySelectorAll('input[type="radio"]').forEach(radio => {
+        radio.addEventListener('change', function () {
+            let nuevoTipo = this.value;
+            let index = window.idproductos.findIndex(item => item.id === productoId);
 
+            if (index !== -1) {
+                window.idproductos[index].tipo = nuevoTipo;
+            }
+        });
+    });
 
     // Filtrar productos con cantidad cero
     window.idproductos = window.idproductos.filter(item => item.cantidad > 0);
