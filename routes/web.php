@@ -52,6 +52,7 @@ Route::controller(ControllerUsuario::class)->group(function () {
     Route::put('/guardarFavorito', 'guardarFavorito')->name('usuario.guardarFavorito');
     Route::get('/getFavoritos', 'getFavoritos')->name('usuario.getFavoritos');
     Route::delete('/eliminarFavorito', 'eliminarFavorito')->name('usuario.eliminarFavorito');
+    Route::post('/obtenerReferencia', 'obtenerReferencia')->name('usuario.obtenerReferencia');
 
 
 });

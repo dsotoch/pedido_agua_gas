@@ -143,10 +143,9 @@
                                     @if ($empresa->productos && $empresa->productos->isnotEmpty())
                                         <option value="mismo">Mismo Producto a Registrar</option>
                                         @foreach ($empresa->productos as $item)
-                                            @if (!$item->comercializable)
+                                           
                                                 <option value="{{ $item->descripcion }}">{{ $item->descripcion }}
                                                 </option>
-                                            @endif
                                         @endforeach
                                     @else
                                         <option value="mismo">Mismo Producto a Registrar</option>
@@ -264,9 +263,9 @@
                     @if ($empresa->productos && $empresa->productos->isnotEmpty())
                         <option value="mismo">Mismo Producto</option>
                         @foreach ($empresa->productos as $item)
-                            @if (!$item->comercializable)
+                           
                                 <option value="{{ $item->descripcion }}">{{ $item->descripcion }}</option>
-                            @endif
+                            
                         @endforeach
                     @else
                         <option value="mismo">Mismo Producto</option>

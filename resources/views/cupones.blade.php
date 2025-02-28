@@ -29,7 +29,9 @@
                         <th class="px-4 py-2 border">Tipo</th>
                         <th class="px-4 py-2 border">Valor</th>
                         <th class="px-4 py-2 border">Límite de uso</th>
+                        <th class="px-4 py-2 border">Usos</th>
                         <th class="px-4 py-2 border">Expira en</th>
+                        <th class="px-4 py-2 border">Especial</th>
                         <th class="px-4 py-2 border">Acciones</th>
                     </tr>
                 </thead>
@@ -49,11 +51,22 @@
                                 {{ $cupon->valor }}</td>
                             <td
                                 class="block md:table-cell px-4 py-2 before:content-['Limites_de_uso:'] before:font-semibold before:block md:before:hidden">
-                                {{ $cupon->limite_uso }}
+                                @if ($cupon->especial)
+                                    ♾️
+                                @else
+                                    {{ $cupon->limite_uso }}
+                                @endif
+                            </td>
+                            <td
+                                class="block md:table-cell px-4 py-2 before:content-['Limites_de_uso:'] before:font-semibold before:block md:before:hidden">
+                                {{ $cupon->usado }}
                             </td>
                             <td
                                 class="block md:table-cell px-4 py-2 before:content-['Expira_en:'] before:font-semibold before:block md:before:hidden">
                                 {{ $cupon->expira_en }}</td>
+                            <td
+                                class="block md:table-cell px-4 py-2 before:content-['Expira_en:'] before:font-semibold before:block md:before:hidden">
+                                {{ $cupon->especial ? '✅ ' : '❎' }}</td>
                             <td class=" md:table-cell px-4 py-2 flex justify-center items-center space-x-2">
                                 <form action="{{ route('cupones.eliminar', $cupon->id) }}" class="form_eliminar_cupon"
                                     method="POST">
@@ -100,21 +113,30 @@
 
             <div class="mb-4">
                 <label for="limite_uso" class="block text-gray-700 font-medium">Límite de Uso en general</label>
-                <input type="number" id="limite_uso" name="limite_uso" placeholder="cantidad que puede ser usado para este cupón entre los clientes"
+                <input type="number" id="limite_uso" name="limite_uso"
+                    placeholder="cantidad que puede ser usado para este cupón entre los clientes"
                     class="mt-1 block w-full border border-gray-300 rounded-md p-2" min="1" required>
             </div>
-            <div class="mb-4">
+            <div class="mb-4 hidden">
                 <label for="limite_uso_cliente" class="block text-gray-700 font-medium">Límite de Uso por cliente</label>
-                <input type="number" id="limite_uso_cliente" name="limite_uso_cliente"
-                    class="mt-1 block w-full border border-gray-300 rounded-md p-2" min="1" required>
+                <input type="number" id="limite_uso_cliente" name="limite_uso_cliente" value="1" 
+                    class="mt-1  w-full border border-gray-300 rounded-md p-2 " min="1" required>
             </div>
             <div class="mb-4">
                 <label for="expira_en" class="block text-gray-700 font-medium">Fecha de Expiración</label>
                 <input type="date" id="expira_en" name="expira_en"
                     class="mt-1 block w-full border border-gray-300 rounded-md p-2" required>
             </div>
-            <input type="text" name="empresa_id" value="{{ $empresa->id }} " class="hidden">
+            <div class="mb-4 flex items-center">
+                <input type="checkbox" id="especial" name="especial"
+                    class="h-4 w-4 border border-gray-300 rounded-md text-blue-600 focus:ring focus:ring-blue-200">
+                <label for="especial" class="ml-2 text-gray-700 font-medium cursor-pointer">
+                    ¿Cupón Especial?
+                </label>
+            </div>
 
+            <input type="text" name="empresa_id" value="{{ $empresa->id }} " class="hidden">
+            <br>
             <button type="submit" class="bg-naranja text-white px-6 py-2 rounded transform hover:scale-105">Crear
                 Cupón</button>
         </form>

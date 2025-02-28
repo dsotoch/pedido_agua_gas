@@ -11,11 +11,35 @@ use App\Models\Producto;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class ControllerUsuario extends Controller
 {
+
+
+    public function obtenerReferencia(Request $request)
+    {
+        try {
+            // Buscar la dirección del usuario
+            $direccion = Direcciones::where('user_id', Auth::id())
+                ->where('direccion', $request->direccion)
+                ->first();
+
+            if ($direccion) {
+                $respuesta = $direccion->referencia;
+            } else {
+                // Si no encuentra la dirección, buscar en Persona
+                $persona = Persona::where('user_id', Auth::id())->first();
+                $respuesta = $persona ? $persona->nota : ''; // Evitar error si Persona es null
+            }
+
+            return response()->json(['mensaje' => $respuesta], 200);
+        } catch (\Throwable $th) {
+            return response()->json(['mensaje' => 'Error en el servidor'], 500);
+        }
+    }
 
 
     public function validateUser(Request $request)

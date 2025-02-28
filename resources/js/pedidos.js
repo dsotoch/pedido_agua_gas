@@ -20,7 +20,10 @@ const paymentModalVentaRapida = document.getElementById('paymentModalVentaRapida
 const form_metodo_pago_venta_rapida = document.getElementById('form_metodo_pago_venta_rapida');
 if (btn_venta_rapida) {
     btn_venta_rapida.addEventListener('click', () => {
+
         paymentModalVentaRapida.classList.remove('hidden');
+        paymentModalVentaRapida.classList.add('flex');
+
     });
 }
 

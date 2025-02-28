@@ -11,13 +11,21 @@ use Illuminate\Support\Facades\Auth;
 
 class CuponController extends Controller
 {
-    public function aplicarCupon($codigoCupon, $total)
+    public function aplicarCupon($codigoCupon, $total, $empresa)
     {
         // Buscar el cupón en la base de datos
-        $cupon = Cupones::where('codigo', $codigoCupon)->first();
+        $cupon = Cupones::where('codigo', $codigoCupon)->where('empresa_id', $empresa)->first();
 
         if (!$cupon || !$cupon->esValido()) {
             throw new Exception('El cupon no es valido o ha expirado.', 400);
+        }
+        $usoCliente = null;
+        if ($cupon->especial) {
+            // Verificar si el usuario ya usó el cupón hoy
+            $usoCliente = CuponUser::where('cupon_id', $cupon->id)
+                ->where('usuario_id', auth()->id())
+                ->whereDate('created_at', now()->toDateString()) // Filtra por la fecha actual
+                ->first();
         }
 
         // Verificar si el usuario ha alcanzado su límite de uso
@@ -84,25 +92,42 @@ class CuponController extends Controller
     {
         try {
             // Validar que el cupón existe
-            $codigo = Cupones::where('codigo', $request->cupon)->first();
+            $codigo = Cupones::where('codigo', $request->cupon)->where('empresa_id', $request->empresa ?? 0)->first();
 
             if (!$codigo) {
-                throw new \Exception('El código ingresado no existe.', 404);
+                throw new \Exception('El código ingresado no existe en la Distribuidora.', 404);
+            }
+            if (!$codigo || !$codigo->esValido()) {
+                throw new Exception('El cupon no es valido o ha expirado.', 400);
+            }
+            $usoCliente = null;
+            if ($codigo->especial) {
+                // Verificar si el usuario ya usó el cupón hoy
+                $usoCliente = CuponUser::where('cupon_id', $codigo->id)
+                    ->where('usuario_id', auth()->id())
+                    ->whereDate('created_at', now()->toDateString()) // Filtra por la fecha actual
+                    ->first();
             }
 
-            // Validar si el cupón ya ha alcanzado su límite de uso
-            $usosRestantesGlobal = $codigo->limite_uso - $codigo->usado;
-            if ($usosRestantesGlobal <= 0) {
-                throw new \Exception('Código ya no es válido', 400);
+            if (!$codigo->especial) {
+                // Validar si el cupón ya ha alcanzado su límite de uso
+                $usosRestantesGlobal = $codigo->limite_uso - $codigo->usado;
+                if ($usosRestantesGlobal <= 0) {
+                    throw new \Exception('Código ya no es válido', 400);
+                }
+
+                // Verificar si el usuario ha alcanzado su límite de uso
+                $usoCliente = CuponUser::where('cupon_id', $codigo->id)
+                    ->where('usuario_id', auth()->id())
+                    ->first();
             }
 
-            // Verificar si el usuario ha alcanzado su límite de uso
-            $usoCliente = CuponUser::where('cupon_id', $codigo->id)
-                ->where('usuario_id', auth()->id())
-                ->first();
 
             $usosRestantesCliente = $codigo->limite_uso_por_cliente - ($usoCliente->veces_usado ?? 0);
             if ($usosRestantesCliente <= 0) {
+                if ($codigo->especial) {
+                    throw new \Exception('Ya usaste este cupón hoy', 422);
+                }
                 throw new \Exception('Has alcanzado el límite de uso para este código', 400);
             }
 
@@ -132,14 +157,16 @@ class CuponController extends Controller
             $nuevoTotal = max(0, $totalCompra - $descuento);
 
             // Simular la reducción de uso sin modificar la base de datos
-            $usosRestantesGlobal--;
+            if (!$codigo->especial) {
+                $usosRestantesGlobal--;
+            }
             $usosRestantesCliente--;
 
             return response()->json([
                 'mensaje' => 'Descuento aplicado correctamente',
                 'descuento' => $descuento,
                 'nuevo_total' => $nuevoTotal,
-                'usos_restantes_global' => $usosRestantesGlobal,
+                'usos_restantes_global' => $usosRestantesGlobal ?? '',
                 'usos_restantes_cliente' => $usosRestantesCliente
             ]);
         } catch (\Exception $e) {
@@ -157,13 +184,20 @@ class CuponController extends Controller
         }
         try {
             $request->validate([
-                'codigo' => 'required|string|unique:cupones,codigo'
+                'codigo' => 'required|string|'
             ]);
+            $existe = Cupones::where('codigo', $request->codigo)->where('empresa_id', $request->empresa_id)->first();
+            if ($existe) {
+                return response()->json([
+                    'mensaje' => 'Hubo un problema al crear el cupón. Codigo ya Registrado',
+                ], 403);
+            }
             // Crear el cupón en la base de datos
             $cupon = Cupones::create([
                 'codigo' => strtoupper($request->codigo), // Guardar en mayúsculas
                 'tipo' => $request->tipo,
                 'valor' => $request->valor,
+                'especial' => $request->has('especial') ? true : false,
                 'limite_uso' => $request->limite_uso,
                 'limite_uso_por_cliente' => $request->limite_uso_cliente,
                 'expira_en' => $request->expira_en,

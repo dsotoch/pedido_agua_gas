@@ -10,7 +10,7 @@ class Cupones extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['codigo', 'tipo', 'valor', 'limite_uso', 'usado', 'expira_en', 'producto_id', 'empresa_id', 'limite_uso_por_cliente'];
+    protected $fillable = ['codigo', 'tipo', 'valor', 'limite_uso', 'usado', 'expira_en', 'producto_id', 'empresa_id', 'limite_uso_por_cliente', 'especial'];
 
     public function empresa()
     {
@@ -20,13 +20,15 @@ class Cupones extends Model
     public function esValido()
     {
         // Verificar si ha expirado
-        if ($this->expira_en && Carbon::now()->gte($this->expira_en)) {
+        if ($this->expira_en && Carbon::now('America/Lima')->gte($this->expira_en)) {
             return false;
         }
 
         // Verificar si ha excedido el límite de uso
-        if (!is_null($this->limite_uso) && $this->usado >= $this->limite_uso) {
-            return false;
+        if (!$this->especial) {
+            if (!is_null($this->limite_uso) && $this->usado >= $this->limite_uso) {
+                return false;
+            }
         }
 
         return true;

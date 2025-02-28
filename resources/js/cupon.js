@@ -74,8 +74,9 @@ if (btnAplicarCupon) {
 }
 
 async function aplicar_Cupon(cupon, total_valor) {
+    const empresa = document.querySelector('#empresa_id_para_cupon').value;
     try {
-        let datos = { cupon: cupon, total: total_valor }
+        let datos = { cupon: cupon, total: total_valor, empresa: empresa }
         const response = await fetch('/calcular-total', {
             method: 'POST',
             headers: {

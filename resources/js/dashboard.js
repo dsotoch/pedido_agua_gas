@@ -1,5 +1,5 @@
 import { deshabilitarClienteID, eliminarFavorito, esFavorito, esPaginaPredeterminada, guardarFavorito, guardarPaginaPredeterminada, habilitarClienteID, paginaPredeterminada } from "./cookies";
-
+const token = document.querySelector('meta[name="token"]').getAttribute('content');
 const mi_cuenta_input_buscar = document.getElementById('mi_cuenta_input_buscar');
 const mi_cuenta_contenedor_pedidos = document.getElementById('mi_cuenta_contenedor_pedidos_super');
 const mensajeSinResultados = document.getElementById('mi_cuenta_mensaje_no_resultados');
@@ -168,8 +168,24 @@ if (btn_distribuidoras_cliente) {
 }
 
 if (select_direccion) {
-    select_direccion.addEventListener('change', () => {
-        direccion.value = select_direccion.value;
+    select_direccion.addEventListener('change', async () => {
+        const referencia = document.getElementById('referencia');
+        try {
+            const response = await fetch('/obtenerReferencia', {
+                method: 'POST', // Aunque sea para obtener datos, el backend puede manejarlo como GET
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X_CSRF_TOKEN':token
+                },
+                body: JSON.stringify({ direccion: select_direccion.value })
+            });
+
+            const data = await response.json();
+            direccion.value = select_direccion.value;
+            referencia.value = data.mensaje || '';
+        } catch (error) {
+            console.error('Error al obtener la dirección:', error);
+        }
     });
 }
 if (mi_cuenta_input_buscar) {

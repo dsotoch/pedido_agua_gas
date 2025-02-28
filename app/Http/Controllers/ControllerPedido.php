@@ -343,7 +343,7 @@ class ControllerPedido extends Controller
 
             $usuario = Auth::user();
             // Validar el usuario                
-            if (User::findOr($usuario->id)->tipo == "cliente") {
+            if (User::findOrFail($usuario->id)->tipo == "cliente") {
                 $usuario = User::find($request->usuario_id);
                 if (!$usuario) {
                     return response()->json(['mensaje' => 'Usuario no encontrado.'], 401);
@@ -537,7 +537,7 @@ class ControllerPedido extends Controller
                 }
                 $controlador_cupon = new CuponController();
                 if (!empty($request->cupon)) {
-                    $resultados = $controlador_cupon->aplicarCupon($request->cupon, $totalPedido);
+                    $resultados = $controlador_cupon->aplicarCupon($request->cupon, $totalPedido,$request->empresa_id);
                     $pedido->update([
                         'total' => $resultados['total_con_descuento'],
                         'descuento' => $resultados['descuento'],

@@ -1,5 +1,5 @@
 <div class="pt-[40px] pb-[40px] bg-color-fondo-productos flex flex-col  w-full justify-stretch items-center space-x-2 ">
-
+    <input type="text" name="" id="empresa_id_para_cupon" hidden value="{{$empresa? $empresa->id :''}}">
 
     @if ($productos->count() > 0)
         <div id="contener_producto_item" class="flex flex-col w-full">
@@ -188,7 +188,7 @@
                     Siguiente
                     <i class=" fas fa-arrow-right-long text-2xl ml-2 "></i></button>
                 @auth
-                    @if ($usuario->tipo != 'cliente')
+                    @if ($usuario->tipo != 'cliente' && $empresa->id == $usuario->empresas()->first()->id)
                         <button type="button" disabled
                             class="btn_venta_rapida disabled:opacity-50 opacity-100 mt-2 font-normal text-[18px]  w-[328px] h-[55px] rounded-md custom-bg-button  text-white  mb-2">
                             Venta Rapida
@@ -202,13 +202,13 @@
         <p class="text-gray-700 mx-auto font-medium text-md m-2">Sin Productos Registrados.</p>
     @endif
 </div>
-<!-- Modal Pago Pedido -->
+<!-- Modal Pago Pedido VENTA RAPIDA-->
 <div id="paymentModalVentaRapida"
-    class="hidden fixed flex-col inset-0 bg-black bg-opacity-70 my-auto  items-center justify-center z-50">
+    class="hidden fixed  inset-0 bg-black bg-opacity-70 my-auto  items-center justify-center z-50">
     <div class="bg-white rounded text-color-text text-base font-sans  shadow-md w-full mx-auto max-w-md p-6">
         <h2 class="text-xl font-semibold text-center mb-4 font-cabin">Finalizar Pedido <span
                 id="modal_pago_pedido_id"></span></h2>
-        <form id="form_metodo_pago_venta_rapida" method="post"
+        <form id="form_metodo_pago_venta_rapida" method="post" class="mx-auto my-auto"
             action="{{ route('pedido.pedidorapido', ['slug' => $empresa->dominio]) }}">
             <input type="text" name="empresa_id" value="{{ $empresa->id }}" hidden>
             <!-- Opciones de pago -->
