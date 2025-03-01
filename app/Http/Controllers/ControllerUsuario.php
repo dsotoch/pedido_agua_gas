@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use PhpParser\Node\Stmt\TryCatch;
 
 class ControllerUsuario extends Controller
 {
@@ -286,7 +287,16 @@ class ControllerUsuario extends Controller
         return view('micuenta', compact('salidas', 'pedido', 'pedidos', 'empresa', 'usuario'));
     }
 
+    public function eliminarUsuario(Request $request){
+        try {
+            $persona=User::findOrFail($request->input('persona_id'));
+            $persona->delete();
+            return redirect()->back()->with(['mensaje'=>'Repartidor eliminado Correctamente.']);
+        } catch (\Throwable $th) {
+            return redirect()->back()->withErrors('Ocurrio un error al eliminar. Recarga la pagina e intentalo nuevamente.');
 
+        }
+    }
     public function update(Request $request, $id)
     {
         // Validar los datos del formulario
@@ -294,7 +304,7 @@ class ControllerUsuario extends Controller
             $request->validate([
                 'celular' => 'required|string|max:9|unique:users,usuario,' . $id,
                 'nombre' => 'required|string|max:255',
-                'dni' => 'required|string|min:8|max:8|unique:persona,dni,' . $id,
+                'dni' => 'nullable|string|min:8|max:8|unique:persona,dni,' . $id,
                 'email' => 'nullable|email|max:255|unique:persona,correo,' . $id,
                 'direccion' => 'nullable|string|max:255',
                 'direccion2' => 'nullable|array|max:255',

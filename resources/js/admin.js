@@ -52,11 +52,22 @@ if (nuevousuarioadmin) {
 
                     }
 
-                })
+                });
+
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+                
 
             })
             .catch(error => {
-                mensajeError(error.message);
+                const errorResponse = JSON.parse(error.message); // Convertir mensaje a JSON
+                const mensajes = errorResponse.errors
+                    ? Object.values(errorResponse.errors).flat()
+                    : [];
+
+                mensajeError(mensajes.join("\n"));
+
             });
     })
 }
@@ -210,7 +221,9 @@ let itemsPerView = window.innerWidth >= 768 ? 2 : 1;
 
 const updateSlider = () => {
     let percentage = (currentIndex * 100) / itemsPerView;
-    slider.style.transform = `translateX(-${percentage}%)`;
+    if (slider) {
+        slider.style.transform = `translateX(-${percentage}%)`;
+    }
 };
 
 if (next) {

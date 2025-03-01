@@ -91,7 +91,12 @@
                             &nbsp;&nbsp;Usuarios
                         </a>
                     </div>
-
+                    <div
+                        class="border border-transparent p-3 {{ request()->routeIs('empresa.datos') ? 'btn-active-mi-cuenta' : '' }} rounded-md hover:bg-naranja hover:border-red-500">
+                        <a class="" href="{{ route('empresa.datos') }}" id="btn_boton_datos"><i
+                                class="fa-solid fa-user-gear"></i>
+                            &nbsp;&nbsp;Mis Datos</a>
+                    </div>
                     <div
                         class="{{ request()->routeIs('empresa.reportes') ? 'btn-active-mi-cuenta' : '' }}  border border-transparent p-3 rounded-md hover:bg-naranja hover:border-red-500">
                         <a class="" href="{{ route('empresa.reportes') }}" id="btn_boton_reportes"><i

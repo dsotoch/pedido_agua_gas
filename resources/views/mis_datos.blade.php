@@ -22,7 +22,7 @@
             @csrf
             @method('PUT')
             <!-- dni -->
-            <div class="mb-4">
+            <div class="mb-4 hidden">
                 <label for="dni" class="block text-gray-700 text-sm font-bold mb-2">DNI:</label>
                 <input type="text" name="dni" id="dni" value="{{ old('dni', $usuario->persona->dni) }}"
                     readonly
@@ -49,21 +49,21 @@
             </div>
 
             <!-- Dirección -->
-            <div class="mb-4">
+            <div class="mb-4 {{ $usuario->tipo == 'cliente' ? 'block' : 'hidden' }} ">
                 <label for="direccion" class="block text-gray-700 text-sm font-bold mb-2">Dirección:</label>
                 <input type="text" name="direccion" id="direccion"
                     value="{{ old('direccion', $usuario->persona->direccion) }}"
                     class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
             </div>
             <!-- Nota -->
-            <div class="mb-4">
+            <div class="mb-4 {{ $usuario->tipo == 'cliente' ? 'block' : 'hidden' }}">
                 <label for="nota" class="block text-gray-700 text-sm font-bold mb-2">Referencia:</label>
                 <textarea name="nota" id="nota" rows="3"
                     class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">{{ old('nota', $usuario->persona->nota) }}</textarea>
             </div>
 
             <!-- Dirección2 -->
-            <div class="mb-4">
+            <div class="mb-4 {{ $usuario->tipo == 'cliente' ? 'block' : 'hidden' }}">
                 <label for="nota" class="block text-gray-700 text-sm font-bold mb-2">Otras Direcciones:</label>
 
                 <div id="direcciones-container" class="flex flex-col space-y-2">
@@ -84,7 +84,7 @@
                     <!-- Aquí se agregarán dinámicamente las direcciones -->
                 </div>
                 <button type="button" id="agregarDireccion"
-                    class="mt-2 border transform hover:scale-105 w-1/3 p-3 text-color-titulos-entrega font-semibold text-base rounded border-color-titulos-entrega">Agregar
+                    class="{{ $usuario->tipo == 'cliente' ? 'block' : 'hidden' }} mt-2 border transform hover:scale-105 w-1/3 p-3 text-color-titulos-entrega font-semibold text-base rounded border-color-titulos-entrega">Agregar
                     otra
                     dirección</button>
             </div>
