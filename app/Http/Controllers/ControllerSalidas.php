@@ -117,13 +117,15 @@ class ControllerSalidas extends Controller
                 $nombreProducto = strpos($producto['descripcion'], '_') !== false
                     ? explode('_', $producto['descripcion'], 2)[0]
                     : $producto['descripcion'];
-
+                $tipo = strpos($producto['descripcion'], '_') !== false
+                    ? explode('_', $producto['descripcion'], 2)[1]
+                    : '';
                 // Buscar el producto basado en el nombre extraído
-                $productoEncontrado = Producto::whereRaw("CONCAT(nombre, ' ', descripcion) = ?", [$nombreProducto])->first();
+                $productoEncontrado = Producto::where("nombre", [$nombreProducto])->first();
                 if ($productoEncontrado) {
                     $productosConIds[] = [
                         'cantidad' => $producto['cantidad'],
-                        'producto_id' => $productoEncontrado->id,
+                        'producto_id' => $productoEncontrado->id . ($tipo != '' ? '_' . $tipo : ''),
                     ];
                 }
             }
@@ -233,6 +235,101 @@ class ControllerSalidas extends Controller
             throw new Exception($th->getMessage()); // Lanza la excepción para poder depurar
         }
     }
+    public function restarStockActual($salida_id, $productosIds)
+    {
+        try {
+            $salida = Stock::where('id', $salida_id)->first();
+            if (!$salida) {
+                throw new \Exception("Stock no encontrado.");
+            }
+
+            // Decodificar el JSON actual de productos en el stock
+            $productosStock = json_decode($salida->productos, true) ?? [];
+
+            // Crear un mapa para acceso rápido a productos en stock
+            $productosMap = [];
+            foreach ($productosStock as &$producto) {
+                $productosMap[$producto['producto_id']] = &$producto;
+            }
+
+            // Recorrer los productos a restar
+            foreach ($productosIds as $productoData) {
+                $producto_id = $productoData['producto_id'];
+                $cantidadRestar = $productoData['cantidad'] ?? 0;
+
+                if (isset($productosMap[$producto_id])) {
+                    // Restar la cantidad al stock
+                    $productosMap[$producto_id]['cantidad'] -= $cantidadRestar;
+
+                    // Si la cantidad es menor o igual a 0, eliminar el producto del stock
+                    if ($productosMap[$producto_id]['cantidad'] <= 0) {
+                        unset($productosMap[$producto_id]);
+                    }
+                }
+            }
+
+            // Guardar el stock actualizado
+            $salida->productos = json_encode(array_values($productosMap));
+            $salida->save();
+        } catch (\Throwable $th) {
+            throw new Exception("Error al restar stock: " . $th->getMessage());
+        }
+    }
+    public function sumarStockActual_cuando_anula_pedido($usuario, $productosIds)
+    {
+        try {
+            $salida = Salidas::whereDate('fecha', Carbon::now('America/Lima'))
+                ->where('repartidor', $usuario)
+                ->first();
+    
+            if (!$salida) {
+                throw new \Exception("No se encontró una salida para el repartidor en la fecha actual.");
+            }
+    
+            $stock = Stock::where('salida_id', $salida->id)->first();
+            if (!$stock) {
+                throw new \Exception("Stock no encontrado.");
+            }
+    
+            // Decodificar el JSON actual de productos en el stock
+            $productosStock = json_decode($stock->productos, true) ?? [];
+    
+            // Crear un mapa para acceso rápido a productos en stock
+            $productosMap = [];
+            foreach ($productosStock as &$producto) {
+                $productosMap[$producto['producto_id']] = &$producto;
+            }
+    
+            // Recorrer los productos a sumar
+            foreach ($productosIds as $productoData) {
+                $producto_id = $productoData['producto_id'] ?? null;
+                $cantidadSumar = $productoData['cantidad'] ?? 0;
+    
+                if (!$producto_id) {
+                    throw new \Exception("Producto ID inválido.");
+                }
+    
+                if (isset($productosMap[$producto_id])) {
+                    // Si ya existe, sumamos la cantidad
+                    $productosMap[$producto_id]['cantidad'] += $cantidadSumar;
+                } else {
+                    // Si no existe en stock, lo agregamos
+                    $productosMap[$producto_id] = [
+                        'producto_id' => $producto_id,
+                        'cantidad' => $cantidadSumar
+                    ];
+                }
+            }
+    
+            // Guardar el stock actualizado
+            $stock->productos = json_encode(array_values($productosMap));
+            $stock->save();
+        } catch (\Throwable $th) {
+            throw new Exception("Error al sumar stock: " . $th->getMessage());
+        }
+    }
+    
+
 
     public function show($id)
     {
@@ -256,7 +353,7 @@ class ControllerSalidas extends Controller
                 // Si se encuentra el producto, agregar su información
                 if ($producto) {
                     $item['nombre'] = $producto->nombre;
-                    $item['descripcion'] = $producto->descripcion.$tipo;
+                    $item['descripcion'] = $producto->descripcion . $tipo;
                 } else {
                     $item['nombre'] = 'Producto no encontrado';
                     $item['descripcion'] = '';

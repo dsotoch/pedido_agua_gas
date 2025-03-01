@@ -112,14 +112,29 @@
             </div>
 
             <div class="mb-4">
-                <label for="limite_uso" class="block text-gray-700 font-medium">Límite de Uso en general</label>
-                <input type="number" id="limite_uso" name="limite_uso"
+                <label for="limite_uso" class=" text-gray-700 font-medium flex items-center">
+                    Límite de Uso en general
+                    <span class="ml-2 relative group">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            class="w-5 h-5 text-gray-500 cursor-pointer group-hover:text-gray-700" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="16" x2="12" y2="12"></line>
+                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                        </svg>
+                        <span
+                            class="absolute left-0 mt-2 w-48 bg-gray-800 text-white text-xs rounded-md p-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            Este límite se anula si el cupón es especial.
+                        </span>
+                    </span>
+                </label> <input type="number" id="limite_uso" name="limite_uso"
                     placeholder="cantidad que puede ser usado para este cupón entre los clientes"
                     class="mt-1 block w-full border border-gray-300 rounded-md p-2" min="1" required>
             </div>
             <div class="mb-4 hidden">
                 <label for="limite_uso_cliente" class="block text-gray-700 font-medium">Límite de Uso por cliente</label>
-                <input type="number" id="limite_uso_cliente" name="limite_uso_cliente" value="1" 
+                <input type="number" id="limite_uso_cliente" name="limite_uso_cliente" value="1"
                     class="mt-1  w-full border border-gray-300 rounded-md p-2 " min="1" required>
             </div>
             <div class="mb-4">
@@ -130,8 +145,22 @@
             <div class="mb-4 flex items-center">
                 <input type="checkbox" id="especial" name="especial"
                     class="h-4 w-4 border border-gray-300 rounded-md text-blue-600 focus:ring focus:ring-blue-200">
-                <label for="especial" class="ml-2 text-gray-700 font-medium cursor-pointer">
+                <label for="especial" class="ml-2 text-gray-700 font-medium cursor-pointer flex items-center">
                     ¿Cupón Especial?
+                    <span class="ml-2 relative group">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            class="w-5 h-5 text-gray-500 cursor-pointer group-hover:text-gray-700" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="16" x2="12" y2="12"></line>
+                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                        </svg>
+                        <span
+                            class="absolute left-0 mt-2 w-48 bg-gray-800 text-white text-xs rounded-md p-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            Este cupón puede ser utilizado por los clientes todos los días, una vez por día.
+                        </span>
+                    </span>
                 </label>
             </div>
 

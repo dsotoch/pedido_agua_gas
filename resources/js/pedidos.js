@@ -62,7 +62,7 @@ if (form_metodo_pago_venta_rapida) {
             paymentModalVentaRapida.classList.add('hidden');
             let promocion = '';
             if (respuesta.promocion) {
-                promocion = '|| Producto Gratis 1' + " " + respuesta.promocion;
+                promocion = '|| Producto Gratis '+respuesta.promocion.cantidad + " " + respuesta.promocion.producto;
             }
 
             Swal.fire({
@@ -669,9 +669,11 @@ function actualizarEstadoYPagoPanelAdministrador(pedidoId, estado) {
 
 function actualizar_Estado_delivery_panel_cliente($pedido_id, $estado) {
     const estado_pedido_span = mi_cuenta_contenedor_pedidos.querySelector("#caja-" + $pedido_id).querySelector('.estado_pedido_span');
+    const boton_asignar_repartidor=mi_cuenta_contenedor_pedidos.querySelector("#caja-" + $pedido_id).querySelector('.btnasignarrepartidor');
     estado_pedido_span.innerHTML = $estado == 'En Camino'
         ? $estado + " <span class='text-2xl'>🚚</span>"
         : $estado;
+    boton_asignar_repartidor.classList.add('border-verde');
 }
 
 
@@ -931,7 +933,7 @@ const form_editar_pedido_repartidor = document.getElementById('form_editar_pedid
 let spanrepartidor;
 const mi_cuenta_contenedor_pedidos = document.getElementById('mi_cuenta_contenedor_pedidos_super');
 let productos_del_pedido;
-
+let boton_asignar_clickeado;
 if (mi_cuenta_contenedor_pedidos) {
     mi_cuenta_contenedor_pedidos.addEventListener('click', (event) => {
         const botonasignar = event.target.closest('.btnasignarrepartidor');
@@ -950,7 +952,7 @@ if (mi_cuenta_contenedor_pedidos) {
                 let productos_requ = Array.from(productos_del_pedido_detalles).map(element => element.textContent.trim());
                 // Limpiar la lista antes de agregar nuevos elementos
                 productos_requeridos.innerHTML = '';
-
+                boton_asignar_clickeado=botonasignar;
                 // Crear un elemento <li> por cada producto
                 productos_requ.forEach(texto => {
                     let li = document.createElement("li");
@@ -1095,8 +1097,8 @@ if (formAsignarRepartidor) {
         productos.forEach(element => {
             detalles_productos.push(element.textContent.trim());
         });
-
         let textos = Array.from(productos_del_pedido).map(element => element.textContent.trim());
+
         let productosSeparados_requeridos = textos.map(item => {
             let partes = item.split('/');
             return {
@@ -1104,18 +1106,20 @@ if (formAsignarRepartidor) {
                 descripcion: partes[0].trim()
             };
         });
+
+
         let productosSeparados = detalles_productos.map(item => {
             let partes = item.split('×'); // Dividir en cantidad y descripción
             return {
                 cantidad: parseInt(partes[0].trim()), // Convertir cantidad a número
-                descripcion: partes[1].trim()
+                nombre: partes[1].trim()
             };
         });
 
         // Crear un mapa con el stock disponible
         let stockDisponible = new Map();
         productosSeparados.forEach(producto => {
-            stockDisponible.set(producto.descripcion, producto.cantidad);
+            stockDisponible.set(producto.nombre, producto.cantidad);
         });
 
         // Verificar si hay suficiente stock
@@ -1124,18 +1128,9 @@ if (formAsignarRepartidor) {
         productosSeparados_requeridos.forEach(producto => {
             let stock = stockDisponible.get(producto.descripcion) || 0;
             if (stock < producto.cantidad) {
-                Swal.fire({
-                    title: 'Stock Faltante',
-                    text: `No hay suficiente stock para ${producto.descripcion}. Disponible: ${stock}, Requerido: ${producto.cantidad}`,
-                    icon: 'warning',
-                    timerProgressBar: true,
-                    timer: 2000,
-                    showConfirmButton: false,
-                    customClass: {
-                        timerProgressBar: 'bg-red-500 h-2 rounded'
-                    }
-                })
+
                 puedeVender = false;
+                
             }
         });
         let exito_repartidor = false;
@@ -1192,6 +1187,7 @@ if (formAsignarRepartidor) {
                     })
                     formAsignarRepartidor.reset();
                     spanrepartidor.textContent = result.repartidor;
+                    boton_asignar_clickeado.classList.add('border-2','border-naranja');
 
                 })
                 .catch(error => {
@@ -1203,15 +1199,14 @@ if (formAsignarRepartidor) {
                 datos_actualizar.innerHTML = '';
 
                 // Agregar todos los productos disponibles a la lista
-                stockDisponible.forEach((cantidad, descripcion) => {
+                stockDisponible.forEach((cantidad, nombre) => {
                     let li = document.createElement('li');
-                    li.textContent = `${cantidad} × ${descripcion}`;
+                    li.textContent = `${cantidad} × ${nombre}`;
                     datos_actualizar.appendChild(li);
                 });
 
 
 
-                console.log("Venta procesada. Stock actualizado:", Array.from(stockDisponible.entries()).map(([descripcion, cantidad]) => ({ descripcion, cantidad })));
             }
         } else {
             Swal.fire({
@@ -1230,7 +1225,6 @@ if (formAsignarRepartidor) {
 
 
         if (exito_repartidor) {
-            console.log(stockDisponible);
             await registrarNuevoStock(salida_id, Array.from(stockDisponible.entries()).map(([descripcion, cantidad]) => ({ descripcion, cantidad })));
 
         }

@@ -18,7 +18,8 @@ export default {
         'color-fondo-productos':'#eeeeee',
         'color-titulos-entrega':'#293241',
         'color-dashboard':'#ebeff2',
-        'color-tarjetas':'#f9f9f9'
+        'color-tarjetas':'#f9f9f9',
+        'verde':'#25d366',
       },
       fontFamily: {
         sans: ['Open Sans', 'sans-serif'], // Agrega Open Sans sin eliminar la fuente predeterminada

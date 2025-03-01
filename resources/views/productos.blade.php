@@ -144,7 +144,7 @@
                                         <option value="mismo">Mismo Producto a Registrar</option>
                                         @foreach ($empresa->productos as $item)
                                            
-                                                <option value="{{ $item->descripcion }}">{{ $item->descripcion }}
+                                                <option value="{{ $item->nombre }}">{{ $item->nombre }}
                                                 </option>
                                         @endforeach
                                     @else
@@ -264,7 +264,7 @@
                         <option value="mismo">Mismo Producto</option>
                         @foreach ($empresa->productos as $item)
                            
-                                <option value="{{ $item->descripcion }}">{{ $item->descripcion }}</option>
+                                <option value="{{ $item->nombre }}">{{ $item->nombre }}</option>
                             
                         @endforeach
                     @else

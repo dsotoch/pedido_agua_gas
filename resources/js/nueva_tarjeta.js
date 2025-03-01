@@ -18,21 +18,27 @@ export function agregarPedido(pedido, usuario, tiempo) {
     const horaFormateada = pedidoFecha.toLocaleTimeString('es-PE', opcionesHora); // Formato hh:mm:ss am/pm
     const detallesHTML = Array.isArray(pedido.detalles) && pedido.detalles.length > 0
         ? pedido.detalles.map(item => `
-            <p>
-                ${item.producto?.nombre || ''} ${item.producto?.descripcion || ''}
-                ${item.tipo ? `_${item.tipo}` : ''}
-                x ${item.cantidad}
-            </p>
-        `).join('')
+        <span hidden>
+            ${item.producto?.nombre}${item.tipo ? '_' + item.tipo : ''}/${item.cantidad}
+        </span>
+
+        <p>
+            ${item.producto?.nombre}${item.tipo ? '_' + item.tipo : ''} x ${item.cantidad}
+        </p>
+    `).join('')
         : '';
 
 
     const promocionesHTML = Array.isArray(pedido.entrega_promociones) && pedido.entrega_promociones.length > 0
         ? pedido.entrega_promociones
             .filter(et => et.estado) // Filtra solo los que tienen estado `true`
-            .map(et => `<p>${et.producto} x ${et.cantidad} Gratis.</p>`)
+            .map(et => `
+                <span hidden>${et.producto}/${et.cantidad}</span>
+                <p>${et.producto} x ${et.cantidad} Gratis.</p>
+            `)
             .join('')
         : '';
+
 
 
 
@@ -71,7 +77,7 @@ export function agregarPedido(pedido, usuario, tiempo) {
                         
                         <button title="Asignar repartidor" data-id="${pedido}"
                             class="btnasignarrepartidor z-50 flex items-center px-2 py-2 border-color-titulos-entrega text-color-titulos-entrega rounded shadow-md hover:scale-150 transform">
-                            <i class="btnasignarrepartidor fas fa-user-plus mr-2" data-id="${pedido}"></i> 
+                            <i class=" fas fa-user-plus mr-2" data-id="${pedido}"></i> 
                         </button>
     
                         <button title="Editar pedido" data-id="${pedido}"
@@ -205,7 +211,7 @@ export function agregarPedido(pedido, usuario, tiempo) {
                 <div class="w-[17px] h-[17px] text-color-titulos-entrega opacity-80">
                     <img src="imagenes/cajas/carrito.svg" alt="">
                 </div>
-                <div class="flex flex-col justify-center ml-2">
+                <div class="productos_del_pedido flex flex-col justify-center ml-2">
                     ${detallesHTML}
                     ${promocionesHTML}
                 </div>

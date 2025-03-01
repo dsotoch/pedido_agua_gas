@@ -46,8 +46,7 @@
                                      }
                                  @endphp
                                  <li>
-                                     {{ $item['cantidad'] }} ×
-                                     {{ $producto ? $producto->nombre . ' ' . $producto->descripcion . $tipo : 'Producto no encontrado' }}
+                                     {{ $item['cantidad'] }} × {{ $producto ? $producto->nombre . $tipo : 'Producto no encontrado' }}
                                  </li>
                              @endforeach
                          </ul>

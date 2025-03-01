@@ -60,7 +60,12 @@
                                                 @if ($usuario->tipo == 'admin')
                                                     <!-- Botón Asignar Repartidor -->
                                                     <button title="Asignar repartidor" data-id="{{ $pedido->id }}"
-                                                        class="btnasignarrepartidor z-50 flex items-center px-2 py-2  border-color-titulos-entrega text-color-titulos-entrega rounded shadow-md hover:scale-150 transform">
+                                                        class="btnasignarrepartidor 
+                                                        z-50 flex items-center px-2 py-2 rounded shadow-md transform 
+                                                        hover:scale-150 
+                                                         
+                                                        {{ $pedido->estado == 'En Camino' ? 'border-2 border-verde' : ($pedido->repartidor ? 'border-2 border-naranja' : '') }} 
+                                                        text-color-titulos-entrega">
                                                         <i class=" fas fa-user-plus mr-2"></i>
                                                         <!-- Ícono de Font Awesome -->
                                                     </button>
@@ -214,12 +219,11 @@
                                                 @if ($pedido->detalles->count() > 0)
                                                     @foreach ($pedido->detalles as $item)
                                                         <span hidden>
-                                                            {{ $item->producto?->nombre . ' ' . $item->producto?->descripcion }}{{ $item->tipo ?'_'.$item->tipo : '' }}/{{ $item->cantidad }}
+                                                            {{ $item->producto?->nombre }}{{ $item->tipo ? '_' . $item->tipo : '' }}/{{ $item->cantidad }}
                                                         </span>
 
                                                         <p>
-                                                            {{ $item->producto?->nombre . ' ' . $item->producto?->descripcion }}{{ $item->tipo ?'_'.$item->tipo : '' }}
-                                                            x {{ $item->cantidad }}
+                                                            {{ $item->producto?->nombre }}{{ $item->tipo ? '_' . $item->tipo : '' }} x {{ $item->cantidad }}
                                                         </p>
                                                     @endforeach
                                                 @endif
@@ -304,7 +308,7 @@
                                                         </div>
                                                     </div>
                                                     <img src="{{ asset('imagenes/cajas/cupons.png') }}" alt=""
-                                                        class="absolute top-[55px] md:left-[25px] -right-3  md:w-[60px] w-[38px] h-[50px]">
+                                                        class="absolute top-[65px] md:left-[25px] -right-3  md:w-[55px] w-[38px] h-[45px]">
 
                                                 </div>
                                             </div>
@@ -505,8 +509,7 @@
                                             <div class="flex flex-col justify-center  ml-2">
                                                 @foreach ($pedido->detalles as $item)
                                                     <p>
-                                                        {{ $item->producto?->nombre . ' ' . $item->producto?->descripcion }}
-                                                        {{ $item->tipo ? '_' . $item->tipo : '' }}
+                                                        {{ $item->producto?->nombre }}{{ $item->tipo ? '_' . $item->tipo : '' }}
                                                         x {{ $item->cantidad }}
                                                     </p>
                                                 @endforeach

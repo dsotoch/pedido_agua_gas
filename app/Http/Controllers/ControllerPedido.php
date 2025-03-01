@@ -10,7 +10,10 @@ use App\Models\Empresa;
 use App\Models\EntregaPromociones;
 use App\Models\Pedido;
 use App\Models\Producto;
+use App\Models\Promociones;
 use App\Models\PromocionesUnitario;
+use App\Models\Salidas;
+use App\Models\Stock;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -176,8 +179,27 @@ class ControllerPedido extends Controller
                 'nota_interna' => $request->notas,
                 'actor' => $user_actual->persona->nombres
             ]);
+            $array_productos = [];
+
+            foreach ($pedido->detalles as $detalle) {
+                array_push($array_productos, [
+                    'cantidad' => $detalle->cantidad,
+                    'producto_id' => $detalle->producto->id . (!empty($detalle->tipo) ? "_{$detalle->tipo}" : '')
+                ]);
+            }
+
+            foreach ($pedido->entregaPromociones as $promocion) {
+                array_push($array_productos, [
+                    'cantidad' => $promocion->cantidad,
+                    'producto_id' => Producto::where('nombre',$promocion->producto)->value('id')
+                ]);
+            }
+
+
             $mensaje = ['operacion' => 'anulacion', 'mensaje' => 'El pedido ha sido anulado.', 'pedido_id' => $pedido->id, 'estado' => $pedido->estado];
             $admin = $pedido->empresa->usuarios()->where('tipo', 'admin')->first();
+            $salida=new ControllerSalidas();
+            $salida->sumarStockActual_cuando_anula_pedido($user_actual->persona?->nombres, $array_productos);
             SendMessage::dispatch($mensaje, $admin->id);
             return response()->json(['mensaje' => 'El pedido #' . $request->id_pedido . ' se anulo Correctamente', 'pedido_id' => $pedido->id], 200);
         } catch (\Throwable $th) {
@@ -537,7 +559,7 @@ class ControllerPedido extends Controller
                 }
                 $controlador_cupon = new CuponController();
                 if (!empty($request->cupon)) {
-                    $resultados = $controlador_cupon->aplicarCupon($request->cupon, $totalPedido,$request->empresa_id);
+                    $resultados = $controlador_cupon->aplicarCupon($request->cupon, $totalPedido, $request->empresa_id);
                     $pedido->update([
                         'total' => $resultados['total_con_descuento'],
                         'descuento' => $resultados['descuento'],
@@ -579,8 +601,10 @@ class ControllerPedido extends Controller
     public function pedido_rapido(Request $request)
     {
         DB::beginTransaction();
+
         try {
 
+            $productosIds = [];
             $usuario = Auth::user();
             $usuario = User::findOr($usuario->id);
             $totalPedido = 0.00;
@@ -610,7 +634,7 @@ class ControllerPedido extends Controller
             }
 
             // Calcular precios y procesar productos
-            $preciosYDetalles = $productos->map(function ($productoData) use ($pedido, &$totalPedido) {
+            $preciosYDetalles = $productos->map(function ($productoData) use ($pedido, &$totalPedido, &$productosIds) {
                 $producto = Producto::find($productoData['id']);
                 if (!$producto) {
                     throw new \Exception("Producto no encontrado.");
@@ -631,11 +655,25 @@ class ControllerPedido extends Controller
                 Detalles::create([
                     'pedido_id' => $pedido->id,
                     'producto_id' => $producto->id,
-                    'tipo' => $productoData['tipo']??'',
+                    'tipo' => $productoData['tipo'] ?? '',
                     'cantidad' => $productoData['cantidad'],
                     'precioUnitario' => $precioFinal,
                     'total' => $totalProducto,
                 ]);
+
+                $productoId = $producto->id . ($productoData['tipo'] ? '_' . $productoData['tipo'] : '');
+                $cantidad = $productoData['cantidad'] ?? 0;
+
+                // Buscar si ya existe en el array
+                $index = array_search($productoId, array_column($productosIds, 'producto_id'));
+
+                if ($index !== false) {
+                    // Si ya existe, sumamos la cantidad
+                    $productosIds[$index]['cantidad'] += $cantidad;
+                } else {
+                    // Si no existe, lo agregamos con array_push()
+                    array_push($productosIds, ['cantidad' => $cantidad, 'producto_id' => $productoId]);
+                }
 
                 return [
                     'producto' => $producto,
@@ -652,7 +690,9 @@ class ControllerPedido extends Controller
 
 
             // Procesar promociones unitarias y actualizar cantidades
-            $productos->each(function ($productoData) use ($usuario, $pedido, $empresa) {
+            $cantidad = 0;
+            $productos->each(function ($productoData) use ($usuario, $pedido, $empresa, &$cantidad) {
+
                 $producto = Producto::find($productoData['id']);
                 if (!$producto || $productoData['cantidad'] <= 0) {
                     throw new \Exception("Producto inválido o cantidad incorrecta.");
@@ -660,29 +700,23 @@ class ControllerPedido extends Controller
 
                 $promocionUnitaria = PromocionesUnitario::where('producto_id', $producto->id)->first();
 
-
-
-
-
                 $nuevaCantidad = $productoData['cantidad'];
                 // Verificamos si hay una promoción y si se cumple la cantidad requerida
                 if ($promocionUnitaria) {
                     if ($nuevaCantidad >= $promocionUnitaria->cantidad) {
-                        // Crear una promoción pero con estado false
-                        $entregaPromocion = EntregaPromociones::firstOrNew([
-                            'user_id' => $usuario->id,
-                            'producto_id' => $producto->id,
-                            'pedido_id'=>$pedido->id
-                        ]);
-
-                        if (!$entregaPromocion->exists) {
-                            $entregaPromocion->fill([
-                                'cantidad' => 1,
+                        $cantidad++;
+                        $entregaPromocion = EntregaPromociones::updateOrCreate(
+                            [
+                                'user_id' => $usuario->id,
+                                'producto_id' => $producto->id,
+                                'pedido_id' => $pedido->id
+                            ],
+                            [
+                                'cantidad' => $cantidad,
                                 'producto' => $promocionUnitaria->producto_gratis,
                                 'estado' => true, // No se entrega aún
-                            ]);
-                            $entregaPromocion->save();
-                        }
+                            ]
+                        );
                     }
                 }
             });
@@ -697,9 +731,28 @@ class ControllerPedido extends Controller
             $promocion = optional($pedido_completo->entregaPromociones)
                 ->where('pedido_id', $pedido->id)
                 ->where('estado', true)
-                ->first()
-                ->producto ?? null;
+                ->first() ?? null;
             // Confirmar la transacción
+
+            if ($usuario->tipo == 'repartidor') {
+                $salida = new ControllerSalidas();
+                array_push($productosIds, [
+                    'cantidad' => optional($pedido_completo->entregaPromociones)
+                        ->where('pedido_id', $pedido->id)
+                        ->where('estado', true)
+                        ->first()->cantidad ?? 0,
+                    'producto_id' => Producto::where('nombre', $promocion)->value('id')
+
+                ]);
+
+                $salida_id = Salidas::whereDate('fecha', Carbon::now('America/Lima'))->where('repartidor', $usuario->persona->nombres)->first();
+                $stock = Stock::where('salida_id', $salida_id->id)->first();
+                // Restar stock de todos los productos en una sola ejecución
+                $salida->restarStockActual($stock->id, $productosIds);
+            }
+
+
+
             DB::commit();
             return response()->json(['mensaje' => 'Pedido Finalizado Correctamente', 'promocion' => $promocion], 201);
         } catch (\Throwable $e) {

@@ -110,7 +110,6 @@ if (mi_cuenta_contenedor_pedidos) {
     
         if (disparador.classList.contains('btnanularpedido')) {
             const id_pedido_modal_anular = document.getElementById('id_pedido_modal_anular');
-            disparador.disabled = true;
             modal_anular_pedido.classList.remove('hidden');
             modal_anular_pedido.classList.add('flex');
             modal_anular_pedido_id.textContent = "#" + id;
