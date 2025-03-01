@@ -32,7 +32,7 @@
             </button>
             @guest
                 <div id="contenedor_login"
-                    class="absolute hidden overflow-y-auto w-[350px]  md:w-[600px] max-h-[80vh] z-50    flex-col justify-start text-start  top-12  bg-white shadow-md">
+                    class="absolute hidden overflow-y-auto min-w-[360px] md:min-w-[600px] md:max-h-[80vh] max-h-[95vh] min-h-[250px] z-50    flex-col justify-start text-start  top-12  bg-white shadow-md">
 
                     <!-- Formulario de inicio de sesión -->
                     <div class="bg-white w-full p-10" id="formLogindiv">
@@ -162,7 +162,7 @@
             @endguest
             @auth
                 <div id="contenedor_login"
-                    class="absolute hidden overflow-y-auto w-full  md:w-[600px] max-h-[80vh] md:min-h-[250px] min-h-[300px] z-50  group-focus-within:flex  flex-col justify-start text-start  top-12  bg-white shadow-md">
+                    class="absolute hidden overflow-y-auto w-full min-w-[360px] md:min-w-[600px] md:max-h-[80vh] max-h-[95vh] min-h-[250px] z-50  group-focus-within:flex  flex-col justify-start text-start  top-12  bg-white shadow-md">
 
                     <!--Usuario ya Autenticado--->
                     <div class="absolute w-full">

@@ -21,13 +21,29 @@ const contenedorLogin = document.getElementById("contenedor_login");
 if (btnAcceder) {
     btnAcceder.addEventListener("mouseenter", function () {
         contenedorLogin.classList.remove("hidden");
+        btnAcceder.innerHTML = "X"; // Cambia el texto a "X"
+        btnAcceder.classList.add('text-2xl','font-semibold');
+    });
+
+    btnAcceder.addEventListener("click", function () {
+        if (!contenedorLogin.classList.contains("hidden")) {
+            contenedorLogin.classList.add("hidden");
+            btnAcceder.classList.remove('text-2xl','font-semibold');
+
+            btnAcceder.innerHTML = 'Acceder&nbsp;&nbsp;<i class="fa-solid fa-right-to-bracket"></i>'; // Restaura el botón
+        }
     });
 }
+
 
 
 if (contenedorLogin) {
     contenedorLogin.addEventListener("mouseleave", function () {
         contenedorLogin.classList.add("hidden");
+        btnAcceder.classList.remove('text-2xl','font-semibold');
+
+        btnAcceder.innerHTML = 'Acceder&nbsp;&nbsp;<i class="fa-solid fa-right-to-bracket"></i>'; // Restaura el botón
+
     });
 }
 function mostrarMensaje(mensaje, color) {

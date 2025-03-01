@@ -15,27 +15,24 @@
                 nuestros clientes.
             </p>
             <p class="text-wrap font-normal mt-2 text-base leading-[35px] text-color-text">{!! nl2br(e($empresa->descripcion)) !!}</p>
-            <div class="relative z-40 w-full  mx-auto  overflow-hidden mb-[40px] mt-16">
+            <div class="relative z-40 w-full mx-auto overflow-hidden mb-[40px] mt-16">
                 <!-- Contenedor de las diapositivas -->
                 <div id="slider" class="flex transition-transform duration-500">
                     @foreach ($imagenes as $item)
-                        <div class="w-full flex-shrink-0">
-                            <img src="{{ asset('storage/' . $item) }}" class="object-contain"
+                        <div class="w-full md:w-1/2 flex-shrink-0 p-2">
+                            <img src="{{ asset('storage/' . $item) }}" class="object-cover w-full h-auto rounded-lg shadow-md"
                                 alt="Producto de la empresa">
                         </div>
                     @endforeach
-
                 </div>
                 <!-- Controles -->
                 <button id="prev"
-                    class="border hover:border-red-500 absolute left-0 top-1/2 transform -translate-y-1/2 bg-[#111111] text-white w-[50px] h-[50px]">
+                    class="border hover:border-red-500 absolute left-0 top-1/2 transform -translate-y-1/2 bg-[#111111] text-white w-[50px] h-[50px] flex items-center justify-center rounded-full">
                     <i class="fas fa-angle-left text-[30px]"></i>
-
                 </button>
                 <button id="next"
-                    class="border hover:border-red-500 absolute right-0 top-1/2 transform -translate-y-1/2 bg-[#111111] text-white   w-[50px] h-[50px]">
+                    class="border hover:border-red-500 absolute right-0 top-1/2 transform -translate-y-1/2 bg-[#111111] text-white w-[50px] h-[50px] flex items-center justify-center rounded-full">
                     <i class="fas fa-angle-right text-[30px]"></i>
-
                 </button>
             </div>
         </div>

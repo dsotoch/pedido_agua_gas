@@ -200,31 +200,42 @@ if (tablapagospendientes.length > 0) {
     });
 }
 
-//SLIDER PRODUCTOS 
-const slider = document.getElementById('slider');
-const slides = document.querySelectorAll('#slider > div');
-const prev = document.getElementById('prev');
-const next = document.getElementById('next');
+const slider = document.getElementById("slider");
+const slides = document.querySelectorAll("#slider > div");
+const prev = document.getElementById("prev");
+const next = document.getElementById("next");
 
 let currentIndex = 0;
+let itemsPerView = window.innerWidth >= 768 ? 2 : 1;
 
 const updateSlider = () => {
-    slider.style.transform = `translateX(-${currentIndex * 100}%)`;
+    let percentage = (currentIndex * 100) / itemsPerView;
+    slider.style.transform = `translateX(-${percentage}%)`;
 };
 
 if (next) {
-    next.addEventListener('click', () => {
-        currentIndex = (currentIndex + 1) % slides.length;
-        updateSlider();
+    next.addEventListener("click", () => {
+        if (currentIndex < slides.length - itemsPerView) {
+            currentIndex++;
+            updateSlider();
+        }
     });
 }
 
 if (prev) {
-    prev.addEventListener('click', () => {
-        currentIndex = (currentIndex - 1 + slides.length) % slides.length;
-        updateSlider();
+    prev.addEventListener("click", () => {
+        if (currentIndex > 0) {
+            currentIndex--;
+            updateSlider();
+        }
     });
 }
+
+window.addEventListener("resize", () => {
+    itemsPerView = window.innerWidth >= 768 ? 2 : 1;
+    updateSlider();
+});
+
 
 
 //Mensaje de Error
