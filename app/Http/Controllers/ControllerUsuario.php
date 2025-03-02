@@ -298,7 +298,10 @@ class ControllerUsuario extends Controller
         }
     }
     public function update(Request $request, $id)
+
+
     {
+
         // Validar los datos del formulario
         try {
             $request->validate([

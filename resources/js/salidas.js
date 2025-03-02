@@ -4,8 +4,13 @@ const btn_guardar_vehiculo = document.getElementById('btn_guardar_vehiculo');
 const vehiculo_select = document.getElementById('vehiculo-select');
 const repartidor_select = document.getElementById('repartidor-select');
 const btn_editar_vehiculo = document.getElementById("btn_editar_vehiculo");
+const btn_eliminar_vehiculo = document.getElementById("btn_eliminar_vehiculo");
+const token = document.querySelector('meta[name="token"]').getAttribute('content');
+
 const modal = document.getElementById("modal_vehiculos");
 const modalVehiculo = document.getElementById("modal-vehiculo");
+const modalVehiculoInput = document.getElementById("modal-vehiculo_input");
+
 const modalRepartidor = document.getElementById("modal-repartidor");
 const nuevoRepartidor = document.getElementById("nuevo-repartidor");
 const btnCerrar = document.getElementById("cerrar-modal");
@@ -13,39 +18,45 @@ const btnGuardar = document.getElementById("guardar-cambio");
 const modalVerSalida = document.getElementById('modal_ver_salida');
 const cerrarModalBtns = document.querySelectorAll('#cerrar_modal, #cerrar_modal_footer');
 const tablaProductos = document.getElementById('tabla_productos');
-const btnVerSalida = document.getElementById('btn_ver_salida'); // Asegúrate de tener este botón en tu HTML
+const btnVerSalida = document.querySelectorAll('#btn_ver_salida'); // Asegúrate de tener este botón en tu HTML
 if (btnVerSalida) {
+    btnVerSalida.forEach((element) => {
+        element.addEventListener('click', (e) => {
+            const btn = e.target.closest('#btn_ver_salida'); // Busca el botón más cercano
+            let salidaId;
+            if (btn) {
+                salidaId = btn.dataset.id;
+            }
 
-    btnVerSalida.addEventListener('click', () => {
-        const salidaId = btnVerSalida.getAttribute('data-id');
+            fetch(`/salidas/${salidaId}`)
+                .then(response => response.json())
+                .then(data => {
+                    tablaProductos.innerHTML = ''; // Limpiar la tabla antes de insertar nuevos datos
 
-        fetch(`/salidas/${salidaId}`)
-            .then(response => response.json())
-            .then(data => {
-                tablaProductos.innerHTML = ''; // Limpiar la tabla antes de insertar nuevos datos
+                    if (data.error) {
+                        console.error("Error:", data.error);
+                        return;
+                    }
 
-                if (data.error) {
-                    console.error("Error:", data.error);
-                    return;
-                }
+                    // `data.productos` ya es un array de objetos, NO necesitas hacer JSON.parse()
+                    data.productos.forEach(producto => {
+                        const fila = document.createElement('tr');
+                        fila.innerHTML = `
+                        <td class="border p-2 text-center">${producto.nombre} ${producto.descripcion}</td>
+                       
+                        <td class="border p-2 text-center">${producto.cantidad}</td>
+                    `;
+                        tablaProductos.appendChild(fila);
+                    });
 
-                // `data.productos` ya es un array de objetos, NO necesitas hacer JSON.parse()
-                data.productos.forEach(producto => {
-                    const fila = document.createElement('tr');
-                    fila.innerHTML = `
-                    <td class="border p-2 text-center">${producto.nombre} ${producto.descripcion}</td>
-                   
-                    <td class="border p-2 text-center">${producto.cantidad}</td>
-                `;
-                    tablaProductos.appendChild(fila);
-                });
+                    modalVerSalida.classList.remove('hidden'); // Mostrar el modal
+                    modalVerSalida.classList.add('flex'); // Mostrar el modal
 
-                modalVerSalida.classList.remove('hidden'); // Mostrar el modal
-                modalVerSalida.classList.add('flex'); // Mostrar el modal
+                })
+                .catch(error => console.error('Error al obtener los productos:', error));
+        });
+    })
 
-            })
-            .catch(error => console.error('Error al obtener los productos:', error));
-    });
 }
 
 
@@ -56,6 +67,12 @@ if (cerrarModalBtns) {
             modalVerSalida.classList.remove('flex'); // Mostrar el modal
             modalVerSalida.classList.add('hidden');
         });
+    });
+}
+if (vehiculo_select) {
+    vehiculo_select.addEventListener('change', () => {
+        document.getElementById('placa_salida').value = '';
+
     });
 }
 
@@ -69,14 +86,56 @@ if (btn_editar_vehiculo) {
         }
         const datos = (vehiculo_select.options[vehiculo_select.selectedIndex].textContent).split('-');
 
-        vehiculoActual = datos[0];
+        vehiculoActual = datos[0].trim();
         const repartidorId = datos[1];
 
         modalVehiculo.textContent = vehiculoActual;
         modalRepartidor.textContent = repartidorId;
-
+        modalVehiculoInput.value = vehiculoActual;
         // Mostrar modal
         modal.classList.remove("hidden");
+    });
+}
+if (btn_eliminar_vehiculo) {
+    btn_eliminar_vehiculo.addEventListener("click", function () {
+
+        if (vehiculo_select.value == '') {
+            errorMensaje("Selecciona un vehiculo para Eliminar", 'Requerimiento faltante.');
+            return;
+        }
+        const datos = (vehiculo_select.options[vehiculo_select.selectedIndex].textContent).split('-');
+        const empresaID = document.getElementById('empresaId_salida').value.trim();
+        vehiculoActual = datos[0].trim();
+
+        if (!confirm("¿Estás seguro de eliminar este vehículo?")) return;
+
+        fetch("/eliminarVehiculo", {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": token
+            },
+            body: JSON.stringify({ id: vehiculoActual, empresa_id: empresaID }) // Enviar el ID del vehículo
+        })
+            .then(response => {
+                if (!response.ok) { // Verifica el código HTTP
+                    return response.json().then(err => { throw new Error(err.mensaje); });
+                }
+                return response.json();
+            })
+            .then(data => {
+                exitoMensaje(data.mensaje, "Confirmación");
+
+                // Elimina la opción seleccionada en el select
+                const opcionSeleccionada = vehiculo_select.querySelector(`option[value="${vehiculo_select.value}"]`);
+                if (opcionSeleccionada) {
+                    opcionSeleccionada.remove();
+                }
+            })
+            .catch(error => errorMensaje(error.message, 'Error al Procesar'));
+
+
+
     });
 }
 
@@ -90,17 +149,46 @@ if (btnGuardar) {
     btnGuardar.addEventListener("click", function () {
         const repartidorSeleccionado_id = nuevoRepartidor.value;
         const repartidorSeleccionado = nuevoRepartidor.options[nuevoRepartidor.selectedIndex].textContent;
-        vehiculo_select.options[vehiculo_select.selectedIndex].remove();
+        let vehiculo = modalVehiculo.textContent.trim();
+        // Si el vehículo ha cambiado, actualizar vehiculoActual
+        vehiculoActual = modalVehiculoInput.value.trim();
+
+
+        // Validar si la placa ya está registrada antes de eliminar
+        if (placaExiste(vehiculoActual)) {
+            errorMensaje('La placa ingresada ya está registrada.', 'Conflicto de datos');
+            return;
+        }
+
+        document.getElementById('placa_salida').value = vehiculo;
+        // Eliminar la opción seleccionada solo si existe
+        if (vehiculo_select.selectedIndex !== -1) {
+            vehiculo_select.options[vehiculo_select.selectedIndex].remove();
+        }
+
+        // Verificar si la opción ya existe en el select
+        const existeOpcion = Array.from(vehiculo_select.options).some(option => option.value.startsWith(vehiculoActual));
+        if (existeOpcion) {
+            errorMensaje('La placa ingresada ya está registrada en el listado.', 'Conflicto de datos');
+            return;
+        }
+
+        // Crear y agregar nueva opción
         let option = document.createElement('option');
-        option.value = vehiculoActual + '-' + repartidorSeleccionado_id; // Temporalmente, sin ID real
+        option.value = vehiculoActual + '-' + repartidorSeleccionado_id;
         option.textContent = `${vehiculoActual} - ${repartidorSeleccionado}`;
         vehiculo_select.appendChild(option);
+
         // Seleccionar la nueva opción
         vehiculo_select.value = option.value;
+
+
+
         // Cerrar modal
         modal.classList.add("hidden");
     });
 }
+
 
 
 
@@ -141,8 +229,8 @@ function placaExiste(placa) {
 
     for (let i = 0; i < select.options.length; i++) {
         let valor = select.options[i].value.split("-")[0]; // Obtener la placa (antes del guion)
-        if (valor === placa) {
-            return true; // La placa ya existe
+        if (valor.trim() === placa.trim()) {
+            return true;
         }
     }
     return false; // La placa no existe
@@ -202,6 +290,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const formContainer = document.getElementById("formulario-edicion-productos");
             formContainer.innerHTML = ""; // Limpiar contenido previo
+            formContainer.cla
 
             // Input oculto con salida_id
             let inputSalidaId = document.createElement("input");
@@ -212,6 +301,10 @@ document.addEventListener("DOMContentLoaded", function () {
             formContainer.appendChild(inputSalidaId);
 
             productos.forEach((item) => {
+
+                let contenedor = document.createElement("div");
+                contenedor.classList.add('border', 'p-2', 'contenedor_producto');
+
                 // Crear un select para producto
                 let selectProducto = document.createElement("select");
                 selectProducto.name = "productos[]";
@@ -225,19 +318,29 @@ document.addEventListener("DOMContentLoaded", function () {
                 selectProducto.appendChild(optionSelected);
 
                 let divContainer = document.createElement("div");
-                divContainer.classList.add("flex", "flex-col", "space-y-2");
+                divContainer.classList.add("flex", "flex-col", "space-y-2", 'border', 'p-2');
 
                 // Crear el texto descriptivo
                 let labelText = document.createElement("span");
                 labelText.textContent = "Cantidad a agregar:";
                 labelText.classList.add("text-gray-700", "text-base");
-
+                // Crear input para cantidad
+                let bntEliminar = document.createElement("button");
+                bntEliminar.textContent = "Eliminar";
+                bntEliminar.type = 'button';
+                bntEliminar.classList.add("border", "p-2", "rounded", 'font-semibold', 'border-color-titulos-entrega', 'text-color-titulos-entrega', 'hover:scale-x-105');
+                bntEliminar.addEventListener('click', () => {
+                    bntEliminar.closest('.contenedor_producto').remove();
+                    productos = productos.filter(producto => producto.id !== item.id);
+                    console.log(productos);
+                })
                 // Crear input para cantidad
                 let inputCantidad = document.createElement("input");
                 inputCantidad.type = "number";
                 inputCantidad.name = "cantidades[]";
                 inputCantidad.value = '0';
                 inputCantidad.classList.add("border", "p-2", "rounded", "w-full");
+                divContainer.appendChild(bntEliminar);
 
                 // Agregar el texto y el input al contenedor
                 divContainer.appendChild(labelText);
@@ -251,8 +354,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 // Agregar los elementos al div contenedor
                 div.appendChild(selectProducto);
                 div.appendChild(divContainer);
-
-                formContainer.appendChild(div);
+                contenedor.appendChild(div);
+                formContainer.appendChild(contenedor);
             });
 
         });

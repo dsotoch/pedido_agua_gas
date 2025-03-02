@@ -77,3 +77,38 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 });
+
+
+//USUARIOS ADMIN
+
+const usuariosadmin = document.querySelectorAll('.usuariosadmin');
+if (usuariosadmin) {
+    usuariosadmin.forEach((element) => {
+        element.addEventListener('click', (event) => {
+            if (event.target.classList.contains('btn_editar_repartidor_datos')) {
+                const disparador = event.target;
+                const padre = disparador.closest('.usuariosadmin');
+                const usuario = padre.querySelector('#edit_usuario').textContent.trim();
+                const nombre = padre.querySelector('#edit_nombres').textContent.trim();
+                const email = padre.querySelector('#edit_email').textContent.trim();
+                const editarUsuarioModal = document.getElementById('editar_usuario_repartidor');
+                if (editarUsuarioModal) {
+                    const edit_form_nombre = editarUsuarioModal.querySelector('#edit_form_nombre');
+                    const edit_form_email = editarUsuarioModal.querySelector('#edit_form_email');
+                    const edit_form_usuario = editarUsuarioModal.querySelector('#edit_form_usuario');
+
+                    editarUsuarioModal.classList.remove('hidden');
+                    editarUsuarioModal.classList.add('flex');
+                    edit_form_email.value = email;
+                    edit_form_nombre.value = nombre;
+                    edit_form_usuario.value = usuario;
+                    const userId = disparador.getAttribute('data-id'); // Obtener el ID del usuario
+                    const form = editarUsuarioModal.querySelector('form');
+                    if (userId && form) {
+                        form.action = `/update/${userId}`; // Actualizar la URL del formulario
+                    }
+                }
+            }
+        });
+    })
+}

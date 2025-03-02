@@ -26,31 +26,38 @@
 
             <div class="mb-4 w-full flex flex-col space-y-3 mt-1">
                 <label class="block font-semibold">Vehículo</label>
+                <input type="text" id="empresaId_salida" value="{{ $empresa->id }}" class="hidden">
+                <input type="text" id="placa_salida" name="placa_modificada" class="hidden">
 
                 <div id="vehiculo-container w-full">
-                    <div class="flex items-center space-x-1 w-3/4">
+                    <div class="flex items-center  w-3/4 md:space-x-3 space-x-1">
                         <select name="vehiculo_id" id="vehiculo-select" required class="w-full p-2 border rounded-lg">
                             @if (count($vehiculos) > 0)
                                 <option value="" disabled selected>Seleccione un vehiculo </option>
 
                                 @foreach ($vehiculos as $vehiculo)
-                                    <option value="{{ $vehiculo->placa }} - {{ $vehiculo->repartidor->id }}">
-                                        {{ $vehiculo->placa }} - {{ $vehiculo->repartidor->persona->nombres }}</option>
+                                    <option value="{{ $vehiculo->placa }} - {{ $vehiculo->repartidor?->id }}">
+                                        {{ $vehiculo->placa }} - {{ $vehiculo->repartidor?->persona->nombres }}</option>
                                 @endforeach
                             @else
                                 <option value="" disabled selected>No hay vehículos registrados</option>
                             @endif
                         </select>
-                        <div class="w-[15%]"><button type="button" class="transform hover:scale-105"
-                                id="btn_editar_vehiculo"><i class="fas fa-edit text-2xl"></i></button></div>
+                        <div class="w-[15%] flex space-x-2"><button type="button" class="transform hover:scale-105"
+                                id="btn_editar_vehiculo"><i class="fas fa-edit text-2xl"></i></button>
+                            <button type="button" class="transform hover:scale-105" id="btn_eliminar_vehiculo"><i
+                                    class="fas fa-trash text-2xl"></i></button>
+                        </div>
                     </div>
                     <!-- Modal -->
                     <div id="modal_vehiculos"
                         class="fixed inset-0  bg-gray-900 bg-opacity-50 flex items-center justify-center hidden">
                         <div class="bg-white p-6 rounded-lg shadow-lg w-1/3">
-                            <h2 class="text-xl font-bold mb-4">Cambiar Repartidor</h2>
+                            <h2 class="text-xl font-bold mb-4">Modificar Vehiculo</h2>
 
-                            <p class="mb-2 flex space-x-2"><strong>Vehículo:</strong> <span id="modal-vehiculo"></span></p>
+                            <p class="mb-2 flex space-x-2 items-center"><strong>Vehículo:</strong><input type="text"
+                                    id="modal-vehiculo_input" class="text-left border p-2"> <span id="modal-vehiculo"
+                                    class="hidden"></span></p>
                             <p class="mb-4 flex space-x-2"><strong>Repartidor Actual:</strong> <span
                                     id="modal-repartidor"></span></p>
 
@@ -259,7 +266,9 @@
                 <!-- Encabezado -->
                 <div class="bg-tarjetas text-white p-4 flex justify-between items-center">
                     <h2 class="text-lg font-semibold">Editar Salida de Productos</h2>
-                    <button id="cerrar-modal" onclick="document.getElementById('modal_editar_salida').classList.add('hidden');" class="text-white text-2xl font-bold hover:text-gray-300">&times;</button>
+                    <button id="cerrar-modal"
+                        onclick="document.getElementById('modal_editar_salida').classList.add('hidden');"
+                        class="text-white text-2xl font-bold hover:text-gray-300">&times;</button>
                 </div>
 
                 <!-- Contenido del modal -->
@@ -274,6 +283,7 @@
                             <button type="submit" class="px-4 py-2 bg-naranja text-white rounded-lg ">Guardar</button>
                         </div>
                     </form>
+                   
                 </div>
 
 
@@ -286,7 +296,9 @@
                 <!-- Encabezado -->
                 <div class="bg-tarjetas text-white p-4 flex justify-between items-center">
                     <h2 class="text-lg font-semibold">Detalles de la Salida</h2>
-                    <button id="cerrar_modal" onclick="document.getElementById('modal_ver_salida').classList.add('hidden');" class="text-white text-2xl font-bold hover:text-gray-300">&times;</button>
+                    <button id="cerrar_modal"
+                        onclick="document.getElementById('modal_ver_salida').classList.add('hidden');"
+                        class="text-white text-2xl font-bold hover:text-gray-300">&times;</button>
                 </div>
 
                 <!-- Contenido -->

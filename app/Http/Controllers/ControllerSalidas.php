@@ -15,6 +15,26 @@ use Illuminate\Support\Facades\DB;
 
 class ControllerSalidas extends Controller
 {
+
+
+    public function eliminarVehiculo(Request $request)
+    {
+        try {
+            $vehiculo = Vehiculo::where('placa', $request->id)
+                ->where('empresa_id', $request->empresa_id)
+                ->first();
+
+            if (!$vehiculo) {
+                return response()->json(['mensaje' => 'Vehículo no encontrado.'], 404);
+            }
+
+            $vehiculo->delete();
+            return response()->json(['mensaje' => 'Vehículo eliminado correctamente.'], 200);
+        } catch (\Throwable $th) {
+            return response()->json(['mensaje' => 'Error al eliminar el vehículo: ' . $th->getMessage()], 500);
+        }
+    }
+
     public function delete(Request $request)
     {
         try {
@@ -43,14 +63,24 @@ class ControllerSalidas extends Controller
         try {
             $vehiculoInfo = $request->vehiculo_id;
             $partes = explode("-", $vehiculoInfo);
-
+            $placa_modificada = $request->placa_modificada;
             $placa = $partes[0] ?? null;
             $repartidor = $partes[1] ?? null;
             $salida_de_hoy = Salidas::where('placa', $placa)->whereDate('fecha', Carbon::now('America/Lima'))->first();
             if ($salida_de_hoy) {
                 throw new Exception("La salida del vehiculo ya se registró hoy.");
             }
-            $vehiculo_existe = Vehiculo::where('placa', $placa)->where('empresa_id', $request->empresa_id)->first();
+            $placa_antigua = null;
+            $actualizar = false;
+            if (!empty($placa_modificada)) {
+                $placa_antigua = $placa_modificada;
+                $actualizar = true;
+            }
+            if ($actualizar) {
+                $vehiculo_existe = Vehiculo::where('placa', $placa_antigua)->where('empresa_id', $request->empresa_id)->first();
+            } else {
+                $vehiculo_existe = Vehiculo::where('placa', $placa)->where('empresa_id', $request->empresa_id)->first();
+            }
             $vehiculo = null;
             if ($vehiculo_existe) {
                 $vehiculo_existe->update([
@@ -74,10 +104,12 @@ class ControllerSalidas extends Controller
                     'cantidad' => $request->cantidades[$index] ?? 0, // Si no existe cantidad, asigna 0
                 ];
             }
+            $repartidorNombre = optional($vehiculo->repartidor)->persona->nombres ?? 'Desconocido';
+
             // Crear la salida
             $salida = Salidas::create([
                 'placa' => $vehiculo->placa,
-                'repartidor' => $vehiculo->repartidor->persona->nombres,
+                'repartidor' => $repartidorNombre,
                 'productos' => json_encode($productosConCantidades),
                 'fecha' => Carbon::now('America/lima'),
                 'empresa_id' => $request->empresa_id
@@ -172,6 +204,7 @@ class ControllerSalidas extends Controller
                 $productosMap[$producto['producto_id']] = &$producto;
             }
 
+            $productosModificados = [];
             // Recorrer los productos del request
             foreach ($request->productos as $index => $producto_id) {
                 $cantidadNueva = $request->cantidades[$index] ?? 0;
@@ -179,6 +212,10 @@ class ControllerSalidas extends Controller
                 if (isset($productosMap[$producto_id])) {
                     // Si el producto ya existe en el stock, sumamos la cantidad
                     $productosMap[$producto_id]['cantidad'] += $cantidadNueva;
+                    $productosModificados[] = [
+                        'producto_id' => $producto_id,
+                        'cantidad' => $productosMap[$producto_id]['cantidad'],
+                    ];
                 } else {
                     // Si el producto no existe, lo agregamos al array
                     $productosStock[] = [
@@ -188,9 +225,9 @@ class ControllerSalidas extends Controller
                     ];
                 }
             }
-
+          
             // Guardar los productos en formato JSON
-            $salida->productos = json_encode($productosStock);
+            $salida->productos = json_encode($productosModificados);
             $salida->save(); // Guardar en la BD
             $this->sumarStockActual($request->salida_id, $request->productos, $request->cantidades);
             return redirect()->back()->with('mensaje', 'Salida actualizada correctamente');
@@ -206,35 +243,46 @@ class ControllerSalidas extends Controller
             // Decodificar el JSON actual de productos en el stock
             $productosStock = json_decode($salida->productos, true) ?? [];
 
-            // Crear un mapa para acceder rápidamente a los productos existentes
+            // Crear un mapa de productos existentes
             $productosMap = [];
             foreach ($productosStock as &$producto) {
                 $productosMap[$producto['producto_id']] = &$producto;
             }
+            $productosModificados = [];
 
-            // Recorrer los productos del request
+            // Recorrer los productos y actualizar solo los que existen en el stock
             foreach ($productos as $index => $producto_id) {
                 $cantidadNueva = $cantidades[$index] ?? 0;
 
                 if (isset($productosMap[$producto_id])) {
                     // Si el producto ya existe en el stock, sumamos la cantidad
                     $productosMap[$producto_id]['cantidad'] += $cantidadNueva;
-                } else {
-                    // Si el producto no existe, lo agregamos al array
-                    $productosStock[] = [
-                        'cantidad' => $cantidadNueva,
+                    // Guardamos solo los productos que existen en productosMap
+                    $productosModificados[] = [
                         'producto_id' => $producto_id,
+                        'cantidad' => $productosMap[$producto_id]['cantidad'],
                     ];
                 }
             }
 
+
+
+
+            // Reindexar el array
+            $productosStock = array_values($productosModificados);
+
             // Guardar el JSON actualizado
-            $salida->productos = json_encode($productosStock);
+            $salida->productos = json_encode($productosModificados);
             $salida->save();
+
+            // Retornar los productos que fueron actualizados
+            return response()->json($productosModificados);
         } catch (\Throwable $th) {
-            throw new Exception($th->getMessage()); // Lanza la excepción para poder depurar
+            return response()->json(['error' => $th->getMessage()], 500);
         }
     }
+
+
     public function restarStockActual($salida_id, $productosIds)
     {
         try {
@@ -281,34 +329,34 @@ class ControllerSalidas extends Controller
             $salida = Salidas::whereDate('fecha', Carbon::now('America/Lima'))
                 ->where('repartidor', $usuario)
                 ->first();
-    
+
             if (!$salida) {
                 throw new \Exception("No se encontró una salida para el repartidor en la fecha actual.");
             }
-    
+
             $stock = Stock::where('salida_id', $salida->id)->first();
             if (!$stock) {
                 throw new \Exception("Stock no encontrado.");
             }
-    
+
             // Decodificar el JSON actual de productos en el stock
             $productosStock = json_decode($stock->productos, true) ?? [];
-    
+
             // Crear un mapa para acceso rápido a productos en stock
             $productosMap = [];
             foreach ($productosStock as &$producto) {
                 $productosMap[$producto['producto_id']] = &$producto;
             }
-    
+
             // Recorrer los productos a sumar
             foreach ($productosIds as $productoData) {
                 $producto_id = $productoData['producto_id'] ?? null;
                 $cantidadSumar = $productoData['cantidad'] ?? 0;
-    
+
                 if (!$producto_id) {
                     throw new \Exception("Producto ID inválido.");
                 }
-    
+
                 if (isset($productosMap[$producto_id])) {
                     // Si ya existe, sumamos la cantidad
                     $productosMap[$producto_id]['cantidad'] += $cantidadSumar;
@@ -320,7 +368,7 @@ class ControllerSalidas extends Controller
                     ];
                 }
             }
-    
+
             // Guardar el stock actualizado
             $stock->productos = json_encode(array_values($productosMap));
             $stock->save();
@@ -328,7 +376,7 @@ class ControllerSalidas extends Controller
             throw new Exception("Error al sumar stock: " . $th->getMessage());
         }
     }
-    
+
 
 
     public function show($id)

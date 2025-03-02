@@ -12,11 +12,17 @@
             </button>
         </div>
         @if (session('mensaje'))
-            <div  id="mensaje"
+            <div id="mensaje"
                 class="mensaje border-2  border-green-500 font-semibold flex justify-center text-center p-2 bg-green-100 text-green-700">
                 <p>{{ session('mensaje') }}</p>
             </div>
         @endif
+        @if (session('success'))
+        <div id="mensaje"
+            class="mensaje border-2  border-green-500 font-semibold flex justify-center text-center p-2 bg-green-100 text-green-700">
+            <p>{{ session('success') }}</p>
+        </div>
+    @endif
         @if ($errors->any())
             <div id="mensaje"
                 class="mensaje border-2 border-red-500 font-semibold flex flex-col items-center text-center p-2 bg-red-100 text-red-700">
@@ -38,14 +44,18 @@
                             <div class="space-y-2">
 
 
-                                <h3 class="font-medium  text-base">
+                                <h3 class="font-medium  text-base" id="edit_nombres">
                                     {{ $item->persona?->nombres ?? 'Sin nombre' }}
                                 </h3>
                                 <p class="text-base hidden">
                                     <i class="fas fa-id-card mr-1"></i> {{ $item->persona?->dni }}
                                 </p>
-                                <p class="text-base "><i class="fas fa-phone mr-1 "></i>
+                                <p class="text-base " id="edit_usuario"><i class="fas fa-phone mr-1 "></i>
                                     {{ $item->usuario }}</p>
+                                <p class="text-base ">
+                                <p class="text-base hidden" id="edit_email"><i class="fas fa-phone mr-1 "></i>
+                                    {{ $item->persona?->correo }}</p>
+
                                 <p class="text-base ">
                                     <i
                                         class="{{ $item->persona?->estado ? 'fas fa-check-circle ' : 'fas fa-times-circle' }} mr-1"></i>
@@ -74,7 +84,8 @@
                                         @endif
                                     </form>
                                     <div class="flex space-x-2">
-                                        <button><i class="fas fa-edit"></i></button>
+                                        <button class="btn_editar_repartidor_datos" data-id="{{$item->id}}"><i
+                                                class="fas fa-edit btn_editar_repartidor_datos"  data-id="{{$item->id}}"></i></button>
                                         <form action="{{ route('usuario.eliminar') }}" method="post">
                                             @method('DELETE')
                                             @csrf
@@ -130,7 +141,7 @@
                         </div>
                         <div class="hidden">
                             <label for="dni" class="block text-sm font-medium text-color-titulos-entrega">DNI</label>
-                            <input type="text" name="dni" 
+                            <input type="text" name="dni"
                                 class="p-2 w-full border  rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 mt-1"
                                 placeholder="DNI del usuario">
                         </div>
@@ -193,6 +204,55 @@
                             class="px-4 py-3 bg-naranja text-base hover:scale-125 transform text-white rounded hover:bgprincipalhover">
                             Guardar
                         </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!--MODAL EDITAR USUARIO-->
+        <div id="editar_usuario_repartidor"
+            class="fixed hidden inset-0 w-full bg-black bg-opacity-50 z-40  items-center justify-center">
+            <div class="bg-white md:w-1/2 w-full mx-auto rounded-lg shadow-lg p-6 z-50">
+                <form action="{{ route('usuario.update', ['id' => 'ID_TEMPORAL']) }}" method="POST"
+                    class="space-y-4 text-base font-sans" id="form_editar_usuario">
+                    @csrf
+                    @method('PUT')
+
+                    <!-- DNI (Oculto) -->
+                    <input type="hidden" name="dni">
+
+                    <!-- Celular -->
+                    <div>
+                        <label for="celular" class="block text-gray-700 font-bold">Celular:</label>
+                        <input type="text" name="celular" id="edit_form_usuario" value="{{ old('celular') }}"
+                            class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+
+                    <!-- Nombre -->
+                    <div>
+                        <label for="nombre" class="block text-gray-700 font-bold">Nombre:</label>
+                        <input type="text" name="nombre" id="edit_form_nombre" value="{{ old('nombre') }}"
+                            class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+
+                    <!-- Correo Electrónico -->
+                    <div>
+                        <label for="email" class="block text-gray-700 font-bold">Correo Electrónico:</label>
+                        <input type="email" name="email" id="edit_form_email" value="{{ old('email') }}"
+                            class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+
+                    <!-- Contraseña -->
+                    <div>
+                        <label for="password" class="block text-gray-700 font-bold">Contraseña (dejar en blanco si no
+                            desea cambiarla):</label>
+                        <input type="password" name="password" id="edit_form_password"
+                            class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+
+                    <!-- Botón de Guardar -->
+                    <div class="flex justify-end">
+                        <button type="submit" class="bg-naranja text-white py-2 px-4 rounded transition">Guardar
+                            Cambios</button>
                     </div>
                 </form>
             </div>
