@@ -367,7 +367,7 @@ if (btn_siguiente_pedido) {
         document.querySelector("#contenedor_modales_usuario_no_auth").classList.remove('hidden');
         ocultarContenedorProductosItem();
         contenedor_form_realizar_pedido.classList.remove('hidden');
-        contenedor_form_realizar_pedido.classList.add('grid');
+        contenedor_form_realizar_pedido.classList.add('flex','flex-col');
 
     });
 }

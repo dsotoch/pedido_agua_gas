@@ -145,30 +145,86 @@
                                 <span class="text-red-500">{{ $message }}</span>
                             @enderror
                         </div>
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700">Horario de Atención</label>
-                            <div class="md:flex grid space-x-2 mt-1">
-                                <input type="time" id="hora_inicio" name="hora_inicio"
-                                    value="{{ $empresa->hora_inicio }}"
-                                    class="p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                                <span class="text-gray-500">a</span>
-                                <input type="time" id="hora_fin" name="hora_fin" value="{{ $empresa->hora_fin }}"
-                                    class="p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                            </div>
+
+                        <div class="mt-4">
+                            <label for="minutos" class="block text-gray-600 font-medium mb-1">Tiempo de Entrega
+                                (minutos)</label>
+                            <input type="number" id="minutos_empresa" name="minutos"
+                                class="border rounded p-2 text-center" value="{{ $empresa->tiempo ?? 20 }}">
+                            @error('minutos')
+                                <span class="text-red-500">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <label class="block text-base font-medium text-gray-700 mb-1">Horario de Atención</label>
+                    <div class="flex space-x-2">
+                        <input type="text" name="empresa_id" hidden value='{{ $empresa->id }}'>
+                        <div class="border p-2">
+                            <label for="dia">Día:</label>
+                            <select id="select_dia_conf">
+                                <option value="Lunes">Lunes</option>
+                                <option value="Martes">Martes</option>
+                                <option value="Miércoles">Miércoles</option>
+                                <option value="Jueves">Jueves</option>
+                                <option value="Viernes">Viernes</option>
+                                <option value="Sabado">Sabado</option>
+                                <option value="Domingo">Domingo</option>
+
+                            </select>
                         </div>
 
+                        <div class="border p-2">
+                            <label for="hora_inicio">Hora Inicio:</label>
+                            <input type="time" id="hora_inicio_conf" >
+                        </div>
+                        <div class="border p-2">
+                            <label for="hora_fin">Hora Cierre:</label>
+                            <input type="time" id="hora_fin_conf" >
+                        </div>
+
+
+
+                        <button type="button" id="btn_guardar_horario_conf"
+                            class="p-2 rounded bg-naranja text-white hover:border-2 hover:border-red-500">Guardar</button>
                     </div>
                 </div>
                 <div class="mt-4">
-                    <label for="minutos" class="block text-gray-600 font-medium mb-1">Tiempo de Entrega (minutos)</label>
-                    <input type="number" id="minutos_empresa" name="minutos" class="border rounded p-2 text-center" value="{{ $empresa->tiempo ?? 20 }}">
-                    @error('minutos')
-                        <span class="text-red-500">{{ $message }}</span>
-                    @enderror
+                    <table class="w-full" id="tabla_horario_conf">
+                        <thead class="bg-tarjetas text-white ">
+                            <th class="p-2">Dia</th>
+                            <th class="p-2">Hora de Inicio</th>
+                            <th class="p-2">Hora de Cierre</th>
+                            <th class="p-2">Acción</th>
+                        </thead>
+                        <tbody>
+                            @foreach ($horarios as $item)
+                                <tr class="border-b-2">
+                                    <td  class="text-center">
+                                        <input type="text" name="dia[]" class="p-2 border w-full text-center" readonly value="{{ $item->dia }}">
+                                    </td>
+                                    <td class="text-center">
+                                        <input type="time" name="hora_inicio[]"  class="p-2 border w-full text-center" value="{{ $item->hora_inicio }}">
+                                    </td>
+                                    <td class="text-center">
+                                        <input type="time" name="hora_fin[]"  class="p-2 border w-full text-center" value="{{ $item->hora_fin }}">
+                                    </td>
+                                    <td class="text-center">
+                                        <button type="button" class="btn-eliminar border text-white bg-red-500 p-2 rounded">Eliminar</button>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+
+                    </table>
                 </div>
+
                 <!-- Descripción (ocupa 2 columnas) -->
                 <div class="mt-4">
-                    <label for="descripcion" class="block text-gray-600 font-medium mb-1">Descripción</label>
+                    <label for="descripcion" class="block text-gray-600 font-medium mb-1">Descripción de la
+                        Distribuidora</label>
                     <textarea id="descripcion" name="descripcion" placeholder="Breve descripción del negocio" rows="15"
                         class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>{{ $empresa->descripcion }}</textarea>
                     @error('descripcion')
@@ -196,7 +252,7 @@
                 @foreach ($productos as $item)
                     <li data-id="{{ $item->id }}"
                         class="bg-gray-100 p-4 rounded shadow flex items-center justify-between cursor-move">
-                        <span>{{ $item->descripcion }}</span>
+                        <span>{{ $item->nombre.' '.$item->descripcion }}</span>
                         <svg class="w-6 h-6 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none"
                             viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16" />

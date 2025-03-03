@@ -8,6 +8,7 @@ use App\Http\Controllers\ControllerProducto;
 use App\Http\Controllers\ControllerSalidas;
 use App\Http\Controllers\ControllerUsuario;
 use App\Http\Controllers\CuponController;
+use App\Http\Controllers\HorarioController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -114,6 +115,7 @@ Route::controller(CuponController::class)->group(function () {
     Route::delete('/eliminar-cupon/{id}', 'eliminar')->name('cupones.eliminar');
 });
 
+Route::resource('horarios', HorarioController::class);
 
 Route::prefix('distribuidora')->controller(ControllerEmpresa::class)->group(function () {
     Route::get('/', function () {

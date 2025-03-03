@@ -1,13 +1,13 @@
-<div class="pt-[40px] pb-[40px] bg-color-fondo-productos flex flex-col  w-full justify-stretch items-center space-x-2 ">
-    <input type="text" name="" id="empresa_id_para_cupon" hidden value="{{$empresa? $empresa->id :''}}">
+<div class="pt-[20px]  bg-color-fondo-productos flex flex-col  w-full  items-center space-x-2 ">
+    <input type="text" name="" id="empresa_id_para_cupon" hidden value="{{ $empresa ? $empresa->id : '' }}">
 
     @if ($productos->count() > 0)
         <div id="contener_producto_item" class="flex flex-col w-full">
-            <div class="flex flex-col mx-auto h-auto text-color-text  items-center justify-center rounded-3xl p-[10px] bg-transparent text-center w-full md:w-[520px]"
+            <div class="flex flex-col mx-auto md:pl-0 md:pr-0 pl-[10px] pr-[10px] h-auto text-color-text  items-center justify-center rounded-3xl  bg-transparent text-center w-full md:w-[520px]"
                 data-index="">
                 @foreach ($productos as $item)
                     <!---Productos Antiguos-->
-                    <div class="w-full p-1 bg-white mt-[20px] rounded-[10px] flex ">
+                    <div class="w-full p-1  bg-white mt-[20px] rounded-[10px] flex ">
                         <div class="w-[79px] h-[145px] my-auto flex items-center">
                             <img src="{{ asset('storage/' . $item->imagen) }}" alt="" class=" object-contain">
                         </div>
@@ -17,10 +17,10 @@
                                     <p class="producto_descripcion  text-base ">
                                         {{ $item->nombre }}</p>
                                 </div>
-                                <div class="flex w-full md:w-1/2 items-center space-x-2 md:space-x-1  pt-4">
+                                <div class="flex w-full md:justify-normal md:pl-0 md:pr-0 pr-[10px] justify-between  md:w-1/2 items-center space-x-2 md:space-x-1  pt-4">
                                     <div class="w-1/2">
-                                        <p class=""> <span
-                                                class="text-[15px]  precioprincipal">S/{{ number_format($item->precio ?? 0, 2, '.', '') }}</span>
+                                        <p class="text-start"> <span
+                                                class="text-[15px] text-start  precioprincipal">S/{{ number_format($item->precio ?? 0, 2, '.', '') }}</span>
                                         </p>
                                     </div>
                                     <div class="item-container p-1 opacity-80 justify-center space-x-2  border-color-text rounded-[3px] flex w-[76px] h-[37px] max-h-[37px] items-center  border "
@@ -138,7 +138,7 @@
                 @endforeach
 
             </div>
-            <div class="flex flex-col  md:w-[500px] mx-auto  mt-8 w-full   bg-white rounded-[10px] p-[10px]">
+            <div class="flex flex-col  md:w-[500px] mx-auto  mt-[40px] w-full   bg-white rounded-[10px] p-[10px]">
                 <!-- Mensaje y botón de despliegue -->
                 <div class="flex items-center justify-center space-x-2 cursor-pointer mt-[10px] mb-[10px]"
                     id="toggleCupon">
@@ -160,7 +160,7 @@
                 </div>
             </div>
             <div id="contenedor-total"
-                class="mt-2 sticky bottom-0 contenedor-total grid  w-full bg-color-fondo-productos justify-items-center ">
+                class="mt-[40px] sticky bottom-0 contenedor-total grid  w-full bg-color-fondo-productos justify-items-center ">
                 <div id="contenedor_cupones" class="hidden  flex-col w-full text-center items-center justify-center">
                     <center>
                         <div class="w-full">
@@ -181,10 +181,10 @@
                 </div>
 
                 <input type="text" readonly
-                    class="total text-[18px]  w-[328px] h-[55px] rounded-md focus:outline-none bg-transparent font-bold  text-center pt-[10px] pb-[10px] "
+                    class="total text-[18px]   w-[328px] h-[55px] rounded-md focus:outline-none bg-transparent font-bold  text-center  pb-[10px] "
                     value="Total: S/0.00">
                 <button type="button" disabled
-                    class="btnproductoagregar disabled:opacity-50 opacity-100  font-normal text-[18px]  w-[328px] h-[55px] rounded-md custom-bg-button  text-white  mb-2">
+                    class="btnproductoagregar disabled:opacity-50 opacity-100  font-normal text-[18px]  w-[328px] h-[55px] rounded-md custom-bg-button  text-white  mb-[40px]">
                     Siguiente
                     <i class=" fas fa-arrow-right-long text-2xl ml-2 "></i></button>
                 @auth
@@ -201,6 +201,107 @@
     @else
         <p class="text-gray-700 mx-auto font-medium text-md m-2">Sin Productos Registrados.</p>
     @endif
+
+    <div id="contenedor_form_realizar_pedido"
+        class=" hidden justify-center  mx-auto w-full p-[10px] md:min-w-[450px] md:max-w-[450px] mb-[35px] text-[15px] mt-[20px]  text-color-text">
+        @if ($usuario && $usuario->tipo == 'cliente')
+            <form action="{{ route('pedido.crear', ['slug' => $empresa->dominio]) }}" id="form_realizar_pedido"
+                class=" text-start w-full md:min-w-[450px]  rounded-[20px] bg-white" method="POST">
+                <div class="flex space-y-2 flex-col pt-[20px]   pb-[60px] pl-[20px] pr-[20px]">
+                    <input type="hidden" id="usuario_id" name="usuario_id" value="{{ $usuario->id }}" required>
+                    <input type="hidden" id="empresa_id" name="empresa_id" value="{{ $empresa->id }}" required>
+
+                    <div class="mb-4">
+                        <label for="select_direccion"
+                            class="block text-lg font-semibold text-color-titulos-entrega">Selecciona tu
+                            dirección
+                        </label>
+
+                        <div class="relative mt-2">
+                            <select name="select_direccion" id="select_direccion"
+                                class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-gray-700">
+                                <option disabled selected>📍 Elige una dirección para tu pedido</option>
+                                @if (!empty($usuario->persona->direccion))
+                                    <option value="{{ $usuario->persona->direccion }}">🏠
+                                        {{ $usuario->persona->direccion }}</option>
+                                @endif
+                                @if (!empty($usuario->direcciones))
+                                    @foreach ($usuario->direcciones as $dir)
+                                        <option value="{{ $dir->direccion }}">🏢
+                                            {{ $dir->direccion }}</option>
+                                    @endforeach
+                                @endif
+                            </select>
+
+                            <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                                <i class="fas fa-map-marker-alt text-gray-400"></i>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <label for="celular">Celular <span class="text-red-500">*</span></label>
+                    <input type="tel" id="celular" name="celular" value="{{ $usuario->usuario }}"
+                        minlength="9" maxlength="9" required pattern="\d{9}"
+                        title="El número de teléfono debe tener exactamente 9 dígitos"
+                        class=" rounded-[20px]  p-3 border border-color-text">
+                    <label for="nombres">Nombres y Apellidos <span class="text-red-500">*</span></label>
+                    <input type="text" value="{{ $usuario->persona->nombres }}" name="nombres" id="nombres"
+                        class="rounded-[20px]  p-3 border border-color-text" required>
+                    <label for="direccion">Dirección <span class="text-red-500">*</span></label>
+                    <input type="text" value="{{ $usuario->persona->direccion }}" id="direccion"
+                        name="direccion" class="rounded-[20px] p-3  border border-color-text" required>
+                    <label for="referencia">Referencia y Nota para la Entrega <span
+                            class="text-red-500">*</span></label>
+                    <textarea type="text" rows="5" id="referencia" name="referencia" required
+                        class="rounded-[20px] p-3  border border-color-text text-start">{{ $usuario->persona->nota }}
+                        </textarea>
+                    <div class="flex text-[17px]  justify-between pt-4 space-x-2">
+                        <button type="button" id="btn_regresar_a_productos"
+                            class="w-1/5 h-[57px] border border-color-text rounded-[3px]">Atrás</button>
+                        <button type="submit"
+                            class="custom-bg-button w-4/5 h-[57px] rounded-[3px]  text-white">Realizar
+                            pedido</button>
+                    </div>
+
+                </div>
+            </form>
+        @else
+            <form action="{{ route('pedido.crear', ['slug' => $empresa->dominio]) }}" method="POST"
+                id="form_realizar_pedido" class="mx-auto   w-full md:min-w-[450px] ">
+                <div
+                    class="flex space-y-2 flex-col w-full  bg-white rounded-[20px] pt-[20px] pb-[60px] pl-[20px] pr-[20px]">
+                    <input type="hidden" id="usuario_id" name="usuario_id"
+                        value="{{ $usuario ? $usuario->id : '' }}" required>
+                    <input type="hidden" id="empresa_id" name="empresa_id" value="{{ $empresa->id }}" required>
+
+                    <label for="celular">Celular <span class="text-red-500">*</span></label>
+                    <input type="tel" id="celular" placeholder="Ingrese el numero para buscar..."
+                        name="celular" class="rounded-[20px]  p-3 border border-color-text" required>
+                    <label for="nombres">Nombres y Apellidos <span class="text-red-500">*</span></label>
+                    <input type="text" name="nombres" id="nombres"
+                        class="rounded-[20px]  p-3 border border-color-text" required>
+                    <label for="direccion">Dirección <span class="text-red-500">*</span></label>
+                    <input type="text" id="direccion" name="direccion"
+                        class="rounded-[20px] p-3  border border-color-text" required>
+                    <label for="referencia">Referencia y Nota para la Entrega <span
+                            class="text-red-500">*</span></label>
+                    <textarea type="text" rows="5" id="referencia" name="referencia"
+                        class="rounded-[20px] p-3  border border-color-text" required>
+                        </textarea>
+                    <div class="flex text-[17px]  justify-between pt-4 space-x-2">
+                        <button type="button" id="btn_atras_distribuidora"
+                            class="w-1/5 h-[57px] border border-color-text rounded-[3px]">Atrás</button>
+                        <button type="submit"
+                            class="custom-bg-button w-4/5 h-[57px] rounded-[3px] text-white">Realizar
+                            pedido</button>
+                    </div>
+
+                </div>
+            </form>
+        @endif
+
+    </div>
 </div>
 <!-- Modal Pago Pedido VENTA RAPIDA-->
 <div id="paymentModalVentaRapida"
@@ -249,100 +350,5 @@
         </form>
     </div>
 </div>
-<div id="contenedor_form_realizar_pedido" class="hidden justify-center  mx-auto w-full text-[15px] text-color-text">
-    @if ($usuario && $usuario->tipo == 'cliente')
-        <form action="{{ route('pedido.crear', ['slug' => $empresa->dominio]) }}" id="form_realizar_pedido"
-            class=" text-start " method="POST">
-            <div
-                class="flex space-y-2 flex-col w-full md:w-[450px] h-[650px] bg-white rounded-[20px] pt-[30px] pb-[60px] pl-[20px] pr-[20px]">
-                <input type="hidden" id="usuario_id" name="usuario_id" value="{{ $usuario->id }}" required>
-                <input type="hidden" id="empresa_id" name="empresa_id" value="{{ $empresa->id }}" required>
 
-                <div class="mb-4">
-                    <label for="select_direccion"
-                        class="block text-lg font-semibold text-color-titulos-entrega">Selecciona tu
-                        dirección
-                    </label>
-
-                    <div class="relative mt-2">
-                        <select name="select_direccion" id="select_direccion"
-                            class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-gray-700">
-                            <option disabled selected>📍 Elige una dirección para tu pedido</option>
-                            @if (!empty($usuario->persona->direccion))
-                                <option value="{{ $usuario->persona->direccion }}">🏠
-                                    {{ $usuario->persona->direccion }}</option>
-                            @endif
-                            @if (!empty($usuario->direcciones))
-                                @foreach ($usuario->direcciones as $dir)
-                                    <option value="{{ $dir->direccion }}">🏢
-                                        {{ $dir->direccion }}</option>
-                                @endforeach
-                            @endif
-                        </select>
-
-                        <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                            <i class="fas fa-map-marker-alt text-gray-400"></i>
-                        </div>
-                    </div>
-                </div>
-
-
-                <label for="celular">Celular <span class="text-red-500">*</span></label>
-                <input type="tel" id="celular" name="celular" value="{{ $usuario->usuario }}" minlength="9"
-                    maxlength="9" required pattern="\d{9}"
-                    title="El número de teléfono debe tener exactamente 9 dígitos"
-                    class=" rounded-[20px]  p-3 border border-color-text">
-                <label for="nombres">Nombres y Apellidos <span class="text-red-500">*</span></label>
-                <input type="text" value="{{ $usuario->persona->nombres }}" name="nombres" id="nombres"
-                    class="rounded-[20px]  p-3 border border-color-text" required>
-                <label for="direccion">Dirección <span class="text-red-500">*</span></label>
-                <input type="text" value="{{ $usuario->persona->direccion }}" id="direccion" name="direccion"
-                    class="rounded-[20px] p-3  border border-color-text" required>
-                <label for="referencia">Referencia y Nota para la Entrega <span class="text-red-500">*</span></label>
-                <textarea type="text" rows="5" id="referencia" name="referencia" required
-                    class="rounded-[20px] p-3  border border-color-text text-start">{{ $usuario->persona->nota }}
-                    </textarea>
-                <div class="flex text-[17px]  justify-between pt-4 space-x-2">
-                    <button type="button" id="btn_regresar_a_productos"
-                        class="w-1/5 h-[57px] border border-color-text rounded-[3px]">Atrás</button>
-                    <button type="submit" class="custom-bg-button w-4/5 h-[57px] rounded-[3px] text-white">Realizar
-                        pedido</button>
-                </div>
-
-            </div>
-        </form>
-    @else
-        <form action="{{ route('pedido.crear', ['slug' => $empresa->dominio]) }}" method="POST"
-            id="form_realizar_pedido" class="mx-auto">
-            <div
-                class="flex space-y-2 flex-col w-full md:w-[450px] h-[650px] bg-white rounded-[20px] pt-[30px] pb-[60px] pl-[20px] pr-[20px]">
-                <input type="hidden" id="usuario_id" name="usuario_id" value="{{ $usuario ? $usuario->id : '' }}"
-                    required>
-                <input type="hidden" id="empresa_id" name="empresa_id" value="{{ $empresa->id }}" required>
-
-                <label for="celular">Celular <span class="text-red-500">*</span></label>
-                <input type="tel" id="celular" placeholder="Ingrese el numero para buscar..." name="celular"
-                    class="rounded-[20px]  p-3 border border-color-text" required>
-                <label for="nombres">Nombres y Apellidos <span class="text-red-500">*</span></label>
-                <input type="text" name="nombres" id="nombres"
-                    class="rounded-[20px]  p-3 border border-color-text" required>
-                <label for="direccion">Dirección <span class="text-red-500">*</span></label>
-                <input type="text" id="direccion" name="direccion"
-                    class="rounded-[20px] p-3  border border-color-text" required>
-                <label for="referencia">Referencia y Nota para la Entrega <span class="text-red-500">*</span></label>
-                <textarea type="text" rows="5" id="referencia" name="referencia"
-                    class="rounded-[20px] p-3  border border-color-text" required>
-                    </textarea>
-                <div class="flex text-[17px]  justify-between pt-4 space-x-2">
-                    <button type="button" id="btn_atras_distribuidora"
-                        class="w-1/5 h-[57px] border border-color-text rounded-[3px]">Atrás</button>
-                    <button type="submit" class="custom-bg-button w-4/5 h-[57px] rounded-[3px] text-white">Realizar
-                        pedido</button>
-                </div>
-
-            </div>
-        </form>
-    @endif
-
-</div>
 </div>

@@ -31,6 +31,11 @@ class Empresa extends Model
         'tiempo'
     ];
 
+    public function horarios()
+    {
+        return $this->hasMany(Horario::class);
+    }
+
     public function vehiculos()
     {
         return $this->hasMany(Vehiculo::class);

@@ -44,6 +44,7 @@
                                             <button type="button"
                                                 class="editar-producto m-2 p-3 rounded border-2 border-blue-500 text-blue-500"
                                                 data-id="{{ $item->id }}" data-descripcion="{{ $item->descripcion }}"
+                                                data-categoria="{{$item->categoria}}"
                                                 data-nombre="{{ $item->nombre }}"
                                                 data-promociones="{{ $item->promociones }}"
                                                 data-unitarios="{{ $item->unitarios }}" data-precio="{{ $item->precio }}"
@@ -97,7 +98,7 @@
                                 class="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                                 placeholder="Producto">
                                 <option value="otros" selected>Bebidas</option>
-                                <option value="gratis" >Gratis</option>
+                                <option value="gratis">Gratis</option>
                                 <option value="gas">Gas</option>
 
                             </select>
@@ -143,9 +144,8 @@
                                     @if ($empresa->productos && $empresa->productos->isnotEmpty())
                                         <option value="mismo">Mismo Producto a Registrar</option>
                                         @foreach ($empresa->productos as $item)
-                                           
-                                                <option value="{{ $item->nombre }}">{{ $item->nombre }}
-                                                </option>
+                                            <option value="{{ $item->nombre }}">{{ $item->nombre . ' ' . $item->descripcion }}
+                                            </option>
                                         @endforeach
                                     @else
                                         <option value="mismo">Mismo Producto a Registrar</option>
@@ -239,7 +239,16 @@
 
                 <input type="hidden" name="id" id="edit-id">
 
-                <!-- Descripción -->
+                <!-- Categoria -->
+                <label>Categoria</label>
+                <select id="edit-categoria" name="categoria"
+                    class="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    placeholder="Producto">
+                    <option value="otros">Bebidas</option>
+                    <option value="gratis">Gratis</option>
+                    <option value="gas">Gas</option>
+
+                </select> <!-- Descripción -->
                 <label>Nombre</label>
                 <input type="text" id="edit-nombre" name="nombre" class="w-full p-2 border rounded mb-3">
                 <!-- Descripción -->
@@ -263,9 +272,7 @@
                     @if ($empresa->productos && $empresa->productos->isnotEmpty())
                         <option value="mismo">Mismo Producto</option>
                         @foreach ($empresa->productos as $item)
-                           
-                                <option value="{{ $item->nombre }}">{{ $item->nombre }}</option>
-                            
+                            <option value="{{ $item->nombre }}">{{ $item->nombre }}</option>
                         @endforeach
                     @else
                         <option value="mismo">Mismo Producto</option>

@@ -22,6 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('entregapromociones', function (Blueprint $table) {
+            $table->dropForeign(['producto_id']); // Elimina la clave foránea
             $table->dropColumn('producto_id');
         });
     }

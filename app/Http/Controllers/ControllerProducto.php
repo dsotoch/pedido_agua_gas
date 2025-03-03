@@ -112,6 +112,7 @@ class ControllerProducto extends Controller
             // Obtener datos del request
             $precio = $request->precio;
             $nombre = $request->nombre;
+            $categoria =$request->categoria;
             $descripcion = $request->descripcion;
             $promociones = $request->promociones;
             $productos_por_cada = $request->productos_por_cada;
@@ -123,7 +124,8 @@ class ControllerProducto extends Controller
                 'nombre' => $nombre,
                 'descripcion' => "{$descripcion}", // Concatenación
                 'precio' => floatval($precio),
-                'comercializable' => $comercializable
+                'comercializable' => $comercializable,
+                'categoria'=>$categoria
             ]);
 
             // Verificar si existe una promoción y actualizarla o crearla

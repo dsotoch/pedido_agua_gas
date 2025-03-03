@@ -6,6 +6,7 @@ use App\Http\Requests\RequestAdmin;
 use App\Http\Requests\RequestEmpresa;
 use App\Models\Cupones;
 use App\Models\Empresa;
+use App\Models\Horario;
 use App\Models\Pedido;
 use App\Models\Persona;
 use App\Models\Producto;
@@ -79,8 +80,6 @@ class ControllerEmpresa extends Controller
             $empresa->dominio = $request->slug;
             $empresa->direccion = $request->direccion;
             $empresa->descripcion = e($request->descripcion);
-            $empresa->hora_inicio = date('H:i:s', strtotime($request->hora_inicio));
-            $empresa->hora_fin = date('H:i:s', strtotime($request->hora_fin));
             $empresa->tiempo = intval($request->minutos);
 
             // Actualizar logo
@@ -131,6 +130,29 @@ class ControllerEmpresa extends Controller
             $empresa->servicios = $request->has('servicios') ? json_encode($request->servicios) : null;
 
             $empresa->save();
+
+            // Eliminar todos los horarios previos de la empresa
+            Horario::where('empresa_id', $empresa->id)->delete();
+
+            // Verificar si hay datos en la solicitud
+            if (!empty($request->dia) && is_array($request->dia)) {
+                $horarios = [];
+
+                foreach ($request->dia as $index => $dia) {
+                    $horarios[] = [
+                        'dia' => $dia,
+                        'hora_inicio' => $request->hora_inicio[$index] ?? null,
+                        'hora_fin' => $request->hora_fin[$index] ?? null,
+                        'empresa_id' => $empresa->id,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }
+
+                // Insertar todos los registros de una sola vez
+                Horario::insert($horarios);
+            }
+
 
             DB::commit();
 
@@ -210,8 +232,8 @@ class ControllerEmpresa extends Controller
             $productos = $productosQuery;
         }
         $serviciosSeleccionados = json_decode($empresa->servicios, true) ?? []; // Convertir JSON en array
-
-        return view('datos_empresa', compact('usuario', 'empresa', 'serviciosSeleccionados', 'productos'));
+        $horarios = $empresa->horarios;
+        return view('datos_empresa', compact('horarios', 'usuario', 'empresa', 'serviciosSeleccionados', 'productos'));
     }
     public function index_reportes()
     {
@@ -327,14 +349,30 @@ class ControllerEmpresa extends Controller
                 ];
             });
         }
-        $horaActual = Carbon::now('America/Lima');
-        $horaInicio = Carbon::parse($empresa->hora_inicio, 'America/Lima');
-        $horaFin = Carbon::parse($empresa->hora_fin, 'America/Lima');
 
-        $fueraHorario = !$horaActual->between($horaInicio, $horaFin);
+        Carbon::setLocale('es'); // Establece el idioma en español
+        $dia = Carbon::now('America/Lima')->translatedFormat('l'); // Obtiene el día en minúsculas
+        $dia = ucfirst($dia); // Convierte la primera letra en mayúscula
 
+        $nulo=false;
+        $horario = Horario::where('empresa_id', $empresa->id)->where('dia', $dia)->first();
+        if ($horario) {
+            $horaActual = Carbon::now('America/Lima');
+            $horaInicio = Carbon::parse($horario->hora_inicio, 'America/Lima');
+            $horaFin = Carbon::parse($horario->hora_fin, 'America/Lima');
+
+            $fueraHorario = !$horaActual->between($horaInicio, $horaFin);
+        } else {
+            // Si no hay horario en la base de datos, asumimos que está fuera del horario
+            $fueraHorario = true;
+            $nulo=true;
+        }
+        $horarios = $empresa->horarios;
         // Retornar la vista con los datos
         return view('negocio', compact(
+            'nulo',
+            'horario',
+            'horarios',
             'productos_con_promociones',
             'promociones_faltantes',
             'empresa',

@@ -302,6 +302,7 @@ function eliminarProductos() {
                 btn_editar.forEach(button => {
                     button.addEventListener("click", function () {
                         document.getElementById("edit-id").value = this.dataset.id;
+                        document.getElementById("edit-categoria").value = this.dataset.categoria;
                         document.getElementById("edit-descripcion").value = this.dataset.descripcion;
                         document.getElementById("edit-precio").value = this.dataset.precio;
                         document.getElementById("edit-nombre").value = this.dataset.nombre;
