@@ -132,11 +132,13 @@
                                                 <p>{{ $pedido->direccion }}</p>
                                             </div>
                                         </div>
-                                        <div class="flex  min-h-[35px] mt-1 mb-1">
-                                            <div class="w-[18px] h-[18px] mt-2 mb-2 text-color-titulos-entrega opacity-80">
-                                                <img src="{{ asset('imagenes/cajas/nota.svg') }}" alt="">
+                                        <div class="flex items-center  min-h-[35px] mt-1 mb-1 gap-x-2">
+                                            <div class=" h-[28px] flex-shrink-0 flex items-center"> 
+                                                <svg class="text-color-titulos-entrega text-left mt-1 opacity-80 w-full h-full" aria-hidden="true" viewBox="0 0 288 512" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M112 316.94v156.69l22.02 33.02c4.75 7.12 15.22 7.12 19.97 0L176 473.63V316.94c-10.39 1.92-21.06 3.06-32 3.06s-21.61-1.14-32-3.06zM144 0C64.47 0 0 64.47 0 144s64.47 144 144 144 144-64.47 144-144S223.53 0 144 0zm0 76c-37.5 0-68 30.5-68 68 0 6.62-5.38 12-12 12s-12-5.38-12-12c0-50.73 41.28-92 92-92 6.62 0 12 5.38 12 12s-5.38 12-12 12z"></path>
+                                                </svg>
                                             </div>
-                                            <p class="p-2"> {{ $pedido->nota }}</p>
+                                            <p class="mt-1"> {{ $pedido->nota }}</p>
                                         </div>
 
                                         <div class="flex items-center ">
@@ -414,18 +416,16 @@
                                                 <p>{{ $pedido->direccion }}</p>
                                             </div>
                                         </div>
-                                        <div class="flex  min-h-[35px] mt-1 mb-1">
-                                            <div class="w-[18px] h-[18px] mt-2 mb-2"><svg
-                                                    class="text-color-titulos-entrega opacity-80 w-full h-full"
-                                                    aria-hidden="true" viewBox="0 0 288 512"
-                                                    xmlns="http://www.w3.org/2000/svg">
-                                                    <path
-                                                        d="M112 316.94v156.69l22.02 33.02c4.75 7.12 15.22 7.12 19.97 0L176 473.63V316.94c-10.39 1.92-21.06 3.06-32 3.06s-21.61-1.14-32-3.06zM144 0C64.47 0 0 64.47 0 144s64.47 144 144 144 144-64.47 144-144S223.53 0 144 0zm0 76c-37.5 0-68 30.5-68 68 0 6.62-5.38 12-12 12s-12-5.38-12-12c0-50.73 41.28-92 92-92 6.62 0 12 5.38 12 12s-5.38 12-12 12z">
-                                                    </path>
-                                                </svg></div>
-                                            <p class="p-2"> {{ $pedido->nota }}</p>
+                                        <div class="flex items-center  min-h-[35px] mt-1 mb-1 gap-x-2">
+                                            <div class=" h-[28px] flex-shrink-0 flex items-center"> 
+                                                <svg class="text-color-titulos-entrega mt-1 text-left opacity-80 w-full h-full" aria-hidden="true" viewBox="0 0 288 512" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M112 316.94v156.69l22.02 33.02c4.75 7.12 15.22 7.12 19.97 0L176 473.63V316.94c-10.39 1.92-21.06 3.06-32 3.06s-21.61-1.14-32-3.06zM144 0C64.47 0 0 64.47 0 144s64.47 144 144 144 144-64.47 144-144S223.53 0 144 0zm0 76c-37.5 0-68 30.5-68 68 0 6.62-5.38 12-12 12s-12-5.38-12-12c0-50.73 41.28-92 92-92 6.62 0 12 5.38 12 12s-5.38 12-12 12z"></path>
+                                                </svg>
+                                            </div>
+                                            <p class="mt-1"> {{ $pedido->nota }}</p>
                                         </div>
-
+                                        
+                                        
                                         <div class="flex items-center ">
 
                                             <div class="flex space-x-2">
