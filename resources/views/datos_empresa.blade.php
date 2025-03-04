@@ -160,7 +160,7 @@
 
                 <div class="mt-4">
                     <label class="block text-base font-medium text-gray-700 mb-1">Horario de Atención</label>
-                    <div class="flex space-x-2">
+                    <div class="flex space-x-2 overflow-x-auto">
                         <input type="text" name="empresa_id" hidden value='{{ $empresa->id }}'>
                         <div class="border p-2">
                             <label for="dia">Día:</label>
@@ -191,7 +191,7 @@
                             class="p-2 rounded bg-naranja text-white hover:border-2 hover:border-red-500">Guardar</button>
                     </div>
                 </div>
-                <div class="mt-4">
+                <div class="mt-4 overflow-x-auto">
                     <table class="w-full" id="tabla_horario_conf">
                         <thead class="bg-tarjetas text-white ">
                             <th class="p-2">Dia</th>

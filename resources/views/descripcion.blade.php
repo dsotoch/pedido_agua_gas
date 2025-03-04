@@ -6,7 +6,9 @@
             <p class="text-center text-[16px] mb-8 font-bold ">
                 ¡Gracias a todos nuestros clientes por confiar en nosotros!
             </p>
-            <p class="font-normal text[16px] leading-[35px] text-color-text"><span
+          
+          
+          {{---  <p class="font-normal text[16px] leading-[35px] text-color-text"><span
                     class="text-color-elegido font-bold">{{ $empresa->nombre }}</span> siempre llevando un producto de
                 calidad a la puerta de tu hogar. Ahora
                 podrás realizar tus pedidos con solo dos clics. <span
@@ -14,6 +16,7 @@
                 experiencia de
                 nuestros clientes.
             </p>
+            ---}}
             <p class="text-wrap font-normal mt-2 text-base leading-[35px] text-color-text">{!! nl2br(e($empresa->descripcion)) !!}</p>
             <div class="mt-4">
                 <label class="text-[20px] font-semibold ">Días y horarios de atención:

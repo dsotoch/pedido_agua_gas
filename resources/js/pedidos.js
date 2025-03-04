@@ -256,7 +256,7 @@ function calcularTotalEnProducto(boton, operacion) {
     // Obtener las promociones del producto
     const promociones = contenedor.querySelector(".promociones").textContent;
     const objeto = JSON.parse(promociones);
-
+    const contenedorTotal = document.querySelector('.total');
     // Ordenar promociones por cantidad ascendente
     objeto.sort((a, b) => a.cantidad - b.cantidad);
 
@@ -277,6 +277,7 @@ function calcularTotalEnProducto(boton, operacion) {
             window.idproductos = [];
             logica_boton_siguiente();
             cantidadInput.textContent = cantidad;
+            contenedorTotal.value = `Total: S/0.00`;
 
             return '';
         }
@@ -309,7 +310,7 @@ function calcularTotalEnProducto(boton, operacion) {
     window.cantidadesAnteriores[productoId] = cantidad;
 
     // Actualiza el total en el contenedor correspondiente
-    const contenedorTotal = document.querySelector('.total');
+    
     contenedorTotal.value = `Total: S/${window.totalPedidoAcumulado.toFixed(2)}`;
 
     // Buscar el índice del producto en el array

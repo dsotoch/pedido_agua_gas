@@ -261,7 +261,7 @@
             </table>
         </div>
         <div id="modal_editar_salida"
-            class="fixed inset-0  justify-center items-center w-full h-full z-50 bg-black bg-opacity-50 hidden">
+            class="fixed inset-0  overflow-y-auto  justify-center items-center w-full h-full z-50 bg-black bg-opacity-50 hidden">
             <div class="md:w-1/2 w-11/12 bg-white rounded-lg shadow-lg overflow-hidden transform transition-all">
                 <!-- Encabezado -->
                 <div class="bg-tarjetas text-white p-4 flex justify-between items-center">
