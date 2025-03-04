@@ -19,21 +19,38 @@ const btnAcceder = document.getElementById("btn_acceder");
 const contenedorLogin = document.getElementById("contenedor_login");
 
 if (btnAcceder) {
-    btnAcceder.addEventListener("mouseenter", function () {
+    function mostrarLogin() {
         contenedorLogin.classList.remove("hidden");
         btnAcceder.innerHTML = "X"; // Cambia el texto a "X"
-        btnAcceder.classList.add('text-2xl','font-semibold');
+        btnAcceder.classList.add("text-2xl", "font-semibold");
+    }
+
+    function ocultarLogin() {
+        contenedorLogin.classList.add("hidden");
+        btnAcceder.classList.remove("text-2xl", "font-semibold");
+        btnAcceder.innerHTML = 'Acceder&nbsp;&nbsp;<i class="fa-solid fa-right-to-bracket"></i>'; // Restaura el botón
+    }
+
+    // Detectar si es móvil
+    function esMovil() {
+        return window.innerWidth <= 768; // Ajusta este valor según sea necesario
+    }
+
+    // Evento para mostrar en desktop
+    btnAcceder.addEventListener("mouseenter", function () {
+        if (!esMovil()) mostrarLogin();
     });
 
+    // Evento para mostrar/ocultar en móviles
     btnAcceder.addEventListener("click", function () {
-        if (!contenedorLogin.classList.contains("hidden")) {
-            contenedorLogin.classList.add("hidden");
-            btnAcceder.classList.remove('text-2xl','font-semibold');
-
-            btnAcceder.innerHTML = 'Acceder&nbsp;&nbsp;<i class="fa-solid fa-right-to-bracket"></i>'; // Restaura el botón
+        if (contenedorLogin.classList.contains("hidden")) {
+            mostrarLogin();
+        } else {
+            ocultarLogin();
         }
     });
 }
+
 
 
 
