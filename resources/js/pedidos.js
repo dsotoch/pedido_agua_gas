@@ -62,7 +62,7 @@ if (form_metodo_pago_venta_rapida) {
             paymentModalVentaRapida.classList.add('hidden');
             let promocion = '';
             if (respuesta.promocion) {
-                promocion = '|| Producto Gratis '+respuesta.promocion.cantidad + " " + respuesta.promocion.producto;
+                promocion = '|| Producto Gratis ' + respuesta.promocion.cantidad + " " + respuesta.promocion.producto;
             }
 
             Swal.fire({
@@ -239,28 +239,24 @@ function calcularTotalEnProducto(boton, operacion) {
     const precioElement = contenedor.parentElement.querySelector('.precioprincipal');
     const padre_productos = boton.closest('.padre_productos');
     const valvulas = padre_productos?.querySelector('.valvulas');
-    let checkboxSeleccionado = null;
-
-    if (valvulas) {
-        checkboxSeleccionado = valvulas.querySelectorAll('input[type="radio"]');
-    }
 
     // Obtener el precio base normal
     const precioNormal = parseFloat(contenedor.querySelector('.precionormal').textContent.replace('S/', '').trim());
     let cantidad = parseInt(cantidadInput.textContent) || 0;
 
     // Determinar la cantidad anterior del producto
-    const productoId = contenedor.getAttribute('data-producto-id'); // Identificador único por producto
+    const productoId = contenedor.getAttribute('data-producto-id');
     const cantidadAnterior = window.cantidadesAnteriores[productoId] || 0;
 
-    // Obtener las promociones del producto
+    // Obtener promociones
     const promociones = contenedor.querySelector(".promociones").textContent;
     const objeto = JSON.parse(promociones);
     const contenedorTotal = document.querySelector('.total');
+
     // Ordenar promociones por cantidad ascendente
     objeto.sort((a, b) => a.cantidad - b.cantidad);
 
-    // Determinar el precio aplicado basado en la cantidad anterior
+    // Determinar el precio anterior basado en la cantidad anterior
     let precioAnteriorAplicado = precioNormal;
     objeto.forEach((element) => {
         if (cantidadAnterior >= element.cantidad) {
@@ -272,21 +268,13 @@ function calcularTotalEnProducto(boton, operacion) {
     if (operacion === 'suma') {
         cantidad++;
     } else if (operacion === 'resta') {
-        cantidad = Math.max(0, cantidad - 1);
-        if (cantidad == 0) {
-            window.idproductos = [];
-            logica_boton_siguiente();
-            cantidadInput.textContent = cantidad;
-            contenedorTotal.value = `Total: S/0.00`;
-
-            return '';
-        }
+        cantidad = Math.max(0, cantidad - 1); // Asegurar que no baje de 0
     }
 
     // Actualiza el input de cantidad
     cantidadInput.textContent = cantidad;
 
-    // Determinar el precio aplicado basado en la cantidad actual
+    // Determinar el precio actual basado en la cantidad actual
     let precioActualAplicado = precioNormal;
     objeto.forEach((element) => {
         if (cantidad >= element.cantidad) {
@@ -297,8 +285,8 @@ function calcularTotalEnProducto(boton, operacion) {
     // Actualizar el precio mostrado
     precioElement.textContent = 'S/' + precioActualAplicado.toFixed(2);
 
-    // Calcular la diferencia correctamente
-    const diferencia = (cantidad * precioActualAplicado) - (cantidadAnterior * precioAnteriorAplicado);
+    // Calcular la diferencia
+    let diferencia = (cantidad * precioActualAplicado) - (cantidadAnterior * precioAnteriorAplicado);
 
     // Actualizar el total acumulado
     if (typeof window.totalPedidoAcumulado === 'undefined') {
@@ -309,46 +297,43 @@ function calcularTotalEnProducto(boton, operacion) {
     // Almacena la nueva cantidad
     window.cantidadesAnteriores[productoId] = cantidad;
 
-    // Actualiza el total en el contenedor correspondiente
-    
+    // Actualiza el total en el contenedor
     contenedorTotal.value = `Total: S/${window.totalPedidoAcumulado.toFixed(2)}`;
 
-    // Buscar el índice del producto en el array
-    // Buscar si el producto ya existe con el mismo id y tipo
-    const index = window.idproductos.findIndex(item => item.id === productoId && item.tipo === (checkboxSeleccionado ? checkboxSeleccionado.value : ''));
-
-
+    // Manejo del tipo seleccionado
     let tipoSeleccionado = valvulas?.querySelector('input[type="radio"]:checked');
-
-    // Verificamos si tipoSeleccionado es nulo y establecemos un valor predeterminado
     let tipoValor = tipoSeleccionado ? tipoSeleccionado.value : null;
-    // Si el producto con el mismo tipo no existe, agregarlo como un nuevo registro
-    if (index === -1) {
-        window.idproductos.push({
-            id: productoId,
-            cantidad: 1,
-            tipo: tipoValor
-        });
+
+    // Buscar si el producto ya existe en la lista
+    const index = window.idproductos.findIndex(item => item.id === productoId && item.tipo === tipoValor);
+
+    if (cantidad === 0) {
+        // Si la cantidad es 0, eliminar el producto y ajustar correctamente el total
+        if (index !== -1) {
+            window.idproductos.splice(index, 1); // Eliminar el producto del array
+        }
+        delete window.cantidadesAnteriores[productoId]; // Eliminar de cantidades anteriores
     } else {
-        // Si el producto ya existe con el mismo tipo, actualizar solo la cantidad
-        window.idproductos[index].cantidad = cantidad;
+        if (index === -1) {
+            // Si el producto no existe, agregarlo
+            window.idproductos.push({
+                id: productoId,
+                cantidad: cantidad,
+                tipo: tipoValor
+            });
+        } else {
+            // Si el producto ya existe, actualizar la cantidad
+            window.idproductos[index].cantidad = cantidad;
+        }
     }
-
-    valvulas?.querySelectorAll('input[type="radio"]').forEach(radio => {
-        radio.addEventListener('change', function () {
-            let nuevoTipo = this.value;
-            let index = window.idproductos.findIndex(item => item.id === productoId);
-
-            if (index !== -1) {
-                window.idproductos[index].tipo = nuevoTipo;
-            }
-        });
-    });
 
     // Filtrar productos con cantidad cero
     window.idproductos = window.idproductos.filter(item => item.cantidad > 0);
+
+    console.log(window.idproductos);
     logica_boton_siguiente();
 }
+
 
 
 function ocultarContenedorProductosItem() {
@@ -368,7 +353,7 @@ if (btn_siguiente_pedido) {
         document.querySelector("#contenedor_modales_usuario_no_auth").classList.remove('hidden');
         ocultarContenedorProductosItem();
         contenedor_form_realizar_pedido.classList.remove('hidden');
-        contenedor_form_realizar_pedido.classList.add('flex','flex-col');
+        contenedor_form_realizar_pedido.classList.add('flex', 'flex-col');
 
     });
 }
@@ -670,7 +655,7 @@ function actualizarEstadoYPagoPanelAdministrador(pedidoId, estado) {
 
 function actualizar_Estado_delivery_panel_cliente($pedido_id, $estado) {
     const estado_pedido_span = mi_cuenta_contenedor_pedidos.querySelector("#caja-" + $pedido_id).querySelector('.estado_pedido_span');
-    const boton_asignar_repartidor=mi_cuenta_contenedor_pedidos.querySelector("#caja-" + $pedido_id).querySelector('.btnasignarrepartidor');
+    const boton_asignar_repartidor = mi_cuenta_contenedor_pedidos.querySelector("#caja-" + $pedido_id).querySelector('.btnasignarrepartidor');
     estado_pedido_span.innerHTML = $estado == 'En Camino'
         ? $estado + " <span class='text-2xl'>🚚</span>"
         : $estado;
@@ -953,7 +938,7 @@ if (mi_cuenta_contenedor_pedidos) {
                 let productos_requ = Array.from(productos_del_pedido_detalles).map(element => element.textContent.trim());
                 // Limpiar la lista antes de agregar nuevos elementos
                 productos_requeridos.innerHTML = '';
-                boton_asignar_clickeado=botonasignar;
+                boton_asignar_clickeado = botonasignar;
                 // Crear un elemento <li> por cada producto
                 productos_requ.forEach(texto => {
                     let li = document.createElement("li");
@@ -1131,7 +1116,7 @@ if (formAsignarRepartidor) {
             if (stock < producto.cantidad) {
 
                 puedeVender = false;
-                
+
             }
         });
         let exito_repartidor = false;
@@ -1188,7 +1173,7 @@ if (formAsignarRepartidor) {
                     })
                     formAsignarRepartidor.reset();
                     spanrepartidor.textContent = result.repartidor;
-                    boton_asignar_clickeado.classList.add('border-2','border-naranja');
+                    boton_asignar_clickeado.classList.add('border-2', 'border-naranja');
 
                 })
                 .catch(error => {
