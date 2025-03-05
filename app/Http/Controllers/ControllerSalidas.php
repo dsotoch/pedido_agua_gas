@@ -187,7 +187,6 @@ class ControllerSalidas extends Controller
             $request->validate([
                 'salida_id' => 'required|exists:salidas,id',
                 'productos' => 'required|array',
-                'productos.*' => 'exists:productos,id',
                 'cantidades' => 'required|array',
                 'cantidades.*' => 'integer|min:0'
             ]);
@@ -201,7 +200,9 @@ class ControllerSalidas extends Controller
             // Crear un mapa para acceder rápidamente a los productos existentes
             $productosMap = [];
             foreach ($productosStock as &$producto) {
-                $productosMap[$producto['producto_id']] = &$producto;
+                if (!empty($producto['producto_id'])) { // 🔴 Verificar que no sea vacío o nulo
+                    $productosMap[$producto['producto_id']] = &$producto;
+                }
             }
 
             $productosModificados = [];
@@ -218,14 +219,18 @@ class ControllerSalidas extends Controller
                     ];
                 } else {
                     // Si el producto no existe, lo agregamos al array
-                    $productosStock[] = [
+                    $productosModificados[] = [
                         'cantidad' => $cantidadNueva,
                         'producto_id' => $producto_id,
 
                     ];
                 }
             }
-          
+            $productosModificados = array_filter($productosModificados, function ($producto) {
+                return $producto['cantidad'] > 0;
+            });
+
+
             // Guardar los productos en formato JSON
             $salida->productos = json_encode($productosModificados);
             $salida->save(); // Guardar en la BD
@@ -241,12 +246,15 @@ class ControllerSalidas extends Controller
         try {
             $salida = Salidas::findOrFail($salida_id);
             // Decodificar el JSON actual de productos en el stock
+            // Decodificar el JSON actual de productos en el stock
             $productosStock = json_decode($salida->productos, true) ?? [];
 
-            // Crear un mapa de productos existentes
+            // Crear un mapa para acceder rápidamente a los productos existentes
             $productosMap = [];
             foreach ($productosStock as &$producto) {
-                $productosMap[$producto['producto_id']] = &$producto;
+                if (!empty($producto['producto_id'])) { // 🔴 Verificar que no sea vacío o nulo
+                    $productosMap[$producto['producto_id']] = &$producto;
+                }
             }
             $productosModificados = [];
 
@@ -257,19 +265,19 @@ class ControllerSalidas extends Controller
                 if (isset($productosMap[$producto_id])) {
                     // Si el producto ya existe en el stock, sumamos la cantidad
                     $productosMap[$producto_id]['cantidad'] += $cantidadNueva;
-                    // Guardamos solo los productos que existen en productosMap
                     $productosModificados[] = [
                         'producto_id' => $producto_id,
                         'cantidad' => $productosMap[$producto_id]['cantidad'],
                     ];
+                } else {
+                    // Si el producto no existe, lo agregamos al array
+                    $productosModificados[] = [
+                        'cantidad' => $cantidadNueva,
+                        'producto_id' => $producto_id,
+
+                    ];
                 }
             }
-
-
-
-
-            // Reindexar el array
-            $productosStock = array_values($productosModificados);
 
             // Guardar el JSON actualizado
             $salida->productos = json_encode($productosModificados);
@@ -400,11 +408,9 @@ class ControllerSalidas extends Controller
 
                 // Si se encuentra el producto, agregar su información
                 if ($producto) {
-                    $item['nombre'] = $producto->nombre;
-                    $item['descripcion'] = $producto->descripcion . $tipo;
+                    $item['nombre'] = $producto->nombre . $tipo;
                 } else {
                     $item['nombre'] = 'Producto no encontrado';
-                    $item['descripcion'] = '';
                 }
             }
 

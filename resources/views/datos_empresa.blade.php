@@ -160,11 +160,12 @@
 
                 <div class="mt-4">
                     <label class="block text-base font-medium text-gray-700 mb-1">Horario de Atención</label>
-                    <div class="flex space-x-2 overflow-x-auto">
-                        <input type="text" name="empresa_id" hidden value='{{ $empresa->id }}'>
-                        <div class="border p-2">
+                    <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 overflow-x-auto">
+                        <input type="hidden" name="empresa_id" value="{{ $empresa->id }}">
+                    
+                        <div class="border p-2 w-full md:w-auto">
                             <label for="dia">Día:</label>
-                            <select id="select_dia_conf">
+                            <select id="select_dia_conf" class="w-full md:w-auto">
                                 <option value="Lunes">Lunes</option>
                                 <option value="Martes">Martes</option>
                                 <option value="Miércoles">Miércoles</option>
@@ -172,24 +173,26 @@
                                 <option value="Viernes">Viernes</option>
                                 <option value="Sabado">Sabado</option>
                                 <option value="Domingo">Domingo</option>
-
                             </select>
                         </div>
-
-                        <div class="border p-2">
-                            <label for="hora_inicio">Hora Inicio:</label>
-                            <input type="time" id="hora_inicio_conf" >
+                    
+                        <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 w-full">
+                            <div class="border p-2 w-full md:w-auto">
+                                <label for="hora_inicio">Hora Inicio:</label>
+                                <input type="time" id="hora_inicio_conf" class="w-full md:w-auto">
+                            </div>
+                            <div class="border p-2 w-full md:w-auto">
+                                <label for="hora_fin">Hora Cierre:</label>
+                                <input type="time" id="hora_fin_conf" class="w-full md:w-auto">
+                            </div>
+                    
+                            <button type="button" id="btn_guardar_horario_conf"
+                                class="p-2 rounded bg-naranja text-white hover:border-2 hover:border-red-500 w-full md:w-auto">
+                                Guardar
+                            </button>
                         </div>
-                        <div class="border p-2">
-                            <label for="hora_fin">Hora Cierre:</label>
-                            <input type="time" id="hora_fin_conf" >
-                        </div>
-
-
-
-                        <button type="button" id="btn_guardar_horario_conf"
-                            class="p-2 rounded bg-naranja text-white hover:border-2 hover:border-red-500">Guardar</button>
                     </div>
+                    
                 </div>
                 <div class="mt-4 overflow-x-auto">
                     <table class="w-full" id="tabla_horario_conf">

@@ -42,7 +42,7 @@ if (btnVerSalida) {
                     data.productos.forEach(producto => {
                         const fila = document.createElement('tr');
                         fila.innerHTML = `
-                        <td class="border p-2 text-center">${producto.nombre} ${producto.descripcion}</td>
+                        <td class="border p-2 text-center">${producto.nombre}</td>
                        
                         <td class="border p-2 text-center">${producto.cantidad}</td>
                     `;
@@ -279,10 +279,10 @@ document.addEventListener("DOMContentLoaded", function () {
             modal_editar_salida.classList.add('flex');
             const productosData = this.getAttribute("data-productos");
             const salidaId = this.getAttribute("data-id"); // Obtener salida_id
-            let productos = [];
+            let productos2 = [];
 
             try {
-                productos = JSON.parse(productosData);
+                productos2 = JSON.parse(productosData);
             } catch (error) {
                 console.error("Error al parsear JSON de productos:", error);
                 return;
@@ -300,7 +300,7 @@ document.addEventListener("DOMContentLoaded", function () {
             inputSalidaId.hidden = true;
             formContainer.appendChild(inputSalidaId);
 
-            productos.forEach((item) => {
+            productos2.forEach((item) => {
 
                 let contenedor = document.createElement("div");
                 contenedor.classList.add('border', 'p-2', 'contenedor_producto');
@@ -331,8 +331,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 bntEliminar.classList.add("border", "p-2", "rounded", 'font-semibold', 'border-color-titulos-entrega', 'text-color-titulos-entrega', 'hover:scale-x-105');
                 bntEliminar.addEventListener('click', () => {
                     bntEliminar.closest('.contenedor_producto').remove();
-                    productos = productos.filter(producto => producto.id !== item.id);
-                    console.log(productos);
+                    productos2 = productos2.filter(producto => producto.id !== item.id);
                 })
                 // Crear input para cantidad
                 let inputCantidad = document.createElement("input");

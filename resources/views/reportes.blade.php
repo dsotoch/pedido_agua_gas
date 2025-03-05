@@ -133,7 +133,7 @@
                         @foreach ($productos as $item)
                         
                             <th class="break-words w-28 border border-gray-300 px-4 py-2  text-white font-semibold">
-                                {{$item->nombre .' '. $item->descripcion }}
+                                {{$item->nombre  }}
                             </th>
                         @endforeach
                         <th class="break-words w-28 border  border-gray-300 px-4 py-2  text-white font-semibold">Total</th>
@@ -166,7 +166,7 @@
                                     } else {
                                         // Filtrar detalles dentro del pedido actual para obtener la cantidad total de cada producto
                                         $cantidadTotal = $item->entregaPromociones
-                                            ->where('producto', $pro->descripcion) // Verificamos por ID de producto
+                                            ->where('producto', $pro->nombre) // Verificamos por ID de producto
                                             ->sum('cantidad'); // Sumamos todas las cantidades del mismo producto
                                     }
                                 @endphp

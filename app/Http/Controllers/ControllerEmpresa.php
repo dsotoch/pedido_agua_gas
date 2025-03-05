@@ -39,13 +39,15 @@ class ControllerEmpresa extends Controller
         $usuario = User::find($usuario->id);
         $empresa = $usuario->empresas()->first();
         $productos = $empresa->productos;
+        $productos_sele = $empresa->productos;
+
         $vehiculos = $empresa->vehiculos;
         $repartidores = $empresa->usuarios()->where('tipo', 'repartidor')->get();
 
         $salidas = $empresa->salidas()->with('stock')->whereDate('fecha', Carbon::now('America/Lima'))->get();
 
 
-        return view('salidas', compact('usuario', 'empresa', 'vehiculos', 'productos', 'salidas', 'repartidores'));
+        return view('salidas', compact('productos_sele','usuario', 'empresa', 'vehiculos', 'productos', 'salidas', 'repartidores'));
     }
 
     public function index_cupones()
@@ -251,7 +253,7 @@ class ControllerEmpresa extends Controller
 
         foreach ($pedidos as $pedido) {
             foreach ($pedido->detalles as $detalle) {
-                $productoId = $detalle->producto?->descripcion;
+                $productoId = $detalle->producto?->nombre;
                 $productos_cantidades[$productoId] = ($productos_cantidades[$productoId] ?? 0) + $detalle->cantidad;
             }
 

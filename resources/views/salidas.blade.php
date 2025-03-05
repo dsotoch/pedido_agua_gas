@@ -114,16 +114,16 @@
                                 @if ($producto->categoria === 'gas')
                                     <option value="{{ $producto->id . '_normal' }}" data-tipo="gas"
                                         data-id="{{ $producto->id }}">
-                                        {{ $producto->nombre . ' ' . $producto->descripcion . ' - Normal' }}
+                                        {{ $producto->nombre . ' - Normal' }}
                                     </option>
                                     <option value="{{ $producto->id . '_premium' }}" data-tipo="gas"
                                         data-id="{{ $producto->id }}">
-                                        {{ $producto->nombre . ' ' . $producto->descripcion . ' - Premium' }}
+                                        {{ $producto->nombre . ' - Premium' }}
                                     </option>
                                 @else
                                     <option value="{{ $producto->id }}" data-tipo="{{ $producto->categoria }}"
                                         data-id="{{ $producto->id }}">
-                                        {{ $producto->nombre . ' ' . $producto->descripcion }}
+                                        {{ $producto->nombre }}
                                     </option>
                                 @endif
                             @endforeach
@@ -187,8 +187,7 @@
                                             if ($producto) {
                                                 $productos_formateados[] = [
                                                     'id' => $item['producto_id'],
-                                                    'nombre' =>
-                                                        $producto->nombre . ' ' . $producto->descripcion . $tipo,
+                                                    'nombre' => $producto->nombre . $tipo,
                                                     'cantidad' => $item['cantidad'],
                                                 ];
                                             } else {
@@ -228,7 +227,7 @@
 
                                             @if ($producto)
                                                 <li>{{ $item['cantidad'] }} *
-                                                    {{ $producto->nombre . ' ' . $producto->descripcion . $tipo }}</li>
+                                                    {{ $producto->nombre . $tipo }}</li>
                                             @else
                                                 <li>{{ $item['cantidad'] }} * Producto no encontrado</li>
                                             @endif
@@ -261,21 +260,71 @@
             </table>
         </div>
         <div id="modal_editar_salida"
-            class="fixed inset-0  overflow-y-auto  justify-center items-center w-full h-full z-50 bg-black bg-opacity-50 hidden">
-            <div class="md:w-1/2 w-11/12 bg-white rounded-lg shadow-lg overflow-hidden transform transition-all">
+            class="fixed inset-0  justify-center items-center w-full z-50 bg-black bg-opacity-50 hidden">
+            <div
+                class="w-11/12 md:w-1/2 bg-white rounded-lg shadow-lg max-h-[90vh] overflow-y-auto transform transition-all p-4">
+
+
                 <!-- Encabezado -->
                 <div class="bg-tarjetas text-white p-4 flex justify-between items-center">
                     <h2 class="text-lg font-semibold">Editar Salida de Productos</h2>
-                    <button id="cerrar-modal"
-                        onclick="document.getElementById('modal_editar_salida').classList.add('hidden');"
+                    <button id="cerrar-modal" onclick="cerrarmodal()"
                         class="text-white text-2xl font-bold hover:text-gray-300">&times;</button>
                 </div>
 
                 <!-- Contenido del modal -->
-                <div class="p-4 space-y-4">
+                <div class="p-4 space-y-4 ">
                     <form action="{{ route('salidas.editar') }}" method="post">
+                        <div class="p-4">
+                            <div class="mb-4 w-full">
+                                <label class="block font-semibold">Nuevo Producto</label>
+                                <div id="productos-container2" class="w-full">
+                                    <div class="contenedor_producto flex  mb-2 border  w-full">
+                                        <select id="select_productos_salidas_nuevo" name="productos[]" 
+                                            class="w-1/2 md:w-3/5 p-2 border rounded-lg">
+                                            <option value="" selected >
+                                                Seleccione un Producto
+                                            </option>
+                                            @foreach ($productos_sele as $pro)
+                                                @if ($pro->categoria === 'gas')
+                                                    <option value="{{ $pro->id . '_normal' }}" data-tipo="gas"
+                                                        data-id="{{ $pro->id }}">
+                                                        {{ $pro->nombre . ' - Normal' }}
+                                                    </option>
+                                                    <option value="{{ $pro->id . '_premium' }}" data-tipo="gas"
+                                                        data-id="{{ $pro->id }}">
+                                                        {{ $pro->nombre . ' - Premium' }}
+                                                    </option>
+                                                @else
+                                                    <option value="{{ $pro->id }}"
+                                                        data-tipo="{{ $pro->categoria }}" data-id="{{ $pro->id }}">
+                                                        {{ $pro->nombre }}
+                                                    </option>
+                                                @endif
+                                            @endforeach
+
+                                        </select>
+                                        <div class="flex flex-col p-2 space-y-2">
+                                            <button onclick="eliminar()"
+                                                class="btneliminar border p-2 rounded font-semibold border-color-titulos-entrega text-color-titulos-entrega hover:scale-x-105">
+                                                Eliminar
+                                            </button>
+
+
+                                            <input type="number" name="cantidades[]" min="0" required
+                                                class="w-full p-2 border rounded-lg" placeholder="Cantidad"
+                                                value="0">
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="button" onclick="agregarProducto2()"
+                                    class="mt-2 border-2 nuevoproducto  text-color-text border-color-text font-semibold px-3 py-1 rounded">Añadir
+                                    Producto</button>
+                            </div>
+                        </div>
                         @csrf
                         <div id="formulario-edicion-productos"></div>
+
 
                         <!-- Pie del modal -->
                         <div class="bg-gray-100 p-4 flex justify-end space-x-2">
@@ -283,7 +332,7 @@
                             <button type="submit" class="px-4 py-2 bg-naranja text-white rounded-lg ">Guardar</button>
                         </div>
                     </form>
-                   
+
                 </div>
 
 
@@ -339,6 +388,31 @@
             let container = document.getElementById('productos-container');
             let newElement = container.children[0].cloneNode(true);
             container.appendChild(newElement);
+        }
+
+        function agregarProducto2() {
+            let container = document.getElementById('productos-container2');
+            let newElement = container.children[0].cloneNode(true);
+            container.appendChild(newElement);
+        }
+
+        function eliminar() {
+            document.querySelector('.btneliminar').closest('.contenedor_producto').remove();
+
+            let container = document.getElementById('productos-container2');
+
+            if (container.querySelectorAll('select').length === 0) {
+                document.querySelector('.nuevoproducto').disabled = true;
+            }
+        }
+
+        function cerrarmodal() {
+            document.getElementById('modal_editar_salida').classList.add('hidden');
+            let container = document.getElementById('productos-container2');
+
+            if (container.querySelectorAll('select').length === 0) {
+                location.reload();
+            }
         }
     </script>
 @endsection
