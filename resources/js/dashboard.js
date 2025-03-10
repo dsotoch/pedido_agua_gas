@@ -21,14 +21,20 @@ const contenedorLogin = document.getElementById("contenedor_login");
 if (btnAcceder) {
     function mostrarLogin() {
         contenedorLogin.classList.remove("hidden");
-        btnAcceder.innerHTML = "X"; // Cambia el texto a "X"
-        btnAcceder.classList.add("text-2xl", "font-semibold");
+        
+        if (esMovil()) { 
+            btnAcceder.innerHTML = "X"; // Cambia el texto solo en móviles
+            btnAcceder.classList.add("text-2xl", "font-semibold");
+        }
     }
 
     function ocultarLogin() {
         contenedorLogin.classList.add("hidden");
-        btnAcceder.classList.remove("text-2xl", "font-semibold");
-        btnAcceder.innerHTML = 'Acceder&nbsp;&nbsp;<i class="fa-solid fa-right-to-bracket"></i>'; // Restaura el botón
+        
+        if (esMovil()) { 
+            btnAcceder.classList.remove("text-2xl", "font-semibold");
+            btnAcceder.innerHTML = 'Acceder&nbsp;&nbsp;<i class="fa-solid fa-right-to-bracket"></i>'; // Restaura solo en móviles
+        }
     }
 
     // Detectar si es móvil
@@ -36,9 +42,11 @@ if (btnAcceder) {
         return window.innerWidth <= 768; // Ajusta este valor según sea necesario
     }
 
-    // Evento para mostrar en desktop
+    // Evento para mostrar en desktop (sin cambiar la "X")
     btnAcceder.addEventListener("mouseenter", function () {
-        if (!esMovil()) mostrarLogin();
+        if (!esMovil()) {
+            contenedorLogin.classList.remove("hidden");
+        }
     });
 
     // Evento para mostrar/ocultar en móviles
@@ -50,6 +58,7 @@ if (btnAcceder) {
         }
     });
 }
+
 
 
 

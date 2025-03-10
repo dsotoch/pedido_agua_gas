@@ -52,7 +52,7 @@
                     <!-- Modal -->
                     <div id="modal_vehiculos"
                         class="fixed inset-0  bg-gray-900 bg-opacity-50 flex items-center justify-center hidden">
-                        <div class="bg-white p-6 rounded-lg shadow-lg w-1/3">
+                        <div class="bg-white p-6 rounded-lg shadow-lg  w-full md:w-1/3">
                             <h2 class="text-xl font-bold mb-4">Modificar Vehiculo</h2>
 
                             <p class="mb-2 flex space-x-2 items-center"><strong>Vehículo:</strong><input type="text"

@@ -21,259 +21,90 @@ let cantidad_total = 0;
 if (tabla_reportes) {
     cantidad_total = tabla_reportes.querySelectorAll('tbody tr').length;
 }
-function filtrar() {
+function aplicarFiltros() {
     const filtroId = orderId.value.toLowerCase();
     const filtroNombre = ClienteNombre.value.toLowerCase();
     const filtroClienteID = ClienteID.value.toLowerCase();
-
+    const filtroEstado = estadoSelect.value.toLowerCase();
+    const filtroTipo = tipoSelect.value.toLowerCase();
+    const estadoSeleccionado = document.querySelector('input[name="paymentStatus"]:checked')?.value.toLowerCase();
+    const checkboxes = document.querySelectorAll('input[name="noveno_gratis"]:checked');
+    const valoresSeleccionados = Array.from(checkboxes).map(cb => cb.value);
+    const fromDate = fechaFrom.value ? fechaFrom.value.split('-').reverse().join('-') : null;
+    const toDate = fechaTo.value ? fechaTo.value.split('-').reverse().join('-') : null;
+    
     const filas = tabla_reportes.querySelectorAll('tbody tr');
     let total = 0;
     let contador = 0;
+    
     filas.forEach(fila => {
+        fila.style.display = '';
+    });
+    
+    filas.forEach(fila => {
+        const ths = document.querySelectorAll("#tabla_reportes th"); 
+        let thTotal = null, thEstado = null, thFecha = null, thPago = null, thValor = null;
+
+        ths.forEach((th, index) => {
+            if (th.textContent.trim() === 'Total') thTotal = index;
+            if (th.textContent.trim() === 'Delivery') thEstado = index;
+            if (th.textContent.trim() === 'Fecha') thFecha = index;
+            if (th.textContent.trim() === 'Pago') thPago = index;
+            if (th.textContent.trim() === 'PG') thValor = index;
+        });
+
         const celdaId = fila.cells[0]?.textContent.toLowerCase();
         const celdaClienteID = fila.cells[1]?.textContent.toLowerCase();
         const celdaClienteNombre = fila.cells[2]?.textContent.toLowerCase();
-        const ths = document.querySelectorAll("#tabla_reportes th"); // Selecciona todos los <th> de la tabla
-
-        let thTotal = null;
-        ths.forEach((th, index) => {
-
-            if (th.textContent.trim() === 'Total') {
-                thTotal = index;
-            }
-        });
-        const celdaTotal = parseFloat(fila.cells[thTotal]?.textContent.trim()) || 0; // Obtener el valor de la columna de total
-
-        // Mostrar u ocultar la fila según los filtros
-        if (
-            (filtroId === '' || celdaId.includes(filtroId)) &&
-            (filtroClienteID === '' || celdaClienteID.includes(filtroClienteID)) &&
-            (filtroNombre === '' || celdaClienteNombre.includes(filtroNombre))
-        ) {
-            fila.style.display = '';
-            contador++;
-            total += celdaTotal;
-        } else {
-            fila.style.display = 'none';
-        }
-    });
-    cantidad_total = contador;
-    actualizarPedidos(contador, total);
-
-}
-
-// Asignar eventos de escucha a los inputs
-[orderId, ClienteNombre, ClienteID].forEach(input => {
-    if (input) {
-        input.addEventListener('input', filtrar);
-
-    }
-});
-function filtrarPorSelect() {
-    const filtroEstado = estadoSelect.value.toLowerCase();
-    const filtroTipo = tipoSelect.value.toLowerCase();
-
-    const filas = tabla_reportes.querySelectorAll('tbody tr');
-    let total = 0;
-    let contador = 0;
-    filas.forEach(fila => {
-        const ths = document.querySelectorAll("#tabla_reportes th"); // Selecciona todos los <th> de la tabla
-        let thEstado = null;
-        ths.forEach((th, index) => {
-            if (th.textContent.trim() === "Delivery") {
-                thEstado = index;
-            }
-
-        });
         const celdaEstado = fila.cells[thEstado]?.textContent.toLowerCase();
         const celdaTipo = fila.cells[3]?.textContent.toLowerCase();
-        const celdaTotal = parseFloat(fila.cells[4]?.textContent.trim()) || 0; // Obtener el valor de la columna de total
-
-        // Mostrar u ocultar la fila según los filtros
+        const celdaTotal = parseFloat(fila.cells[thTotal]?.textContent.trim()) || 0;
+        const celdaFecha = fila.cells[thFecha]?.textContent.trim();
+        const celdaEstadoPago = fila.cells[thPago]?.textContent?.toLowerCase() || '';
+        const celdaValor = fila.cells[thValor]?.textContent.trim();
+        const fechaFila = celdaFecha ? celdaFecha.split(' ')[0] : '';
+        
         if (
-            (filtroEstado === '' || celdaEstado.includes(filtroEstado)) &&
-            (filtroTipo === '' || celdaTipo.includes(filtroTipo))
+            (filtroId && !celdaId.includes(filtroId)) ||
+            (filtroClienteID && !celdaClienteID.includes(filtroClienteID)) ||
+            (filtroNombre && !celdaClienteNombre.includes(filtroNombre)) ||
+            (filtroEstado && !celdaEstado.includes(filtroEstado)) ||
+            (filtroTipo && !celdaTipo.includes(filtroTipo)) ||
+            (estadoSeleccionado && !celdaEstadoPago.includes(estadoSeleccionado)) ||
+            (valoresSeleccionados.length > 0 && !valoresSeleccionados.includes(celdaValor)) ||
+            (fromDate && fechaFila < fromDate) ||
+            (toDate && fechaFila > toDate)
         ) {
-            fila.style.display = '';
-            total += celdaTotal;
-            contador++;
-        } else {
             fila.style.display = 'none';
+        } else {
+            contador++;
+            total += celdaTotal;
         }
     });
+    
     cantidad_total = contador;
     actualizarPedidos(contador, total);
-
 }
 
-// Asignar eventos de cambio a los selectores
-[estadoSelect, tipoSelect].forEach(select => {
-    if (select) {
-        select.addEventListener('change', filtrarPorSelect);
-
+// Asignar eventos
+[orderId, ClienteNombre, ClienteID, estadoSelect, tipoSelect].forEach(input => {
+    if (input) {
+        input.addEventListener('input', aplicarFiltros);
+        input.addEventListener('change', aplicarFiltros);
     }
 });
 
-
-function filtrarPorEstadoPago() {
-    const estadoSeleccionado = document.querySelector('input[name="paymentStatus"]:checked').value.toLowerCase();
-
-    const filas = tabla_reportes.querySelectorAll('tbody tr');
-    let total = 0;
-    let contador = 0;
-    filas.forEach(fila => {
-        const ths = document.querySelectorAll("#tabla_reportes th"); // Selecciona todos los <th> de la tabla
-        let thEstado = null;
-        let thTotal = null;
-        ths.forEach((th, index) => {
-            if (th.textContent.trim() === 'Pago') {
-                thEstado = index;
-            }
-            if (th.textContent.trim() === 'Total') {
-                thTotal = index;
-            }
-
-        });
-        let celdaEstadoPago = '';
-        let celdaTotal = 0;
-
-        if (estadoSeleccionado === 'deuda pendiente') {
-            celdaEstadoPago = fila.cells[3]?.textContent?.toLowerCase() || '';
-            const celdaTotalIndex = thTotal; // Asegúrate de que `thTotal` está definido correctamente
-            celdaTotal = parseFloat(fila.cells[celdaTotalIndex]?.textContent.trim()) || 0;
-        } else {
-            celdaEstadoPago = fila.cells[thEstado]?.textContent?.toLowerCase() || '';
-            const celdaTotalIndex = thEstado - 2; // Dos celdas antes
-            celdaTotal = parseFloat(fila.cells[celdaTotalIndex]?.textContent.trim()) || 0;
-        }
-
-        // Mostrar todas las filas si "Todos" está seleccionado o si coincide el estado de pago
-        if (estadoSeleccionado === '' || celdaEstadoPago.includes(estadoSeleccionado)) {
-            fila.style.display = '';
-            contador++;
-            total += celdaTotal;
-        } else {
-            fila.style.display = 'none';
-        }
-
-    });
-    cantidad_total = contador;
-    actualizarPedidos(contador, total);
-}
-
-
-// Asignar eventos de cambio a los radio buttons
-radiosPago.forEach(radio => {
-    if (radio) {
-        radio.addEventListener('change', filtrarPorEstadoPago);
-
-    }
+document.querySelectorAll('input[name="paymentStatus"], input[name="noveno_gratis"]').forEach(input => {
+    input.addEventListener('change', aplicarFiltros);
 });
 
-
-
-
-
-
-
-function filtrarPorFecha() {
-    const fromDate = fechaFrom.value ? fechaFrom.value.split('-').reverse().join('-') : null; // Convertir "2025-01-23" → "23-01-2025"
-    const toDate = fechaTo.value ? fechaTo.value.split('-').reverse().join('-') : null; // Convertir "2025-01-23" → "23-01-2025"
-
-
-    const filas = tabla_reportes.querySelectorAll('tbody tr');
-    let total = 0;
-    let contador = 0;
-    filas.forEach(fila => {
-        const ths = document.querySelectorAll("#tabla_reportes th"); // Selecciona todos los <th> de la tabla
-        let thFecha = null;
-        let thTotal = null;
-        ths.forEach((th, index) => {
-            if (th.textContent.trim() === 'Fecha') {
-                thFecha = index;
-            }
-            if (th.textContent.trim() === 'Total') {
-                thTotal = index;
-            }
-        });
-        const celdaFecha = fila.cells[thFecha]?.textContent.trim(); // Obtener el texto de la celda de fecha
-        const celdaTotal = parseFloat(fila.cells[thTotal]?.textContent.trim()) || 0; // Obtener el valor de la columna de total
-
-        if (!celdaFecha) return;
-
-        const fechaFila = celdaFecha.split(' ')[0]; // Extraer solo la fecha "23-01-2025"
-
-        // Validar el rango de fechas
-        if (
-            (!fromDate || fechaFila >= fromDate) &&
-            (!toDate || fechaFila <= toDate)
-        ) {
-            fila.style.display = '';
-            total += celdaTotal;
-            contador++;
-
-        } else {
-            fila.style.display = 'none';
-        }
-    });
-    cantidad_total = contador;
-    actualizarPedidos(contador, total);
-}
-
-
-
-// Asignar evento al botón de filtro
 if (botonFiltrar) {
     botonFiltrar.addEventListener('click', (e) => {
-        e.preventDefault(); // Evita recargar la página si el botón está en un formulario
-        filtrarPorFecha();
+        e.preventDefault();
+        aplicarFiltros();
     });
 }
 
-
-function filtrarPorCheckbox() {
-    const checkboxes = document.querySelectorAll('input[name="noveno_gratis"]:checked');
-    const valoresSeleccionados = Array.from(checkboxes).map(cb => cb.value); // Obtener los valores seleccionados (["NG", "0"])
-
-    const filas = tabla_reportes.querySelectorAll('tbody tr');
-    let contador = 0; // Contador de pedidos filtrados
-    let total = 0; // Total de los pedidos filtrados
-
-    filas.forEach(fila => {
-        const ths = document.querySelectorAll("#tabla_reportes th"); // Selecciona todos los <th> de la tabla
-        let thValor = null;
-        let thTotal = null;
-        ths.forEach((th, index) => {
-            if (th.textContent.trim() === 'PG') {
-                thValor = index;
-            }
-            if (th.textContent.trim() === 'Total') {
-                thTotal = index;
-            }
-        });
-        const celdaValor = fila.cells[thValor]?.textContent.trim(); // Obtener el valor de la columna
-        const celdaTotal = parseFloat(fila.cells[thTotal]?.textContent.trim()) || 0; // Obtener el valor de la columna de total
-
-        // Si no hay checkboxes seleccionados, mostrar todas las filas
-        if (valoresSeleccionados.length === 0 || valoresSeleccionados.includes(celdaValor)) {
-            fila.style.display = '';
-            contador++;
-            total += celdaTotal;
-        } else {
-            fila.style.display = 'none';
-        }
-    });
-    cantidad_total = contador;
-    actualizarPedidos(contador, total);
-}
-
-
-// Asignar evento a los checkboxes
-document.querySelectorAll('input[name="noveno_gratis"]').forEach(checkbox => {
-    if (checkbox) {
-        checkbox.addEventListener('change', filtrarPorCheckbox);
-    }
-});
 
 function actualizarPedidos(numero, total) {
     const ths = document.querySelectorAll("#tabla_reportes th"); // Selecciona todos los <th> de la tabla

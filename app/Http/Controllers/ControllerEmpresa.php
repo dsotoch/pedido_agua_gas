@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Storage;
 
 class ControllerEmpresa extends Controller
 {
+    
     public function index_favoritas()
     {
         if (!Auth::check()) {

@@ -69,11 +69,11 @@
                 </div>
                 <!-- Controles -->
                 <button id="prev"
-                    class="border hover:border-red-500 absolute left-0 top-1/2 transform -translate-y-1/2 bg-[#111111] text-white w-[50px] h-[50px] flex items-center justify-center rounded-full">
+                    class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-[#111111] text-white w-[50px] h-[50px] flex items-center justify-center rounded-full">
                     <i class="fas fa-angle-left text-[30px]"></i>
                 </button>
                 <button id="next"
-                    class="border hover:border-red-500 absolute right-0 top-1/2 transform -translate-y-1/2 bg-[#111111] text-white w-[50px] h-[50px] flex items-center justify-center rounded-full">
+                    class=" absolute right-0 top-1/2 transform -translate-y-1/2 bg-[#111111] text-white w-[50px] h-[50px] flex items-center justify-center rounded-full">
                     <i class="fas fa-angle-right text-[30px]"></i>
                 </button>
             </div>
