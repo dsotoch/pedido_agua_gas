@@ -18,7 +18,7 @@
                                         </h3>
                                         <p class="">
                                             <i class="fas fa-tags"></i>
-                                            {{ $item->nombre . ' ' . $item->descripcion }}
+                                            {{ $item->nombre }}
                                         </p>
                                         <p class=" font-bold">
                                             <i class="fas fa-dollar-sign "></i> Precio:
