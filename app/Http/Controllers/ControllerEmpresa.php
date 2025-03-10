@@ -47,7 +47,7 @@ class ControllerEmpresa extends Controller
         $salidas = $empresa->salidas()->with('stock')->whereDate('fecha', Carbon::now('America/Lima'))->get();
 
 
-        return view('salidas', compact('productos_sele','usuario', 'empresa', 'vehiculos', 'productos', 'salidas', 'repartidores'));
+        return view('salidas', compact('productos_sele', 'usuario', 'empresa', 'vehiculos', 'productos', 'salidas', 'repartidores'));
     }
 
     public function index_cupones()
@@ -356,22 +356,44 @@ class ControllerEmpresa extends Controller
         $dia = Carbon::now('America/Lima')->translatedFormat('l'); // Obtiene el día en minúsculas
         $dia = ucfirst($dia); // Convierte la primera letra en mayúscula
 
-        $nulo=false;
-        $horario = Horario::where('empresa_id', $empresa->id)->where('dia', $dia)->first();
+        Carbon::setLocale('es'); // Establece el idioma en español
+        $diaActual = ucfirst(Carbon::now('America/Lima')->translatedFormat('l')); // Obtiene el día en español con la primera letra en mayúscula
+        
+        $nulo = false;
+        $antes = false;
+        $fueraHorario = false;
+        $horaApertura = null;
+        $horaCierre = null;
+        
+        $horario = Horario::where('empresa_id', $empresa->id)->where('dia', $diaActual)->first();
+        $horaActual = Carbon::now('America/Lima');
+        
         if ($horario) {
-            $horaActual = Carbon::now('America/Lima');
             $horaInicio = Carbon::parse($horario->hora_inicio, 'America/Lima');
             $horaFin = Carbon::parse($horario->hora_fin, 'America/Lima');
-
+        
+            if ($horaActual->lt($horaInicio)) {
+                // Cliente ingresó antes del horario de apertura (mostrar horario del mismo día)
+                $antes = true;
+                $horaApertura = $horaInicio->format('H:i');
+                $horaCierre = $horaFin->format('H:i');
+            }
+        
             $fueraHorario = !$horaActual->between($horaInicio, $horaFin);
         } else {
-            // Si no hay horario en la base de datos, asumimos que está fuera del horario
+            // No hay horario registrado, asumimos que está fuera de horario
             $fueraHorario = true;
-            $nulo=true;
+            $nulo = true;
         }
+        
+
         $horarios = $empresa->horarios;
         // Retornar la vista con los datos
         return view('negocio', compact(
+            'antes',
+            'horaApertura',
+            'horaCierre',
+            'dia',
             'nulo',
             'horario',
             'horarios',
