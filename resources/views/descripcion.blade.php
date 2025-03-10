@@ -3,9 +3,7 @@
         <p class="text-tarjetas text-center leading-[45px] text-[35px] font-medium font-cabin">{{ $empresa->nombre }}</p>
         <br>
         <div class=" w-full grid text-justify text-color-text font-medium p-2">
-            <p class="text-center text-[16px] mb-8 font-bold ">
-                ¡Gracias a todos nuestros clientes por confiar en nosotros!
-            </p>
+          
 
 
             {{-- -  <p class="font-normal text[16px] leading-[35px] text-color-text"><span
@@ -18,7 +16,7 @@
             </p>
             - --}}
             <p class="text-wrap font-normal mt-2 text-base leading-[35px] text-color-text">{!! nl2br(e($empresa->descripcion)) !!}</p>
-            <div class="mt-4">
+            <div class="mt-[40px]">
                 <label class="text-[20px] font-semibold ">Días y horarios de atención:
                 </label>
                 <table class="w-full mt-5 border border-gray-300" id="tabla_horario_conf">

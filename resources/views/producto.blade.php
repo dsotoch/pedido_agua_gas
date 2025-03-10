@@ -2,8 +2,8 @@
     <input type="text" name="" id="empresa_id_para_cupon" hidden value="{{ $empresa ? $empresa->id : '' }}">
 
     @if ($productos->count() > 0)
-        <div id="contener_producto_item" class="flex flex-col w-full">
-            <div class="flex flex-col mx-auto md:pl-0 md:pr-0 pl-[10px] pr-[10px] h-auto text-color-text  items-center justify-center rounded-3xl  bg-transparent text-center w-full md:w-[520px]"
+        <div id="contener_producto_item" class="flex flex-col w-full pl-[10px] pr-[10px]">
+            <div class="flex flex-col mx-auto h-auto text-color-text  items-center justify-center rounded-3xl  bg-transparent text-center w-full md:w-[520px]"
                 data-index="">
                 @foreach ($productos as $item)
                     <!---Productos Antiguos-->
@@ -11,16 +11,17 @@
                         <div class="w-[79px] h-[145px] my-auto flex items-center">
                             <img src="{{ asset('storage/' . $item->imagen) }}" alt="" class=" object-contain">
                         </div>
-                        <div class="flex flex-col w-full  md:w-[398px] ml-4 space-y-2 padre_productos">
+                        <div class="flex flex-col w-full   ml-4 space-y-2 padre_productos ">
                             <div class="md:flex grid items-center ">
-                                <div class="w-1/2 pt-4  text-start">
+                                <div class="w-full  md:w-1/2 pt-4  text-start">
                                     <p class="producto_descripcion  text-base ">
                                         {{ $item->nombre }}</p>
                                 </div>
-                                <div class="flex w-full md:justify-normal md:pl-0 md:pr-0 pr-[10px] justify-between  md:w-1/2 items-center space-x-2 md:space-x-1  pt-4">
+                                <div
+                                    class="flex w-full  md:pl-0 md:pr-0 pr-[10px] justify-between  md:w-1/2 items-center space-x-2 md:space-x-1  pt-4">
                                     <div class="w-1/2">
-                                        <p class="text-start"> <span
-                                                class="text-[15px] text-start  precioprincipal">S/{{ number_format($item->precio ?? 0, 2, '.', '') }}</span>
+                                        <p class="text-center"> <span
+                                                class="text-[15px] text-center  precioprincipal">S/{{ number_format($item->precio ?? 0, 2, '.', '') }}</span>
                                         </p>
                                     </div>
                                     <div class="item-container p-1 opacity-80 justify-center space-x-2  border-color-text rounded-[3px] flex w-[76px] h-[37px] max-h-[37px] items-center  border "
@@ -118,15 +119,15 @@
                                 @endauth
                             </div>
                             @if ($item->categoria == 'gas')
-                                <div class="w-full flex space-x-4 valvulas">
+                                <div class="w-full flex space-x-4 valvulas pb-[18px]">
                                     <label class="flex items-center gap-2 cursor-pointer text-[13px]">
-                                        <input type="radio" data-id="{{ $item->id }}" value="normal" name="valvula_{{ $item->id }}" checked
-                                            class="rounded-full border">
+                                        <input type="radio" data-id="{{ $item->id }}" value="normal"
+                                            name="valvula_{{ $item->id }}" checked class="rounded-full border">
                                         Válvula Normal
                                     </label>
                                     <label class="flex items-center gap-2 cursor-pointer text-[13px]">
-                                        <input type="radio"  data-id="{{ $item->id }}" value="premium" name="valvula_{{ $item->id }}"
-                                            class="rounded-full border">
+                                        <input type="radio" data-id="{{ $item->id }}" value="premium"
+                                            name="valvula_{{ $item->id }}" class="rounded-full border">
                                         Válvula Premium
                                     </label>
                                 </div>
@@ -138,7 +139,7 @@
                 @endforeach
 
             </div>
-            <div class="flex flex-col  md:w-[500px] mx-auto  mt-[40px] w-full   bg-white rounded-[10px] p-[10px]">
+            <div class="flex flex-col  md:w-[500px] mx-auto  mt-[40px] w-full  bg-white rounded-[10px] p-[10px]">
                 <!-- Mensaje y botón de despliegue -->
                 <div class="flex items-center justify-center space-x-2 cursor-pointer mt-[10px] mb-[10px]"
                     id="toggleCupon">
@@ -160,7 +161,7 @@
                 </div>
             </div>
             <div id="contenedor-total"
-                class="mt-[40px] sticky bottom-0 contenedor-total grid  w-full bg-color-fondo-productos justify-items-center ">
+                class="mt-[40px]  sticky bottom-0 contenedor-total grid  w-full bg-color-fondo-productos justify-items-center ">
                 <div id="contenedor_cupones" class="hidden  flex-col w-full text-center items-center justify-center">
                     <center>
                         <div class="w-full">
@@ -184,15 +185,19 @@
                     class="total text-[18px]   w-[328px] h-[55px] rounded-md focus:outline-none bg-transparent font-bold  text-center  pb-[10px] "
                     value="Total: S/0.00">
                 <button type="button" disabled
-                    class="btnproductoagregar disabled:opacity-50 opacity-100  font-normal text-[18px]  w-[328px] h-[55px] rounded-md custom-bg-button  text-white  mb-[40px]">
+                    class="btnproductoagregar disabled:opacity-50 opacity-100  font-normal text-[18px]  w-[328px] h-[55px] rounded-md custom-bg-button  text-white ">
                     Siguiente
                     <i class=" fas fa-arrow-right-long text-2xl ml-2 "></i></button>
+                @guest
+                    <div class="h-[40px]"></div>
+                @endguest
                 @auth
                     @if ($usuario->tipo != 'cliente' && $empresa->id == $usuario->empresas()->first()->id)
                         <button type="button" disabled
-                            class="btn_venta_rapida disabled:opacity-50 opacity-100 mt-2 font-normal text-[18px]  w-[328px] h-[55px] rounded-md custom-bg-button  text-white  mb-2">
+                            class="btn_venta_rapida mb-[10px] transition-all duration-300 disabled:opacity-50  opacity-100 mt-[10px] font-normal text-[18px]  w-[328px] h-[55px] rounded-md custom-bg-button  text-white ">
                             Venta Rapida
                             <i class=" fas fa-arrow-right-long text-2xl ml-2 "></i></button>
+                        
                     @endif
                 @endauth
 

@@ -21,8 +21,8 @@ const contenedorLogin = document.getElementById("contenedor_login");
 if (btnAcceder) {
     function mostrarLogin() {
         contenedorLogin.classList.remove("hidden");
-        
-        if (esMovil()) { 
+
+        if (esMovil()) {
             btnAcceder.innerHTML = "X"; // Cambia el texto solo en móviles
             btnAcceder.classList.add("text-2xl", "font-semibold");
         }
@@ -30,8 +30,8 @@ if (btnAcceder) {
 
     function ocultarLogin() {
         contenedorLogin.classList.add("hidden");
-        
-        if (esMovil()) { 
+
+        if (esMovil()) {
             btnAcceder.classList.remove("text-2xl", "font-semibold");
             btnAcceder.innerHTML = 'Acceder&nbsp;&nbsp;<i class="fa-solid fa-right-to-bracket"></i>'; // Restaura solo en móviles
         }
@@ -59,14 +59,34 @@ if (btnAcceder) {
     });
 }
 
+document.addEventListener("DOMContentLoaded", function () {
+    const contenedor = document.getElementById("contenedor-total");
 
+    if (contenedor) {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (!entry.isIntersecting) {
+                    contenedor.classList.add("pb-[30px]"); // Agregar padding si está pegado
+                } else {
+                    contenedor.classList.remove("pb-[30px]"); // Quitar padding si no está pegado
+                }
+            },
+            { root: null, threshold: 1.0 }
+        );
+        if (observer) {
+            observer.observe(contenedor);
+        }
+    }
+
+
+});
 
 
 
 if (contenedorLogin) {
     contenedorLogin.addEventListener("mouseleave", function () {
         contenedorLogin.classList.add("hidden");
-        btnAcceder.classList.remove('text-2xl','font-semibold');
+        btnAcceder.classList.remove('text-2xl', 'font-semibold');
 
         btnAcceder.innerHTML = 'Acceder&nbsp;&nbsp;<i class="fa-solid fa-right-to-bracket"></i>'; // Restaura el botón
 
@@ -217,7 +237,7 @@ if (select_direccion) {
                 method: 'POST', // Aunque sea para obtener datos, el backend puede manejarlo como GET
                 headers: {
                     'Content-Type': 'application/json',
-                    'X_CSRF_TOKEN':token
+                    'X_CSRF_TOKEN': token
                 },
                 body: JSON.stringify({ direccion: select_direccion.value })
             });
