@@ -68,7 +68,7 @@ class ControllerProducto extends Controller
                     PromocionesUnitario::create([
                         'producto_id' => $producto->id,
                         'cantidad' => $productos_por_cada,
-                        'producto_gratis' => $productos_gratis == 'mismo' ?  $producto->nombre.' '.$producto->descripcion : $productos_gratis,
+                        'producto_gratis' => $productos_gratis == 'mismo' ?  $producto->nombre . ' ' . $producto->descripcion : $productos_gratis,
                     ]);
                 }
 
@@ -112,7 +112,7 @@ class ControllerProducto extends Controller
             // Obtener datos del request
             $precio = $request->precio;
             $nombre = $request->nombre;
-            $categoria =$request->categoria;
+            $categoria = $request->categoria;
             $descripcion = $request->descripcion;
             $promociones = $request->promociones;
             $productos_por_cada = $request->productos_por_cada;
@@ -125,26 +125,43 @@ class ControllerProducto extends Controller
                 'descripcion' => "{$descripcion}", // Concatenación
                 'precio' => floatval($precio),
                 'comercializable' => $comercializable,
-                'categoria'=>$categoria
+                'categoria' => $categoria
             ]);
 
             // Verificar si existe una promoción y actualizarla o crearla
             $promocionUnitario = PromocionesUnitario::where('producto_id', $producto->id)->first();
-
-            if (!is_null($productos_por_cada) && !is_null($productos_gratis)) {
+            if (!empty($productos_por_cada) && empty($productos_gratis)) {
+                return response()->json([
+                    'mensaje' => 'El campo "productos_gratis" es obligatorio cuando "productos_por_cada" tiene un valor.'
+                ], 400);
+            }
+            
+            if (!empty($productos_gratis) && empty($productos_por_cada)) {
+                return response()->json([
+                    'mensaje' => 'El campo "productos_por_cada" es obligatorio cuando "productos_gratis" tiene un valor.'
+                ], 400);
+            }
+            
+            if (!empty($productos_por_cada) && !empty($productos_gratis)) {
                 if ($promocionUnitario) {
                     $promocionUnitario->update([
                         'cantidad' => $productos_por_cada,
-                        'producto_gratis' => $productos_gratis == 'mismo' ? $producto->nombre.' '.$producto->descripcion : $productos_gratis,
+                        'producto_gratis' => $productos_gratis == 'mismo' ? $producto->nombre  : $productos_gratis,
                     ]);
                 } else {
                     PromocionesUnitario::create([
                         'producto_id' => $producto->id,
                         'cantidad' => $productos_por_cada,
-                        'producto_gratis' => $productos_gratis == 'mismo' ?  $producto->nombre.' '.$producto->descripcion : $productos_gratis,
+                        'producto_gratis' => $productos_gratis == 'mismo' ?  $producto->nombre  : $productos_gratis,
                     ]);
                 }
+            } else {
+                if ($promocionUnitario) {
+                    // Si los valores son nulos o vacíos, vaciar también los datos en la base de datos
+                    $promocionUnitario->delete();
+                }
             }
+
 
             // Procesar promociones múltiples
             Promociones::where('producto_id', $producto->id)->delete(); // Eliminar promociones anteriores

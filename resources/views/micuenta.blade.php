@@ -50,7 +50,7 @@
                                                         <img src="{{ asset('imagenes/cajas/id.svg') }}" alt="">
 
                                                     </div>
-                                                    <div class="pl-2"><b>{{ $pedido->id }}</b></div>
+                                                    <div class="pl-2"><b>{{ $pedido->usuario?->id }}</b></div>
                                                 </div>
 
 
@@ -371,7 +371,7 @@
                                                             </path>
                                                         </svg>
                                                     </div>
-                                                    <div class="pl-2"><b>{{ $pedido->id }}</b></div>
+                                                    <div class="pl-2"><b>{{ $usuario->id }}</b></div>
                                                 </div>
                                             </div>
 
