@@ -158,7 +158,7 @@
                         </svg>
                         <span
                             class="absolute -left-12 z-50 md:left-0 mt-2 w-48 bg-gray-800 text-white text-xs rounded-md p-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                            Este cupón puede ser utilizado por los clientes todos los días, una vez por día.
+                            Este cupón puede ser utilizado por los clientes todos los días, una vez por pedido.
                         </span>
                     </span>
                 </label>

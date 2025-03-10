@@ -18,6 +18,8 @@ const modal_editar_pedido = document.getElementById('modal_editar_pedido');
 const btn_venta_rapida = document.querySelector(".btn_venta_rapida");
 const paymentModalVentaRapida = document.getElementById('paymentModalVentaRapida');
 const form_metodo_pago_venta_rapida = document.getElementById('form_metodo_pago_venta_rapida');
+const radio_valvulas = document.querySelectorAll(".valvulas input[type='radio']");
+
 if (btn_venta_rapida) {
     btn_venta_rapida.addEventListener('click', () => {
 
@@ -324,17 +326,36 @@ function calcularTotalEnProducto(boton, operacion) {
         } else {
             // Si el producto ya existe, actualizar la cantidad
             window.idproductos[index].cantidad = cantidad;
+            window.idproductos[index].tipo = tipoValor;
+
         }
     }
 
     // Filtrar productos con cantidad cero
     window.idproductos = window.idproductos.filter(item => item.cantidad > 0);
 
-    console.log(window.idproductos);
     logica_boton_siguiente();
 }
 
+if (radio_valvulas) {
+    radio_valvulas.forEach(function (radio) {
+        radio.addEventListener("change", function () {
+            let itemId = this.dataset.id;
+            let selectedValue = this.value;
+    
+            // Buscar el producto en el array
+            let index = window.idproductos.findIndex(item => item.id === itemId);
+    
+            if (index !== -1) {
+                // Actualizar el tipo de válvula en el producto existente
+                window.idproductos[index].tipo = selectedValue;
+            }
+    
 
+        });
+    });
+
+}
 
 function ocultarContenedorProductosItem() {
     const contener_producto_item = document.getElementById('contener_producto_item');

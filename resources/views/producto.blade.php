@@ -120,12 +120,12 @@
                             @if ($item->categoria == 'gas')
                                 <div class="w-full flex space-x-4 valvulas">
                                     <label class="flex items-center gap-2 cursor-pointer text-[13px]">
-                                        <input type="radio" value="normal" name="valvula_{{ $item->id }}" checked
+                                        <input type="radio" data-id="{{ $item->id }}" value="normal" name="valvula_{{ $item->id }}" checked
                                             class="rounded-full border">
                                         Válvula Normal
                                     </label>
                                     <label class="flex items-center gap-2 cursor-pointer text-[13px]">
-                                        <input type="radio" value="premium" name="valvula_{{ $item->id }}"
+                                        <input type="radio"  data-id="{{ $item->id }}" value="premium" name="valvula_{{ $item->id }}"
                                             class="rounded-full border">
                                         Válvula Premium
                                     </label>

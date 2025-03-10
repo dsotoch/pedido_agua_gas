@@ -16,7 +16,7 @@ export async function esFavoritoPrincipal(dominio) {
     // Aplanar el array y buscar el dominio
     const favoritosLista = favoritos.flat(); // Convierte [[...], [...]] en [...]
     if (Array.isArray(favoritosLista) && favoritosLista.length > 0 && favoritosLista.every(fav => fav !== null && fav !== undefined)) {
-    
+
 
         return favoritosLista.some(fav => fav.dominio === urlActual);
     }
@@ -64,16 +64,16 @@ export async function obtenerFavoritos() {
 
 
 export async function guardarFavorito(usuarioId, dominio) {
-    if(id_usuario_autenticado.textContent.trim()!=''){
+    if (id_usuario_autenticado.textContent.trim() != '') {
         try {
             const response = await fetch('guardarFavorito', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json', 'X_CSRF_TOKEN': token },
                 body: JSON.stringify({ usuario_id: usuarioId, empresa_id: dominio })
             });
-    
+
             const data = await response.json();
-    
+
             if (response.ok) {
                 Swal.fire({
                     title: 'Distribuidora Favorita',
@@ -103,7 +103,7 @@ export async function guardarFavorito(usuarioId, dominio) {
             });
             console.error("Error:", error);
         }
-    }else{
+    } else {
         Swal.fire({
             title: 'Requerimiento faltante!',
             text: "Inicia sesion para realizar esta operacion.",
@@ -311,7 +311,7 @@ export async function guardarPaginaPredeterminada(url, empresa, procedencia) {
             timerProgressBar: 'bg-green-500 h2 rounded',
         }
     });
-    await  guardarPaginaPredeterminadaBD(url);
+    await guardarPaginaPredeterminadaBD(url);
     return true;
 }
 async function guardarPaginaPredeterminadaBD(url) {
@@ -365,7 +365,12 @@ export function ir_pagina_predeterminada() {
     if (!clienteID) return;
 
     let paginaPredeterminada = localStorage.getItem(`${clienteID}_paginaPredeterminada`) || obtenerCookie(clienteID);
-
+    if (id_usuario_autenticado.textContent == '') {
+        let clienteID = obtenerClienteID();
+        localStorage.removeItem(`${clienteID}_paginaPredeterminada`);
+        document.cookie = `${clienteID}=; path=/; max-age=0;`;
+        return;
+    }
     if (paginaPredeterminada && window.location.pathname === "/") {
         window.location.href = decodeURIComponent(paginaPredeterminada);
     }

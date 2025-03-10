@@ -33,13 +33,14 @@ class CuponController extends Controller
             ->where('usuario_id', auth()->id())
             ->first();
 
-        if ($usoCliente && $usoCliente->veces_usado >= $cupon->limite_uso_por_cliente) {
+        if ($usoCliente && $usoCliente->veces_usado >= $cupon->limite_uso_por_cliente && !$cupon->especial) {
             throw new Exception('El cliente ya alcanzó el límite de uso del cupón.', 400);
         }
 
         // Si el usuario ya ha usado el cupón, incrementamos su uso
         if ($usoCliente) {
-            $usoCliente->increment('veces_usado');
+            $usoCliente->veces_usado = 0;
+            $usoCliente->save();
         } else {
             // Si es la primera vez que lo usa, creamos el registro
             CuponUser::create([
@@ -125,10 +126,10 @@ class CuponController extends Controller
 
             $usosRestantesCliente = $codigo->limite_uso_por_cliente - ($usoCliente->veces_usado ?? 0);
             if ($usosRestantesCliente <= 0) {
-                if ($codigo->especial) {
-                    throw new \Exception('Ya usaste este cupón hoy', 422);
+                if (!$codigo->especial) {
+                    throw new \Exception('Has alcanzado el límite de uso para este código', 400);
+
                 }
-                throw new \Exception('Has alcanzado el límite de uso para este código', 400);
             }
 
             // Validar que el total de la compra es un número válido
