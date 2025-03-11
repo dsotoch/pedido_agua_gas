@@ -47,17 +47,10 @@ class ControllerUsuario extends Controller
     {
         try {
             $request->validate([
-                'dni' => 'required|exists:persona,dni',
                 'telefono' => 'required|exists:users,usuario',
-                'email' => 'required|email|exists:persona,correo',
             ]);
 
-            $user = User::where('usuario', $request->telefono)
-                ->whereHas('persona', function ($query) use ($request) {
-                    $query->where('dni', $request->dni)
-                        ->where('correo', $request->email);
-                })
-                ->first();
+            $user = User::where('usuario', $request->telefono)->first();
 
 
             if (!$user) {

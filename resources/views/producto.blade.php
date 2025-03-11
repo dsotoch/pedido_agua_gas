@@ -18,13 +18,13 @@
                                         {{ $item->nombre }}</p>
                                 </div>
                                 <div
-                                    class="flex w-full  md:pl-0 md:pr-0 pr-[10px] justify-between  md:w-1/2 items-center space-x-2 md:space-x-1  pt-4">
+                                    class="flex w-full  md:pl-0  pr-[10px] justify-between  md:w-1/2 items-center space-x-2 md:space-x-1  pt-4">
                                     <div class="w-1/2">
-                                        <p class="text-center"> <span
-                                                class="text-[15px] text-center  precioprincipal">S/{{ number_format($item->precio ?? 0, 2, '.', '') }}</span>
+                                        <p class="text-start md:text-center"> <span
+                                                class="text-[15px]  precioprincipal">S/{{ number_format($item->precio ?? 0, 2, '.', '') }}</span>
                                         </p>
                                     </div>
-                                    <div class="item-container p-1 opacity-80 justify-center space-x-2  border-color-text rounded-[3px] flex w-[76px] h-[37px] max-h-[37px] items-center  border "
+                                    <div class="item-container p-1  opacity-80 justify-center space-x-2  border-color-text rounded-[3px] flex w-[76px] h-[37px] max-h-[37px] items-center  border "
                                         data-producto-id="{{ $item->id }}">
                                         <p class="hidden precionormal">
                                             {{ number_format($item->precio ?? 0, 2, '.', '') }}
@@ -185,16 +185,14 @@
                     class="total text-[18px]   w-[328px] h-[55px] rounded-md focus:outline-none bg-transparent font-bold  text-center  pb-[10px] "
                     value="Total: S/0.00">
                 <button type="button" disabled
-                    class="btnproductoagregar disabled:opacity-50 opacity-100  font-normal text-[18px]  w-[328px] h-[55px] rounded-md custom-bg-button  text-white ">
+                    class="btnproductoagregar mb-[10px] disabled:opacity-50 opacity-100  font-normal text-[18px]  w-[328px] h-[55px] rounded-md custom-bg-button  text-white ">
                     Siguiente
                     <i class=" fas fa-arrow-right-long text-2xl ml-2 "></i></button>
-                @guest
-                    <div class="h-[40px]"></div>
-                @endguest
+               
                 @auth
                     @if ($usuario->tipo != 'cliente' && $empresa->id == $usuario->empresas()->first()->id)
                         <button type="button" disabled
-                            class="btn_venta_rapida mb-[10px] transition-all duration-300 disabled:opacity-50  opacity-100 mt-[10px] font-normal text-[18px]  w-[328px] h-[55px] rounded-md custom-bg-button  text-white ">
+                            class="btn_venta_rapida mb-[10px] transition-all duration-300 disabled:opacity-50  opacity-100  font-normal text-[18px]  w-[328px] h-[55px] rounded-md custom-bg-button  text-white ">
                             Venta Rapida
                             <i class=" fas fa-arrow-right-long text-2xl ml-2 "></i></button>
                         

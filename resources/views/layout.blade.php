@@ -280,16 +280,6 @@
                     class="space-y-4 bg-white p-6 rounded-lg shadow-md w-full max-w-md mx-auto" id="form_reset_pass">
 
                     <div class="relative">
-                        <label class="block text-sm font-medium text-gray-700">DNI:</label>
-                        <div class="relative">
-                            <input type="text" name="dni" required
-                                class="w-full mt-1 px-10 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <i
-                                class="fas fa-id-card absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500"></i>
-                        </div>
-                    </div>
-
-                    <div class="relative">
                         <label class="block text-sm font-medium text-gray-700">Teléfono:</label>
                         <div class="relative">
                             <input type="text" name="telefono" required
@@ -299,15 +289,7 @@
                         </div>
                     </div>
 
-                    <div class="relative">
-                        <label class="block text-sm font-medium text-gray-700">Correo Electrónico:</label>
-                        <div class="relative">
-                            <input type="email" name="email" required
-                                class="w-full mt-1 px-10 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <i
-                                class="fas fa-envelope absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500"></i>
-                        </div>
-                    </div>
+               
 
                     <button type="submit"
                         class="w-full bg-blue-600 hover:bg-blue-700 transform hover:scale-105 text-white font-semibold py-2 rounded-md transition flex justify-center items-center gap-2">
