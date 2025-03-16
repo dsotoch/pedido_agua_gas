@@ -93,39 +93,61 @@
                             hasta las {{ \Carbon\Carbon::parse($horaCierre)->format('h:i A') }}.
                         @else
                             @php
-                                // Obtener el siguiente día hábil
+                                // Definir el orden de los días de la semana
                                 $diasSemana = [
-                                    'lunes',
-                                    'martes',
-                                    'miércoles',
-                                    'jueves',
-                                    'viernes',
-                                    'sábado',
-                                    'domingo',
+                                    'Lunes',
+                                    'Martes',
+                                    'Miércoles',
+                                    'Jueves',
+                                    'Viernes',
+                                    'Sabado',
+                                    'Domingo',
                                 ];
+
+                                // Obtener el índice del día actual
                                 $indiceDiaActual = array_search($dia, $diasSemana);
 
+                                // Ordenar los horarios por el orden de la semana
+                                $horariosOrdenados = collect($empresa->horarios)
+                                    ->sortBy(function ($horario) use ($diasSemana) {
+                                        return array_search($horario->dia, $diasSemana);
+                                    })
+                                    ->values();
+
+                                // Buscar el siguiente día hábil
                                 $siguienteHorario = null;
-                                for ($i = 1; $i < 7; $i++) {
-                                    // Máximo 6 iteraciones para evitar bucles infinitos
-                                    $indiceSiguiente = ($indiceDiaActual + $i) % 7;
-                                    $diaSiguiente = $diasSemana[$indiceSiguiente];
-                                    $siguienteHorario = $empresa->horarios->where('dia', $diaSiguiente)->first();
-                                    if ($siguienteHorario) {
+                                foreach ($horariosOrdenados as $horario) {
+                                    $indiceHorario = array_search($horario->dia, $diasSemana);
+                                    if ($indiceHorario > $indiceDiaActual) {
+                                        $siguienteHorario = $horario;
                                         break;
                                     }
                                 }
 
-                                $siguienteDia = ucfirst($siguienteHorario->dia);
-                                $siguienteHoraApertura = \Carbon\Carbon::parse($siguienteHorario->hora_inicio)->format(
-                                    'h:i A',
-                                );
-                                $siguienteHoraCierre = \Carbon\Carbon::parse($siguienteHorario->hora_fin)->format(
-                                    'h:i A',
-                                );
+                                // Si no encontró un día después del actual, tomar el primer día hábil de la lista
+                                if (!$siguienteHorario) {
+                                    $siguienteHorario = $horariosOrdenados->first();
+                                }
+
+                                // Si hay un horario disponible, obtener sus datos
+                                if ($siguienteHorario) {
+                                    $siguienteDia = ucfirst($siguienteHorario->dia);
+                                    $siguienteHoraApertura = \Carbon\Carbon::parse(
+                                        $siguienteHorario->hora_inicio,
+                                    )->format('h:i A');
+                                    $siguienteHoraCierre = \Carbon\Carbon::parse($siguienteHorario->hora_fin)->format(
+                                        'h:i A',
+                                    );
+                                } else {
+                                    // Si no hay horarios configurados
+                                    $siguienteDia = 'No disponible';
+                                    $siguienteHoraApertura = 'No disponible';
+                                    $siguienteHoraCierre = 'No disponible';
+                                }
                             @endphp
 
-                            Los pedidos realizados en este momento serán procesados el día
+                            Actualmente estamos fuera de nuestro horario de atención. Los pedidos realizados en este momento
+                            serán procesados el día
                             <strong>{{ $siguienteDia }}</strong> desde las
                             <strong>{{ $siguienteHoraApertura }}</strong> hasta las
                             <strong>{{ $siguienteHoraCierre }}</strong>.
