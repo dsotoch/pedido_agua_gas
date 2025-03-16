@@ -171,7 +171,7 @@
                                 <option value="Miércoles">Miércoles</option>
                                 <option value="Jueves">Jueves</option>
                                 <option value="Viernes">Viernes</option>
-                                <option value="Sabado">Sabado</option>
+                                <option value="Sábado">Sabado</option>
                                 <option value="Domingo">Domingo</option>
                             </select>
                         </div>

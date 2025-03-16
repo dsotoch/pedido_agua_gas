@@ -100,7 +100,7 @@
                                     'Miércoles',
                                     'Jueves',
                                     'Viernes',
-                                    'Sabado',
+                                    'Sábado',
                                     'Domingo',
                                 ];
 
