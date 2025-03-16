@@ -7,6 +7,21 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="token" id="token" content="{{ csrf_token() }}">
     @laravelPWA
+    <!-- Web Application Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    <!-- Chrome for Android theme color -->
+    <meta name="theme-color" content="#000000">
+
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="PWA">
+    <link rel="icon" sizes="512x512" href="/images/icons/ola.png">
+
+    <!-- Add to homescreen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="PWA">
+    <link rel="apple-touch-icon" href="/images/icons/ola.png">
     <title>Pidelo</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
         integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
@@ -152,8 +167,8 @@
                         <label for="password" class="">Contraseña <span class="text-red-500">*</span></label>
                         <input required type="password" placeholder="" name="password"
                             class=" border-color-text p-3 border rounded-3xl focus:outline-none" autocomplete="off" />
-                        <div class="flex space-x-1"><label for="remember">Recuérdame</label><input type="checkbox" checked
-                                name="remember" class="w-6"></div>
+                        <div class="flex space-x-1"><label for="remember">Recuérdame</label><input type="checkbox"
+                                checked name="remember" class="w-6"></div>
                         <center><button type="submit"
                                 class="p-4  text-white text-[16px] rounded-2xl w-full bg-tarjetas transition duration-200">Acceder</button>
                         </center>
@@ -290,7 +305,7 @@
                         </div>
                     </div>
 
-               
+
 
                     <button type="submit"
                         class="w-full bg-blue-600 hover:bg-blue-700 transform hover:scale-105 text-white font-semibold py-2 rounded-md transition flex justify-center items-center gap-2">
