@@ -40,7 +40,6 @@
         }
     </style>
     @vite('resources/css/app.css')
-    @laravelPWA
 
     @yield('estilos')
 
