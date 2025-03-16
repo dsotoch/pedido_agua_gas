@@ -43,12 +43,16 @@
     @laravelPWA
 
     @yield('estilos')
-    
+
 </head>
 
 <body class="font-sans overflow-x-hidden">
     @yield('cuerpo')
-    <!-- Modal -->
+
+    <button id="installPWA" title="Click para Instalar." style="display:none;"
+        class=" fixed bottom-0 right-0 m-10 bg-naranja p-6 text-white rounded-full">
+        <i class="fa-solid fa-download text-3xl"></i>
+    </button> <!-- Modal -->
     <div id="messagesModal" class="hidden fixed inset-0 bg-black bg-opacity-50  justify-center items-center z-50">
         <div class="bg-white p-6 rounded-lg md:w-1/2 w-full max-h-full overflow-y-auto relative">
             <button id="closeModalmensajes" class="absolute top-2 right-2 text-red-500 text-3xl">&times;</button>
@@ -291,7 +295,7 @@
                         </div>
                     </div>
 
-               
+
 
                     <button type="submit"
                         class="w-full bg-blue-600 hover:bg-blue-700 transform hover:scale-105 text-white font-semibold py-2 rounded-md transition flex justify-center items-center gap-2">

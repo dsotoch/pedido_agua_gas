@@ -129,3 +129,6 @@ Route::prefix('distribuidora')->controller(ControllerEmpresa::class)->group(func
     Route::get('/buscar-empresas/{filtro}', 'buscarEmpresas');
 });
 Route::get('/{slug}', [ControllerEmpresa::class, 'index_distribuidora'])->name('index.negocio');
+Route::get('/offline', function () {
+    return view('offline');
+});

@@ -1,6 +1,7 @@
 import Swal from "sweetalert2";
 import { eliminarFavorito, esFavoritoPrincipal, esPaginaPredeterminada_Principal, guardarFavorito, guardarPaginaPredeterminada, obtenerFavoritos } from "./cookies";
 
+
 document.addEventListener('DOMContentLoaded', () => {
     const buscador = document.getElementById('buscador');
     const contenedorResultados = document.getElementById('contenedorResultados');
@@ -8,6 +9,38 @@ document.addEventListener('DOMContentLoaded', () => {
     const botonp = document.getElementById('botonp');
     const buttoncolor = document.getElementById('button-color');
     const contenedor_empresas = document.getElementById('empresas');
+
+    const btninstallPwa = document.getElementById('installPWA');
+
+    let deferredPrompt=null;
+    
+    window.addEventListener('beforeinstallprompt', (event) => {
+        event.preventDefault();
+        deferredPrompt = event;
+        if (btninstallPwa) {
+            btninstallPwa.style.display = 'block';
+        }
+    });
+    
+    if (btninstallPwa) {
+        btninstallPwa.addEventListener('click', () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('Usuario aceptó la instalación');
+                    } else {
+                        console.log('Usuario canceló la instalación');
+                    }
+                    deferredPrompt = null;
+                });
+            }
+        });
+    }
+    
+
+
+
     if (volvercolores) {
         volvercolores.addEventListener('click', () => {
             window.location.reload();
