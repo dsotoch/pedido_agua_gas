@@ -1,4 +1,7 @@
 @extends('layout')
+@section('titulo')
+Entrega
+@endsection
 @section('cuerpo')
     <div class=" bg-color-dashboard w-full h-full md:flex md:flex-col grid relative">
         <div id="mensajeConexion"

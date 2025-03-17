@@ -1,4 +1,7 @@
 @extends('layout')
+@section('titulo')
+Entrega
+@endsection
 @section('cuerpo')
     <div>
         <div

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cupones;
 use App\Models\CuponUser;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -128,7 +129,6 @@ class CuponController extends Controller
             if ($usosRestantesCliente <= 0) {
                 if (!$codigo->especial) {
                     throw new \Exception('Has alcanzado el límite de uso para este código', 400);
-
                 }
             }
 
@@ -201,7 +201,7 @@ class CuponController extends Controller
                 'especial' => $request->has('especial') ? true : false,
                 'limite_uso' => $request->limite_uso,
                 'limite_uso_por_cliente' => $request->limite_uso_cliente,
-                'expira_en' => $request->expira_en,
+                'expira_en' => Carbon::parse("{$request->expira_en} {$request->hora_en}"),
                 'empresa_id' => $request->empresa_id
             ]);
 

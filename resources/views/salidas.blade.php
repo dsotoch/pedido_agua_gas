@@ -242,14 +242,30 @@
                                             data-productos="{{ $productos_formateados }}"> <i
                                                 class="fas fa-edit"></i></button>
 
-                                        <form action="{{ route('salidas.eliminar') }}" method="post">
+                                        <form action="{{ route('salidas.eliminar') }}" method="post" id="formEliminar">
                                             @csrf
                                             @method('DELETE')
-                                            <input type="text" hidden name='salida_id'
+                                            <input type="text" hidden name="salida_id"
                                                 value="{{ $salida->salida_id }}">
-                                            <button type="submit"> <i class="fas fa-trash"></i></button>
-
+                                            <button type="submit" id="btnEliminar">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
                                         </form>
+
+                                        <script>
+                                            document.getElementById('btnEliminar').addEventListener('click', function(event) {
+                                                event.preventDefault(); // Evita el envío inmediato del formulario
+
+                                                // Mostrar confirmación antes de eliminar
+                                                const confirmacion = confirm('¿Estás seguro de que deseas eliminar esta salida?');
+
+                                                if (confirmacion) {
+                                                    // Si el usuario confirma, se envía el formulario
+                                                    document.getElementById('formEliminar').submit();
+                                                }
+                                            });
+                                        </script>
+
                                     </div>
                                 </td>
 
@@ -280,9 +296,9 @@
                                 <label class="block font-semibold">Nuevo Producto</label>
                                 <div id="productos-container2" class="w-full">
                                     <div class="contenedor_producto flex  mb-2 border  w-full">
-                                        <select id="select_productos_salidas_nuevo" name="productos[]" 
+                                        <select id="select_productos_salidas_nuevo" name="productos[]"
                                             class="w-1/2 md:w-3/5 p-2 border rounded-lg">
-                                            <option value="" selected >
+                                            <option value="" selected>
                                                 Seleccione un Producto
                                             </option>
                                             @foreach ($productos_sele as $pro)

@@ -142,6 +142,11 @@
                 <input type="date" id="expira_en" name="expira_en"
                     class="mt-1 block w-full border border-gray-300 rounded-md p-2" required>
             </div>
+            <div class="mb-4">
+                <label for="hora_en" class="block text-gray-700 font-medium">Hora de Expiración</label>
+                <input type="time" id="hora_en" name="hora_en"
+                    class="mt-1 block w-full border border-gray-300 rounded-md p-2" required>
+            </div>
             <div class="mb-4 flex items-center">
                 <input type="checkbox" id="especial" name="especial"
                     class="h-4 w-4 border border-gray-300 rounded-md text-blue-600 focus:ring focus:ring-blue-200">

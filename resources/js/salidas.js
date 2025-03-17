@@ -330,9 +330,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 bntEliminar.type = 'button';
                 bntEliminar.classList.add("border", "p-2", "rounded", 'font-semibold', 'border-color-titulos-entrega', 'text-color-titulos-entrega', 'hover:scale-x-105');
                 bntEliminar.addEventListener('click', () => {
-                    bntEliminar.closest('.contenedor_producto').remove();
-                    productos2 = productos2.filter(producto => producto.id !== item.id);
-                })
+                    // Preguntar al usuario si realmente quiere eliminar el producto
+                    const confirmacion = confirm('¿Estás seguro de que deseas eliminar este producto?');
+                
+                    if (confirmacion) {
+                        // Si el usuario confirma, elimina el producto
+                        bntEliminar.closest('.contenedor_producto').remove();
+                        productos2 = productos2.filter(producto => producto.id !== item.id);
+                    }
+                });
+                
                 // Crear input para cantidad
                 let inputCantidad = document.createElement("input");
                 inputCantidad.type = "number";

@@ -452,10 +452,13 @@ class ControllerEmpresa extends Controller
         $usuario = User::with('empresas', 'empresas.productos')->where('id', $usuario_auth->id)->first();
         $empresa = $usuario->empresas()->first();
         $repartidores = $empresa->usuarios()->with('persona')->where('tipo', 'repartidor')->get();
-        $pagosdeldia = Pedido::with(['detalles', 'detalles.producto'])->where('empresa_id', $empresa->id)
-            ->where('pago', true)
-            ->whereDate('fecha', Carbon::now('America/Lima')->toDateString())
-            ->get();
+        $pagosdeldia = Pedido::with(['detalles', 'detalles.producto'])
+        ->where('empresa_id', $empresa->id)
+        ->where('pago', true)
+        ->whereDate('updated_at', Carbon::today('America/Lima'))
+        ->orderByDesc('id')
+        ->get();
+    
         // Filtrar y agrupar productos comercializables
         $productosVendidos = $pagosdeldia->flatMap(function ($pedido) {
             // Aplanar los detalles de los pedidos
@@ -465,11 +468,11 @@ class ControllerEmpresa extends Controller
             })->map(function ($detalle) {
                 // Retornar descripción y cantidad del producto
                 return [
-                    'descripcion' => $detalle->producto?->descripcion,
+                    'nombre' => $detalle->producto?->nombre,
                     'cantidad' => $detalle->cantidad,
                 ];
             });
-        })->groupBy('descripcion') // Agrupar por descripción
+        })->groupBy('nombre') // Agrupar por descripción
             ->map(function ($group) {
                 // Sumar las cantidades de productos en cada grupo
                 return $group->sum('cantidad');

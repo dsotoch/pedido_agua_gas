@@ -6,7 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="token" id="token" content="{{ csrf_token() }}">
-    <title>Pidelo</title>
+    <title>@yield('titulo')</title>
+    <link rel="icon" type="image/png" href="{{ asset('imagenes/favicon.png') }}">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
         integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -283,7 +285,15 @@
 
                 <form action="{{ route('password.validate') }}" method="POST"
                     class="space-y-4 bg-white p-6 rounded-lg shadow-md w-full max-w-md mx-auto" id="form_reset_pass">
-
+                    <div class="relative">
+                        <label class="block text-sm font-medium text-gray-700">Id Cliente:</label>
+                        <div class="relative">
+                            <input type="number" name="id" required
+                                class="w-full mt-1 px-10 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <i
+                                class="fas fa-id-card absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500"></i>
+                        </div>
+                    </div>
                     <div class="relative">
                         <label class="block text-sm font-medium text-gray-700">Teléfono:</label>
                         <div class="relative">

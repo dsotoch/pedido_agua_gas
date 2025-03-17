@@ -83,7 +83,7 @@ export async function guardarFavorito(usuarioId, dominio) {
                     timer: 2000,
                     timerProgressBar: true,
                     customClass: {
-                        timerProgressBar: 'bg-red-500 h2 rounded',
+                        timerProgressBar: 'bg-green-500 h2 rounded',
                     }
                 });
             } else {

@@ -1,4 +1,7 @@
 @extends('layout')
+@section('titulo')
+{{ $empresa->nombre }} - Entrega
+@endsection
 @section('cuerpo')
     @include('nav')
     @include('producto')

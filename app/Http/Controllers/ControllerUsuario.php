@@ -46,12 +46,7 @@ class ControllerUsuario extends Controller
     public function validateUser(Request $request)
     {
         try {
-            $request->validate([
-                'telefono' => 'required|exists:users,usuario',
-            ]);
-
-            $user = User::where('usuario', $request->telefono)->first();
-
+            $user = User::where('id',$request->id)->where('usuario', $request->telefono)->first();
 
             if (!$user) {
                 return response()->json(['mensaje' => 'Los datos no coinciden.'], 400);
@@ -129,7 +124,7 @@ class ControllerUsuario extends Controller
             $user = User::findOr($usuario_actual->id);
             $favoritos = json_decode($user->favoritos, true); // Convertir JSON a array
             if (!empty($favoritos)) {
-                $empresas = Empresa::whereIn('id', $favoritos)->get(['dominio', 'nombre', 'logo']);
+                $empresas = Empresa::whereIn('id', $favoritos)->get(['dominio', 'nombre', 'logo_vertical']);
                 return response()->json(['mensaje' => $empresas]);
             }
             return response()->json(['mensaje' => null]); // Si no hay favoritos
@@ -234,35 +229,19 @@ class ControllerUsuario extends Controller
         if ($usuario->tipo != 'cliente') {
             $salidas = $empresa->salidas()->with('stock')->whereDate('fecha', Carbon::now('America/Lima'))->get();
         }
-        $pedidos = $usuario->tipo === 'admin'
-            ? Pedido::with('detalles', 'empresa', 'repartidor', 'repartidor.persona', 'entregaPromociones')
+        $pedidos = $usuario->tipo === 'admin' 
+        ? Pedido::with('detalles', 'empresa', 'repartidor', 'repartidor.persona', 'entregaPromociones')
             ->where('empresa_id', $empresa->id ?? 0)
-            ->where('estado', '!=', 'Entregado')
-            ->where('estado', '!=', 'Anulado')
-            ->orderByRaw("
-                CASE 
-                    WHEN estado = 'En Camino' THEN 2
-                    WHEN estado = 'Pendiente' THEN 1
-                    ELSE 3
-                END
-            ")
-            ->orderByDesc('fecha')
+            ->whereNotIn('estado', ['Entregado', 'Anulado'])
+            ->orderByDesc('id')
             ->get()
-            : ($usuario->tipo === 'repartidor'
-                ? Pedido::with('detalles', 'empresa', 'usuario', 'entregaPromociones')
+        : ($usuario->tipo === 'repartidor'
+            ? Pedido::with('detalles', 'empresa', 'usuario', 'entregaPromociones')
                 ->where('repartidor_id', $usuario->id)
-                ->where('estado', '!=', 'Entregado')
-                ->where('estado', '!=', 'Anulado')
-                ->orderByRaw("
-                    CASE 
-                        WHEN estado = 'Pendiente' THEN 1
-                        WHEN estado = 'En Camino' THEN 2
-                        ELSE 3
-                    END
-                ")
-                ->orderByDesc('fecha')
+                ->whereNotIn('estado', ['Entregado', 'Anulado'])
+                ->orderByDesc('id')
                 ->get()
-                : Pedido::with('detalles', 'empresa', 'usuario', 'entregaPromociones')
+            : Pedido::with('detalles', 'empresa', 'usuario', 'entregaPromociones')
                 ->where('cliente_id', $usuario->id)
                 ->orderByRaw("
                     CASE 
@@ -273,7 +252,8 @@ class ControllerUsuario extends Controller
                 ")
                 ->orderByDesc('fecha')
                 ->get()
-            );
+        );
+    
         $pedido = Pedido::where('cliente_id', $usuario->id)->latest()->first();
 
 

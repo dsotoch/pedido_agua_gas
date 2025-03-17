@@ -210,7 +210,10 @@ if (tabla_reportes) {
                 let disparador = e.target.closest('[data-id]');
                 let tr = disparador.closest('tr');
                 let pedido_id = disparador.dataset.id; // Usar `let` en vez de `pedido_id =`
-
+                const confirmación=confirm("¿Estas Seguro de Eliminar el pedido #"+pedido_id+"?");
+                if(!confirmación){
+                    return;
+                }
                 const response = await fetch(`/eliminarPedido/${pedido_id}`, { // Agregar barra `/`
                     method: 'DELETE',
                     headers: {

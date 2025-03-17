@@ -50,7 +50,7 @@ export function agregarPedido(pedido, usuario, tiempo) {
                     <div class="relative">
                         <div class="bg-transparent w-[150px] h-[190px] text-color-titulos-entrega ">
                             
-                            <img src="imagenes/cajas/botella.svg" alt="" class="absolute top-[120px] left-[104px]">
+                            <img src="imagenes/cajas/pg.svg" alt="" class="absolute top-[120px] left-[104px]">
                         </div>
                     </div>
                 </div>
@@ -113,7 +113,7 @@ export function agregarPedido(pedido, usuario, tiempo) {
                 <div class="absolute -top-0 right-28 md:right-10 h-[50px]">
                     <div class="relative bg-transparent w-[150px] h-[190px] text-color-titulos-entrega group">
                         <div>
-                            <div class="z-50 -top-10 bg-green-400 left-0 hidden absolute group-hover:flex w-[250px] min-w-[250px] text-white p-2 rounded-md text-center">
+                            <div class="contenedor_cupon_aplicado z-50 -top-10 bg-green-400 left-0 hidden absolute group-hover:flex w-[250px] min-w-[250px] text-white p-2 rounded-md text-center">
                                 <p class="relative text-[14px] leading-[19.6px]">
                                     <strong>¡Cupón Aplicado!</strong><br>
                                     Aplica un descuento de S/${pedido.descuento} 
@@ -122,8 +122,8 @@ export function agregarPedido(pedido, usuario, tiempo) {
                                 <div class="absolute -bottom-[13px] left-1/2 md:left-1/2 -translate-x-1/2 md:-translate-x-[60px] clip-v-shape h-[20px] w-[20px] bg-green-400"></div>
                             </div>
                         </div>
-                        <img src="/imagenes/cajas/cupons.png" alt=""
-                            class="absolute top-[55px] md:left-[25px] right-0 md:w-[60px] w-[38px] h-[50px]">
+                        <img src="/imagenes/cajas/cd.svg" alt=""
+                            class="btn_cupon_aplicado cursor-pointer absolute top-[55px] md:left-[25px] right-0 md:w-[40px] w-[35px] h-[50px]">
                     </div>
                 </div>
             `;

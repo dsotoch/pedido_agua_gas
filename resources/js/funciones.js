@@ -22,6 +22,18 @@ const detalles_cliente = document.getElementById('detalles-cliente');
 const cliente_nologin = document.getElementById('cliente-nologin');
 const btnregresar = document.getElementById('btnregresar');
 const dominio = window.location.pathname;
+const btn_cupon_aplicado = document.querySelectorAll('.btn_cupon_aplicado');
+if (btn_cupon_aplicado) {
+    btn_cupon_aplicado.forEach((button) => {
+        button.addEventListener('click', (e) => {
+            const contenedor_cupon_aplicado = e.currentTarget.closest('.relative').querySelector('.contenedor_cupon_aplicado');
+            if (contenedor_cupon_aplicado) {
+                contenedor_cupon_aplicado.classList.toggle('hidden');
+                contenedor_cupon_aplicado.classList.toggle('flex');
+            }
+        });
+    })
+}
 
 if (btnregresar) {
     btnregresar.addEventListener('click', () => {

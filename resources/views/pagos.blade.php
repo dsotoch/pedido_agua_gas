@@ -30,7 +30,7 @@
                     @if ($usuario->empresas() && $usuario->empresas()->first()->productos->isNotEmpty())
                         @foreach ($usuario->empresas()->first()->productos->where('comercializable', true) as $item)
                             <p class="font-sans  text-base text-wrap">
-                                <b class="m-1">0</b>{{ $item->descripcion }}.
+                                <b class="m-1">0</b>{{ $item->nombre }}.
                             </p>
                         @endforeach
                     @else
@@ -100,7 +100,7 @@
                         </g>
                         <g id="Capa_2"></g>
                     </svg></div>
-                <div class="text-base">S/
+                <div class="text-base total_efectivo">S/
                     @if ($pagosdeldia->count() > 0)
                         {{ number_format(
                             $pagosdeldia->filter(function ($pe) {
@@ -146,7 +146,7 @@
                             </g>
                         </g>
                     </svg></div>
-                <div class="text-base">S/
+                <div class="text-base total_yape">S/
                     @if ($pagosdeldia->count() > 0)
                         {{ number_format(
                             $pagosdeldia->filter(function ($pe) {
@@ -174,7 +174,6 @@
                     <option value="" selected>Seleccione...</option>
                     <option value="yape">Pago con Yape</option>
                     <option value="efectivo">Pago en Efectivo</option>
-                    <option value="cuenta">Pago Pendiente</option>
 
                 </select>
             </div>
@@ -278,7 +277,7 @@
                                             </path>
                                         </g>
                                     </svg></div>
-                                <div class=""> S/{{ $pedido->total }}</div>
+                                <div class=""> S/ <span class="total">{{ $pedido->total }}</span></div>
                                 <div class="flex  ml-6">
                                     @if ($pedido->metodo == 'efectivo')
                                         <img decoding="async" src="{{ asset('imagenes/Efectivo.svg') }}"

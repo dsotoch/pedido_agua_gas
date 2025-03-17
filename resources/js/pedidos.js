@@ -167,7 +167,7 @@ async function buscar_datos_cliente(valor) {
                     timerProgressBar: 'custom-bg-button' // Clase CSS personalizada
                 }
             });
-            return false;
+            return true;
 
 
         }

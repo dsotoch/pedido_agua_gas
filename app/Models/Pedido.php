@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Pedido extends Model
 {
     use HasFactory;
+    public $timestamps = true;
     protected $table = "pedidos";
     protected $fillable = [
         'cliente_id',
