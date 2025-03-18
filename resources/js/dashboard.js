@@ -21,16 +21,28 @@ const contenedorLogin = document.getElementById("contenedor_login");
 if (btnAcceder) {
     function mostrarLogin() {
         contenedorLogin.classList.remove("hidden");
-
+        setTimeout(() => {
+            contenedorLogin.classList.remove('translate-x-full');
+        }, 10);
         if (esMovil()) {
-            btnAcceder.innerHTML = "X"; // Cambia el texto solo en móviles
-            btnAcceder.classList.add("text-2xl", "font-semibold");
+            btnAcceder.innerHTML = ` <p
+                            class="x-icon2 opacity-0 scale-75 text-black text-3xl font-bold transition-all duration-500 ease-out">
+                            X</p>`; // Cambia el texto solo en móviles
+            const xIcon = document.querySelector('.x-icon2');
+            // Mostrar la "X" con animación
+            xIcon.classList.remove("hidden");
+            setTimeout(() => {
+                xIcon.classList.remove("opacity-0", "scale-75");
+                xIcon.classList.add("opacity-100", "scale-100");
+            }, 10); // 
         }
     }
 
     function ocultarLogin() {
-        contenedorLogin.classList.add("hidden");
-
+        contenedorLogin.classList.add('translate-x-full');
+        setTimeout(() => {
+            contenedorLogin.classList.add('hidden');
+        }, 500);
         if (esMovil()) {
             btnAcceder.classList.remove("text-2xl", "font-semibold");
             btnAcceder.innerHTML = 'Acceder&nbsp;&nbsp;<i class="fa-solid fa-right-to-bracket"></i>'; // Restaura solo en móviles
@@ -46,6 +58,10 @@ if (btnAcceder) {
     btnAcceder.addEventListener("mouseenter", function () {
         if (!esMovil()) {
             contenedorLogin.classList.remove("hidden");
+
+            setTimeout(() => {
+                contenedorLogin.classList.remove('translate-x-full');
+            }, 10);
         }
     });
 

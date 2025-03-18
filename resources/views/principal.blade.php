@@ -1,6 +1,6 @@
 @extends('layout')
 @section('titulo')
-Entrega
+    Entrega
 @endsection
 @section('cuerpo')
     <div>
@@ -25,21 +25,26 @@ Entrega
 
             <div class="absolute top-0 right-0 h-[120px]  w-1/2 pt-6  pr-4">
                 <!-- Contenedor del botón y el login -->
-                <div class="  flex justify-end items-center w-full ">
+                <div class=" flex justify-end items-center w-full ">
                     <button id="btn_acceder"
                         class="hidden md:block text-[16px] leading-9 -translate-x-36 z-50">Acceder&nbsp;&nbsp;<i
                             class="fa-solid fa-right-to-bracket"></i></button>
-                    <button id="openModalUsuario" class="text-white  block md:hidden p-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="Capa_1"
-                            class="h-[30px] w-[30px]" x="0px" y="0px" viewBox="0 0 720 720" xml:space="preserve">
-                            <rect fill="#293241" width="720" height="58.5"></rect>
-                            <rect y="661.5" fill="#293241" width="720" height="58.5"></rect>
-                            <rect y="330.75" fill="#293241" width="720" height="58.5"></rect>
-                        </svg>
-                    </button>
+                    <div id="openModalUsuario"
+                        class="md:hidden block cursor-pointer w-10 h-10 flex flex-col justify-center items-center relative">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <p
+                            class="x-icon  hidden opacity-0 scale-75 text-black text-3xl font-bold transition-all duration-500 ease-out">
+                            X</p>
+
+                    </div>
+
+
+
                     @auth
                         <div id="contenedor_login"
-                            class="absolute hidden text-wrap transform md:translate-x-0 translate-x-full overflow-y-auto min-w-[360px] md:min-w-[600px] md:max-h-[80vh] max-h-[95vh] min-h-[250px] z-50   flex-col justify-start text-start  top-20  right-0 bg-white shadow-md">
+                            class="absolute hidden text-wrap transform translate-x-full transition-transform duration-500 ease-in-out overflow-y-auto min-w-[360px] md:min-w-[600px] md:max-h-[80vh] max-h-[95vh] min-h-[250px] z-50   flex-col justify-start text-start  top-20  right-0 bg-white shadow-md">
 
                             <!--Usuario ya Autenticado--->
                             <div class="absolute w-full">
@@ -71,7 +76,7 @@ Entrega
                     @endauth
                     @guest
                         <div id="contenedor_login"
-                            class="absolute hidden md:translate-x-0 translate-x-full transform  overflow-y-auto min-w-[350px] md:p-0 p-2 md:min-w-[600px] max-h-[80vh] min-h-[400px] z-50  h-auto flex-col justify-start text-start top-20 right-0  bg-white shadow-md">
+                            class="absolute hidden text-wrap transform translate-x-full transition-transform duration-500 ease-in-out overflow-y-auto min-w-[360px] md:min-w-[600px] md:max-h-[80vh] max-h-[95vh] min-h-[250px] z-50   flex-col justify-start text-start  top-20  right-0 bg-white shadow-md">
                             <!-- Aquí va todo tu contenido del formulario -->
                             <!-- Formulario de inicio de sesión -->
                             <div class="bg-white w-full p-10" id="formLogindiv">
@@ -89,8 +94,8 @@ Entrega
                                     <input required type="password" placeholder="" name="password"
                                         class=" border-color-text p-3 border rounded-3xl focus:outline-none"
                                         autocomplete="off" />
-                                    <div class="flex space-x-1"><label for="remember">Recuérdame</label><input type="checkbox" checked
-                                            name="remember" class="w-6"></div>
+                                    <div class="flex space-x-1"><label for="remember">Recuérdame</label><input type="checkbox"
+                                            checked name="remember" class="w-6"></div>
 
                                     <center><button type="submit"
                                             class="p-4  text-white text-[16px] rounded-2xl w-full bg-tarjetas transition duration-200">Acceder</button>
