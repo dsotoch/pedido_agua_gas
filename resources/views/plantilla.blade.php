@@ -174,88 +174,142 @@
         @endif
         <!-----PLANTILLA DE LA EMPRESA --->
         <div class="flex">
-
-            <div
-            class="pt-[40px] pb-[40px] bg-color-fondo-productos flex flex-row  w-full justify-stretch items-center space-x-2 ">
-
-
-            <div
-                class="producto-item  flex flex-col mx-auto bg-white text-color-text  items-center justify-center rounded-3xl pt-4 pb-16 bg-transparent text-center w-[450px] shadow-sm 
-                    ">
-                <div class="flex">
-                    <button class="p-4 text-xl w-2/6 hover:text-principal" id="btnatrasproducto"><i
-                            class="fa-solid fa-backward "></i></button>
-                    <div>
-                        <p
-                            class="producto_descripcion text-[18px] w-full
-                            font-semibold mt-5 mb-[11px] leading-9">
-                            Agua Bidon 20 L.</p>
-                        <div class="item-container flex  space-x-2 w-full  mx-auto justify-center">
-
-                            <!-- Botón de disminución -->
-                            <button disabled
-                                class="btn-producto-menos border w-[50px] h-[49px] text-center  border-color-text hover:bg-color-text rounded-full  text-color-text hover:border-red-600 hover:text-white">
-                                <i class="fas fa-minus"></i>
-                            </button>
-
-                            <!-- Input de cantidad con flex-grow y max-w-xs -->
-                            <input type="number" name="cantidad" value="1" readonly
-                                class="cantidad flex-grow text-[16px] max-w-[100px] h-[48px] p-2 border border-color-text rounded-xl border-text-color text-center">
-
-                            <!-- Botón de aumento -->
-                            <button disabled
-                                class="btn-producto-mas border w-[50px] h-[49px] text-center border-color-text hover:bg-color-text rounded-full  text-color-text hover:border-red-600 hover:text-white">
-                                <i class="fas fa-plus "></i>
+            <div id="contener_producto_item" class="flex flex-col w-full pl-[10px] pr-[10px]">
+                <div class="flex flex-col mx-auto h-auto text-color-text  items-center justify-center rounded-3xl  bg-transparent text-center w-full md:w-[520px]"
+                    data-index="">
+                        <!---Productos Antiguos-->
+                        <div class="w-full p-1  bg-white mt-[20px] rounded-[10px] flex ">
+                            <div class="w-[79px] h-[145px] my-auto flex items-center">
+                                <img src="{{ asset('imagenes/agua.jpg' ) }}" alt="" class=" object-contain">
+                            </div>
+                            <div class="flex flex-col w-full   ml-4 space-y-2 padre_productos ">
+                                <div class="md:flex grid items-center ">
+                                    <div class="w-full  md:w-1/2 pt-4  text-start">
+                                        <p class="producto_descripcion  text-base ">
+                                            Agua Mineral 20 Litros.</p>
+                                    </div>
+                                    <div
+                                        class="flex w-full  md:pl-0  pr-[10px] justify-between  md:w-1/2 items-center space-x-2 md:space-x-1  pt-4">
+                                        <div class="w-1/2">
+                                            <p class="text-start md:text-center"> <span
+                                                    class="text-[15px]  precioprincipal">S/{{ number_format(25.00) }}</span>
+                                            </p>
+                                        </div>
+                                        <div class="item-container p-1  opacity-80 justify-center space-x-2  border-color-text rounded-[3px] flex w-[76px] h-[37px] max-h-[37px] items-center  border">
+                                            <p class="hidden precionormal">
+                                                {{ number_format(25.00) }}
+                                            </p>
+                                           
+                                            <!-- Botón de disminución -->
+                                            <button disabled
+                                                class=" btn-producto-menos w-[20px] h-[20px] text-center items-center  opacity-80 text-color-text  ">
+                                                <i class="fas fa-minus"></i>
+                                            </button>
+    
+                                            <!-- Input de cantidad con flex-grow y max-w-xs -->
+                                            <div class="w-auto flex items-center text-center">
+                                                <p name="cantidad" readonly
+                                                    class="cantidad text-[15px] w-full  text-color-text opacity-80  p-0 m-0 text-center">
+                                                    0</p>
+    
+                                            </div>
+    
+                                            <!-- Botón de aumento -->
+                                            <button disabled
+                                                class="btn-producto-mas  w-[20px] h-[20px] text-center items-center opacity-80  text-color-text  ">
+                                                <i class="fas fa-plus "></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="w-full text-start">
+                                    <p class="text-color-text text-[13px]">San Luis Purificada 95%.</p>
+                                </div>
+                                <br>
+                                <p class="text-start text-color-text text-[13px]">Te faltan <strong>9</strong> bidones para tu decimo gratis.</p>
+    
+                               
+    
+                            </div>
+                        </div>
+    
+                </div>
+                <div class="flex flex-col  md:w-[500px] mx-auto  mt-[40px] w-full  bg-white rounded-[10px] p-[10px]">
+                    <!-- Mensaje y botón de despliegue -->
+                    <div class="flex items-center justify-center space-x-2 cursor-pointer mt-[10px] mb-[10px]"
+                        id="toggleCupon">
+                        <p class="text-base  text-color-titulos-entrega font-sans">¿Tienes un cupón?</p>
+                        <i class="fa-solid fa-chevron-down text-color-titulos-entrega transition-transform duration-300"
+                            id="iconoFlecha"></i>
+                    </div>
+    
+                    <!-- Input para cupón (oculto por defecto) -->
+                    <div id="cuponForm" class="hidden  mx-auto  mt-[10px] mb-[10px]">
+                        <div class="flex text-center w-1/2 space-x-2">
+                            <input type="text" id="codigoCupon" placeholder="Ingresa tu codigo"
+                                class="flex-1 p-2 text-center border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <button id="btnAplicarCupon"
+                                class="px-4 py-2 bg-tarjetas text-white font-semibold rounded-full ">
+                                Aplicar
                             </button>
                         </div>
-                        <p class=" mb-5 text-[13px] p-[14px] w-full">Precio Unitario: <span
-                                class="text-[13px]  precioprincipal">S/10.00</span></p>
                     </div>
-                    <button class="p-4 text-xl w-2/6 hover:text-principal" id="btnsiguienteproducto"><i
-                            class="fa-solid fa-forward"></i></button>
                 </div>
-                <span class="bidones-faltan text-[14px] max-h-[55px] h-[55px]">¡Te faltan <span
-                        class="resaltar-numero font-bold text-[16px]">8</span> bidones para tu Noveno
-                    GRATIS!</span>
-                <div id="contenedor-total" class="contenedor-total grid content-center justify-items-center ">
+                <div id="contenedor-total"
+                    class="mt-[40px]  sticky bottom-0 contenedor-total grid  w-full bg-color-fondo-productos justify-items-center ">
+                    <div id="contenedor_cupones" class="hidden  flex-col w-full text-center items-center justify-center">
+                        <center>
+                            <div class="w-full">
+                                <p class="text-[15px] grid grid-cols-2 ">
+                                    Cupón Aplicado:
+                                    <input id="span_cupon" readonly class="font-bold bg-transparent text-start " />
+                                </p>
+                            </div>
+                        </center>
+                        <center>
+                            <div class="  w-full mt-2">
+                                <p class="text-[15px] grid grid-cols-2 ">
+                                    Descuento:
+                                    <input id="descuento" readonly class="font-bold bg-transparent text-start " />
+                                </p>
+                            </div>
+                        </center>
+                    </div>
+    
                     <input type="text" readonly
-                        class="total text-[18px] border w-[328px] h-[55px] rounded-md focus:outline-none bg-secundario text-white font-bold  text-center pt-[10px] pb-[10px] "
-                        value="Total: S/10.00">
-                    <button  id="botonp"
-                        class=" font-normal text-[18px]  w-[328px] h-[55px] rounded-md custom-bg-button  text-white mt-2">
+                        class="total text-[18px]   w-[328px] h-[55px] rounded-md focus:outline-none bg-transparent font-bold  text-center  pb-[10px] "
+                        value="Total: S/0.00">
+                    <button type="button" id="botonp"
+                        class=" mb-[10px] disabled:opacity-50 opacity-100  font-normal text-[18px]  w-[328px] h-[55px] rounded-md bg-black text-white ">
                         Siguiente
-                        <i class="fas fa-arrow-right-long text-2xl ml-2 "></i></button>
-
+                        <i class=" fas fa-arrow-right-long text-2xl ml-2 "></i></button>
+                 
+    
                 </div>
-
-
             </div>
-
-
-
+    
+    
+                <form method="POST" action="{{ route('empresa.config', ['id' => $empresa->id]) }}"
+                    class="w-3/12 container p-4 bg-tarjetas font-sans">
+                    @csrf
+                    <h2 class="text-xl m-4 text-white">Configurar Plantilla</h2>
+                    <br>
+    
+    
+                   
+                    <!-- Selector de color para el botón -->
+                    <label for="button-color" class="block text-white font-normal mb-2">Ingresa el color del
+                        botón (Formato Hexadecimal)</label>
+                    <input type="text" name="button-color" id="button-color" value="#000000" class="cursor-pointer p-3 mb-4 w-full rounded-md">
+    
+                    <input type="text" value="{{ $empresa->id }}" readonly class="text-transparent bg-transparent">
+                    <button id="volvercolores" type="button"
+                        class="p-4 rounded  w-full hover:bg-gray-400 text-white text-base border border-white">Resetear</button>
+    
+                    <button type="submit" class="p-4 rounded  text-white w-full mt-2 text-base bg-naranja">Guardar
+                        Configuraciones</button>
+                </form>
         </div>
-
-
-            <form method="POST" action="{{ route('empresa.config', ['id' => $empresa->id]) }}"
-                class="w-3/12 container p-4 bg-tarjetas font-sans">
-                @csrf
-                <h2 class="text-xl m-4 text-white">Configurar Plantilla</h2>
-                <br>
-
-
-               
-                <!-- Selector de color para el botón -->
-                <label for="button-color" class="block text-white font-normal mb-2">Selecciona el color del
-                    botón</label>
-                <input type="color" name="button-color" id="button-color" class="cursor-pointer p-3 mb-4 w-full rounded-md">
-
-                <input type="text" value="{{ $empresa->id }}" readonly class="text-transparent bg-transparent">
-                <button id="volvercolores" type="button"
-                    class="p-4 rounded  w-full hover:bg-gray-400 text-white text-base border border-white">Resetear</button>
-
-                <button type="submit" class="p-4 rounded  text-white w-full mt-2 text-base bg-naranja">Guardar
-                    Configuraciones</button>
-            </form>
 
 
 

@@ -147,6 +147,7 @@ class ControllerEmpresa extends Controller
                         'hora_inicio' => $request->hora_inicio[$index] ?? null,
                         'hora_fin' => $request->hora_fin[$index] ?? null,
                         'empresa_id' => $empresa->id,
+                        'estado'=>$request->estado[$index],
                         'created_at' => now(),
                         'updated_at' => now(),
                     ];

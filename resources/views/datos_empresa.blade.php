@@ -159,40 +159,9 @@
                 </div>
 
                 <div class="mt-4">
-                    <label class="block text-base font-medium text-gray-700 mb-1">Horario de Atención</label>
-                    <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 overflow-x-auto">
-                        <input type="hidden" name="empresa_id" value="{{ $empresa->id }}">
-                    
-                        <div class="border p-2 w-full md:w-auto">
-                            <label for="dia">Día:</label>
-                            <select id="select_dia_conf" class="w-full md:w-auto">
-                                <option value="Lunes">Lunes</option>
-                                <option value="Martes">Martes</option>
-                                <option value="Miércoles">Miércoles</option>
-                                <option value="Jueves">Jueves</option>
-                                <option value="Viernes">Viernes</option>
-                                <option value="Sábado">Sabado</option>
-                                <option value="Domingo">Domingo</option>
-                            </select>
-                        </div>
-                    
-                        <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 w-full">
-                            <div class="border p-2 w-full md:w-auto">
-                                <label for="hora_inicio">Hora Inicio:</label>
-                                <input type="time" id="hora_inicio_conf" class="w-full md:w-auto">
-                            </div>
-                            <div class="border p-2 w-full md:w-auto">
-                                <label for="hora_fin">Hora Cierre:</label>
-                                <input type="time" id="hora_fin_conf" class="w-full md:w-auto">
-                            </div>
-                    
-                            <button type="button" id="btn_guardar_horario_conf"
-                                class="p-2 rounded bg-naranja text-white hover:border-2 hover:border-red-500 w-full md:w-auto">
-                                Guardar
-                            </button>
-                        </div>
-                    </div>
-                    
+                    <label class="block text-base font-medium text-gray-700 mb-1">Horarios de Atención</label>
+
+
                 </div>
                 <div class="mt-4 overflow-x-auto">
                     <table class="w-full" id="tabla_horario_conf">
@@ -203,22 +172,76 @@
                             <th class="p-2">Acción</th>
                         </thead>
                         <tbody>
-                            @foreach ($horarios as $item)
+                            @forelse($horarios as $item)
                                 <tr class="border-b-2">
-                                    <td  class="text-center">
-                                        <input type="text" name="dia[]" class="p-2 border w-full text-center" readonly value="{{ $item->dia }}">
+                                    <td class="text-center">
+                                        <input type="text" name="dia[]" class="p-2 border w-full text-center"
+                                            readonly value="{{ $item->dia }}">
                                     </td>
                                     <td class="text-center">
-                                        <input type="time" name="hora_inicio[]"  class="p-2 border w-full text-center" value="{{ $item->hora_inicio }}">
+                                        <input type="time" name="hora_inicio[]" class="p-2 border w-full text-center"
+                                            value="{{ $item->hora_inicio }}">
                                     </td>
                                     <td class="text-center">
-                                        <input type="time" name="hora_fin[]"  class="p-2 border w-full text-center" value="{{ $item->hora_fin }}">
+                                        <input type="time" name="hora_fin[]" class="p-2 border w-full text-center"
+                                            value="{{ $item->hora_fin }}">
                                     </td>
-                                    <td class="text-center">
-                                        <button type="button" class="btn-eliminar border text-white bg-red-500 p-2 rounded">Eliminar</button>
+                                    <td class="text-center p-3">
+                                        @if ($item->estado)
+                                            <button type="button"
+                                                class="w-full btn-modificar border text-white bg-green-500 p-2 rounded cursor-pointer">
+                                                <i class="fas fa-ban"></i> Inhabilitar
+                                            </button>
+                                        @else
+                                            <button type="button"
+                                                class="w-full btn-modificar border text-white bg-red-500 p-2 rounded cursor-pointer">
+                                                <i class="fas fa-check-circle"></i> Habilitar
+                                            </button>
+                                        @endif
+                                        <input type="text" name="estado[]" class=" input_estado hidden p-2 border w-full text-center"
+                                            value="{{ $item->estado }}">
                                     </td>
                                 </tr>
-                            @endforeach
+                            @empty
+                                @php
+                                    $diasSemana = [
+                                        'Lunes',
+                                        'Martes',
+                                        'Miércoles',
+                                        'Jueves',
+                                        'Viernes',
+                                        'Sábado',
+                                        'Domingo',
+                                    ];
+                                @endphp
+
+                                @foreach ($diasSemana as $dia)
+                                    <tr class="border-b-2">
+                                        <td class="text-center">
+                                            <input type="text" name="dia[]" class="p-2 border w-full text-center"
+                                                readonly value="{{ $dia }}">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="time" name="hora_inicio[]"
+                                                class="p-2 border w-full text-center" value="07:30">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="time" name="hora_fin[]" class="p-2 border w-full text-center"
+                                                value="19:00">
+                                        </td>
+                                        <td class="text-center p-3">
+                                            <button type="button"
+                                                class="w-full btn-modificar border text-white bg-green-500 p-2 rounded cursor-pointer">
+                                                <i class="fas fa-ban"></i> Inhabilitar
+                                            </button>
+                                            <input type="text" name="estado[]" class="input_estado hidden p-2 border w-full text-center"
+                                            value="1">
+                                        </td>
+
+                                    </tr>
+                                @endforeach
+                            @endforelse
+
                         </tbody>
 
                     </table>
@@ -255,7 +278,7 @@
                 @foreach ($productos as $item)
                     <li data-id="{{ $item->id }}"
                         class="bg-gray-100 p-4 rounded shadow flex items-center justify-between cursor-move">
-                        <span>{{ $item->nombre.' '.$item->descripcion }}</span>
+                        <span>{{ $item->nombre . ' ' . $item->descripcion }}</span>
                         <svg class="w-6 h-6 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none"
                             viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16" />

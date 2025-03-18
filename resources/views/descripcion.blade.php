@@ -109,10 +109,9 @@
 
                                 // Ordenar los horarios por el orden de la semana
                                 $horariosOrdenados = collect($empresa->horarios)
-                                    ->sortBy(function ($horario) use ($diasSemana) {
-                                        return array_search($horario->dia, $diasSemana);
-                                    })
-                                    ->values();
+                                    ->filter(fn($horario) => $horario->estado === 1) // Filtra solo los que tienen estado true
+                                    ->sortBy(fn($horario) => array_search($horario->dia, $diasSemana)) // Ordena por día
+                                    ->values(); // Reindexa la colección
 
                                 // Buscar el siguiente día hábil
                                 $siguienteHorario = null;

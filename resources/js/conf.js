@@ -13,11 +13,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (tabla_horario_conf) {
         tabla_horario_conf.addEventListener('click', (e) => {
-            if (e.target.classList.contains("btn-eliminar")) {
-                const fila = e.target.closest("tr");
-                if (fila) {
-                    fila.remove();
+            if (e.target.classList.contains("btn-modificar")) {
+                const columna = e.target.closest("td");
+                const input_estado = columna.querySelector('.input_estado');
+                let estado_actual = input_estado.value;
+                if (estado_actual == 1) {
+                    input_estado.value = 0;
+                    e.target.classList.add('bg-red-500');
+                    e.target.classList.remove('bg-green-500'); // Asegura que solo tenga el color rojo
+                    e.target.innerHTML = `<i class="fas fa-check-circle"></i> Habilitar`;
+
+                } else {
+                    input_estado.value = 1;
+                    e.target.classList.add('bg-green-500');
+                    e.target.classList.remove('bg-red-500'); // Asegura que solo tenga el color verde
+                    e.target.innerHTML = `<i class="fas fa-ban"></i> Inhabilitar`;
+
                 }
+
             }
         })
     }
