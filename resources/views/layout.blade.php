@@ -7,7 +7,6 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="token" id="token" content="{{ csrf_token() }}">
     <title>@yield('titulo')</title>
-    <link rel="icon" type="image/png" href="{{ asset('imagenes/favicon.png') }}">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
         integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
@@ -43,6 +42,75 @@
     </style>
     @vite('resources/css/app.css')
 
+    <!-- Manifesto de la aplicación web -->
+    <link rel="manifest" href="/manifest.json">
+    <!-- Color del tema para Chrome en Android -->
+    <meta name="theme-color" content="#000000">
+
+    <!-- Agregar a la pantalla de inicio para Chrome en Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="PWA">
+    <link rel="icon" type="image/png" sizes="512x512" href="{{ asset('imagenes/images/icons/favicon-512x512.png') }}">
+
+    <!-- Agregar a la pantalla de inicio para Safari en iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="PWA">
+    <link rel="apple-touch-icon" href="{{ asset('imagenes/images/icons/favicon-512x512.png') }}">
+
+    <!-- Imágenes de inicio para diferentes dispositivos iOS -->
+    <link href="{{ asset('imagenes/images/icons/nautik.png') }}"
+        media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)"
+        rel="apple-touch-startup-image" />
+        <link href="{{ asset('imagenes/images/icons/nautik.png') }}"
+        media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)"
+        rel="apple-touch-startup-image" />
+        <link href="{{ asset('imagenes/images/icons/nautik.png') }}"
+        media="(device-width: 621px) and (device-height: 1104px) and (-webkit-device-pixel-ratio: 3)"
+        rel="apple-touch-startup-image" />
+        <link href="{{ asset('imagenes/images/icons/nautik.png') }}"
+        media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)"
+        rel="apple-touch-startup-image" />
+        <link href="{{ asset('imagenes/images/icons/nautik.png') }}"
+        media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)"
+        rel="apple-touch-startup-image" />
+        <link href="{{ asset('imagenes/images/icons/nautik.png') }}"
+        media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)"
+        rel="apple-touch-startup-image" />
+        <link href="{{ asset('imagenes/images/icons/nautik.png') }}"
+        media="(device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2)"
+        rel="apple-touch-startup-image" />
+        <link href="{{ asset('imagenes/images/icons/nautik.png') }}"
+        media="(device-width: 834px) and (device-height: 1112px) and (-webkit-device-pixel-ratio: 2)"
+        rel="apple-touch-startup-image" />
+        <link href="{{ asset('imagenes/images/icons/nautik.png') }}"
+        media="(device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2)"
+        rel="apple-touch-startup-image" />
+    <link href="{{ asset('imagenes/images/icons/nautik.png') }}"
+        media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2)"
+        rel="apple-touch-startup-image" />
+
+    <!-- Configuración del mosaico para Windows 8 -->
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="{{ asset('imagenes/images/icons/favicon-512x512.png') }}">
+
+    <script type="text/javascript">
+        // Inicializar el Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/serviceworker.js', {
+                scope: '.'
+            }).then(function(registration) {
+                // Registro exitoso
+                console.log('Laravel PWA: Registro de ServiceWorker exitoso con el alcance: ', registration.scope);
+            }, function(err) {
+                // Falló el registro
+                console.log('Laravel PWA: Falló el registro de ServiceWorker: ', err);
+            });
+        }
+    </script>
+
+    @laravelPWA
+
     @yield('estilos')
 
 </head>
@@ -50,8 +118,8 @@
 <body class="font-sans overflow-x-hidden">
     @yield('cuerpo')
 
-    <button id="installPWA" title="Click para Instalar." style="display:none;"
-        class=" fixed bottom-0 right-0 m-10 bg-naranja p-6 text-white rounded-full">
+    <button id="installPWA" title="Instalar Aplicación." style="display:none;"
+        class=" fixed bottom-0 right-0 m-10 bg-naranja  p-6 text-white rounded-full">
         <i class="fa-solid fa-download text-3xl"></i>
     </button> <!-- Modal -->
     <div id="messagesModal" class="hidden fixed inset-0 bg-black bg-opacity-50  justify-center items-center z-50">
@@ -152,14 +220,15 @@
                     <form id="formulario_login_no_aut" class="text-[16px] grid space-y-4 justify-self-center w-full"
                         action="{{ route('usuario.login-no-aut') }}" method="POST">
                         @csrf
-                        <label for="telefono" class="">Numero Telefónico <span class="text-red-500">*</span></label>
+                        <label for="telefono" class="">Numero Telefónico <span
+                                class="text-red-500">*</span></label>
                         <input required type="tel" placeholder="" name="telefono"
                             class="p-3  border-color-text border rounded-3xl focus:outline-none" autocomplete="off" />
                         <label for="password" class="">Contraseña <span class="text-red-500">*</span></label>
                         <input required type="password" placeholder="" name="password"
                             class=" border-color-text p-3 border rounded-3xl focus:outline-none" autocomplete="off" />
-                        <div class="flex space-x-1"><label for="remember">Recuérdame</label><input type="checkbox" checked
-                                name="remember" class="w-6"></div>
+                        <div class="flex space-x-1"><label for="remember">Recuérdame</label><input type="checkbox"
+                                checked name="remember" class="w-6"></div>
                         <center><button type="submit"
                                 class="p-4  text-white text-[16px] rounded-2xl w-full bg-tarjetas transition duration-200">Acceder</button>
                         </center>

@@ -15,7 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let deferredPrompt=null;
     
     window.addEventListener('beforeinstallprompt', (event) => {
-        event.preventDefault();
         deferredPrompt = event;
         if (btninstallPwa) {
             btninstallPwa.style.display = 'block';
