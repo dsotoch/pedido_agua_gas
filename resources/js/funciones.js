@@ -107,6 +107,7 @@ const spans = openModalUsuario?.querySelectorAll("span");
 if (openModalUsuario) {
     // Abrir modal Usuario
     openModalUsuario.addEventListener('click', () => {
+        document.body.classList.add('overflow-hidden'); // Evita el scroll de la página
 
         if (modalUsuario.classList.contains('hidden')) {
             // Mostrar el modal con animación
