@@ -375,22 +375,24 @@ class ControllerEmpresa extends Controller
 
             if ($horaActual->lt($horaInicio)) {
                 // Cliente ingresó antes del horario de apertura (mostrar horario del mismo día)
-                $antes = true;
+                if (!$horario->estado) {
+                    $antes = false;
+                } else {
+                    $antes = true;
+                }
                 $horaApertura = $horaInicio->format('H:i');
                 $horaCierre = $horaFin->format('H:i');
+                $fueraHorario = true;
             } else {
                 $fueraHorario = !$horaActual->between($horaInicio, $horaFin);
-
                 if (!$horario->estado) {
                     $fueraHorario = true;
                 }
             }
-
         } else {
             // No hay horario registrado, asumimos que está fuera de horario
             $fueraHorario = true;
         }
-
 
         $horarios = $empresa->horarios;
         // Retornar la vista con los datos
