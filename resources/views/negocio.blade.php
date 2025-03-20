@@ -8,7 +8,7 @@
     @include('descripcion')
     @include('footer')
 
-    <div >
+    <div>
        
        
         <!-- Modal Crear Cliente -->

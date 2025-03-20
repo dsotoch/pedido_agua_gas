@@ -1,4 +1,4 @@
-    <div class="relative flex bg-white  w-full overflow-x-hidden">
+    <div class="relative flex bg-white  w-full ">
         <!-- Imagen al inicio -->
         <div class="grid justify-start md:pl-0 pl-1 w-1/2">
             <a href="{{ route('index.negocio', ['slug' => $empresa->dominio]) }}"> <img
@@ -32,7 +32,7 @@
             </button>
             @guest
                 <div id="contenedor_login"
-                class="absolute hidden text-wrap transform translate-x-full transition-transform duration-500 ease-in-out overflow-y-auto min-w-[360px] md:min-w-[600px] md:max-h-[80vh] max-h-[95vh] min-h-[250px] z-50   flex-col justify-start text-start  top-10  right-0 bg-white shadow-md">
+                class="absolute hidden text-wrap transform translate-x-full transition-transform duration-500 ease-in-out overflow-y-auto min-w-[350px] md:min-w-[600px] md:max-h-[80vh] max-h-[95vh] min-h-[250px] z-50   flex-col justify-start text-start  top-10  right-0 bg-white shadow-md">
 
                     <!-- Formulario de inicio de sesión -->
                     <div class="bg-white w-full p-10" id="formLogindiv">
