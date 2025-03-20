@@ -107,46 +107,48 @@ const spans = openModalUsuario?.querySelectorAll("span");
 if (openModalUsuario) {
     // Abrir modal Usuario
     openModalUsuario.addEventListener('click', () => {
-        document.body.classList.add('overflow-hidden'); // Evita el scroll de la página
-
+        document.body.classList.add('overflow-hidden'); // Bloquea el scroll
+    
         if (modalUsuario.classList.contains('hidden')) {
             // Mostrar el modal con animación
             modalUsuario.classList.remove('hidden');
             setTimeout(() => {
-                modalUsuario.classList.add('rigth-0');
-
-            }, 10); // Retraso para permitir que la animación se active correctamente
-
+                modalUsuario.classList.add('right-0'); // ❌ Estaba mal escrito (rigth-0 ❌ -> right-0 ✅)
+            }, 10);
+    
             spans[0].classList.add('hidden');
             spans[1].classList.add('hidden');
             spans[2].classList.add('hidden');
-
+    
             const xIcon = document.querySelector('.x-icon');
-            // Mostrar la "X" con animación
             xIcon.classList.remove("hidden");
+    
             setTimeout(() => {
                 xIcon.classList.remove("opacity-0", "scale-75");
                 xIcon.classList.add("opacity-100", "scale-100");
-            }, 10); // 
+            }, 10);
         } else {
+            // Cerrar el modal correctamente
+            modalUsuario.classList.remove('right-0');
+            setTimeout(() => {
+                modalUsuario.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden'); // ✅ Se elimina el bloqueo del scroll
+            }, 500); // Debe coincidir con la animación en Tailwind
+    
             spans[0].classList.remove('hidden');
             spans[1].classList.remove('hidden');
             spans[2].classList.remove('hidden');
-
+    
             const xIcon = document.querySelector('.x-icon');
-
             xIcon.classList.add('hidden');
-
+    
             setTimeout(() => {
-                modalUsuario.classList.add('hidden');
-                xIcon.classList.remove("opacity-100", "scale-100","rigth-0");
+                xIcon.classList.remove("opacity-100", "scale-100");
                 xIcon.classList.add("opacity-0", "scale-75");
-            }, 500); // Debe coincidir con la duración de la animación en Tailwind
-
+            }, 500);
         }
-
-
     });
+    
 }
 if (modalUsuario) {
     modalUsuario.addEventListener('mouseleave', () => {
