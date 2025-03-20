@@ -107,66 +107,61 @@ const spans = openModalUsuario?.querySelectorAll("span");
 if (openModalUsuario) {
     // Abrir modal Usuario
     openModalUsuario.addEventListener('click', () => {
+
         if (modalUsuario.classList.contains('hidden')) {
-            // 🔹 Bloqueamos el scroll del body al abrir
-            document.body.classList.add('overflow-hidden'); 
-    
-            // 🔹 Mostrar el modal con animación
+            // Mostrar el modal con animación
             modalUsuario.classList.remove('hidden');
             setTimeout(() => {
-                modalUsuario.classList.add('right-0'); 
-            }, 10);
-    
+                modalUsuario.classList.remove('translate-x-full');
+            }, 10); // Retraso para permitir que la animación se active correctamente
+
             spans[0].classList.add('hidden');
             spans[1].classList.add('hidden');
             spans[2].classList.add('hidden');
-    
+
             const xIcon = document.querySelector('.x-icon');
+            // Mostrar la "X" con animación
             xIcon.classList.remove("hidden");
-    
             setTimeout(() => {
                 xIcon.classList.remove("opacity-0", "scale-75");
                 xIcon.classList.add("opacity-100", "scale-100");
-            }, 10);
+            }, 10); // 
         } else {
-            // 🔹 Aseguramos que el scroll del body vuelva al cerrar
-            document.body.classList.remove('overflow-hidden');
-    
-            // 🔹 Ocultar el modal con animación
-            modalUsuario.classList.remove('right-0');
-            setTimeout(() => {
-                modalUsuario.classList.add('hidden');
-            }, 500); // Animación sincronizada con Tailwind
-    
             spans[0].classList.remove('hidden');
             spans[1].classList.remove('hidden');
             spans[2].classList.remove('hidden');
-    
+
             const xIcon = document.querySelector('.x-icon');
+
             xIcon.classList.add('hidden');
-    
+
+            modalUsuario.classList.add('translate-x-full');
             setTimeout(() => {
+                modalUsuario.classList.add('hidden');
                 xIcon.classList.remove("opacity-100", "scale-100");
                 xIcon.classList.add("opacity-0", "scale-75");
-            }, 500);
+            }, 500); // Debe coincidir con la duración de la animación en Tailwind
+
         }
+
+
     });
-    
-    
 }
 if (modalUsuario) {
     modalUsuario.addEventListener('mouseleave', () => {
         // Solo cambiar si el modal está cerrado, de lo contrario, no lo hacemos
         if (modalUsuario.classList.contains('hidden')) {
-            spans[0].classList.remove('hidden');
-            spans[1].classList.remove('hidden');
-            spans[2].classList.remove('hidden');
+            spans[0]?.classList.remove('hidden');
+            spans[1]?.classList.remove('hidden');
+            spans[2]?.classList.remove('hidden');
         }
     });
 }
 // Cerrar modal Usuario
 if (closeModalUsuario) {
     closeModalUsuario.addEventListener('click', () => {
+
+        modalUsuario.classList.add('translate-x-full');
         setTimeout(() => {
             modalUsuario.classList.add('hidden');
         }, 500); // Debe coincidir con la duración de la animación en Tailwind
