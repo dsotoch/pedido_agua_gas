@@ -44,7 +44,7 @@
 
                     @auth
                         <div id="contenedor_login"
-                            class="sticky hidden text-wrap transform translate-x-full transition-transform duration-500 ease-in-out overflow-y-auto min-w-[360px] md:min-w-[600px] md:max-h-[80vh] max-h-[95vh] min-h-[250px] z-50   flex-col justify-start text-start  top-20  right-0 bg-white shadow-md">
+                            class="fixed hidden text-wrap transform translate-x-full transition-transform duration-500 ease-in-out overflow-y-auto min-w-[360px] md:min-w-[600px] md:max-h-[80vh] max-h-[95vh] min-h-[250px] z-50   flex-col justify-start text-start  top-20  right-0 bg-white shadow-md">
 
                             <!--Usuario ya Autenticado--->
                             <div class="absolute w-full">
