@@ -200,6 +200,9 @@
                 @endauth
 
             </div>
+            <div class="h-[40px] bg-color-fondo-productos">
+
+            </div>
         </div>
     @else
         <p class="text-gray-700 mx-auto font-medium text-md m-2">Sin Productos Registrados.</p>

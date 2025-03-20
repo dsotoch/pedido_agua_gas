@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Storage;
 
 class ControllerEmpresa extends Controller
 {
-    
+
     public function index_favoritas()
     {
         if (!Auth::check()) {
@@ -147,7 +147,7 @@ class ControllerEmpresa extends Controller
                         'hora_inicio' => $request->hora_inicio[$index] ?? null,
                         'hora_fin' => $request->hora_fin[$index] ?? null,
                         'empresa_id' => $empresa->id,
-                        'estado'=>$request->estado[$index],
+                        'estado' => $request->estado[$index],
                         'created_at' => now(),
                         'updated_at' => now(),
                     ];
@@ -360,34 +360,36 @@ class ControllerEmpresa extends Controller
 
         Carbon::setLocale('es'); // Establece el idioma en español
         $diaActual = ucfirst(Carbon::now('America/Lima')->translatedFormat('l')); // Obtiene el día en español con la primera letra en mayúscula
-        
-        $nulo = false;
+
         $antes = false;
         $fueraHorario = false;
         $horaApertura = null;
         $horaCierre = null;
-        
+
         $horario = Horario::where('empresa_id', $empresa->id)->where('dia', $diaActual)->first();
         $horaActual = Carbon::now('America/Lima');
-        
+
         if ($horario) {
             $horaInicio = Carbon::parse($horario->hora_inicio, 'America/Lima');
             $horaFin = Carbon::parse($horario->hora_fin, 'America/Lima');
-        
+
             if ($horaActual->lt($horaInicio)) {
                 // Cliente ingresó antes del horario de apertura (mostrar horario del mismo día)
                 $antes = true;
                 $horaApertura = $horaInicio->format('H:i');
                 $horaCierre = $horaFin->format('H:i');
+            } else {
+                if (!$horario->estado) {
+                    $fueraHorario = true;
+                }
             }
-        
+
             $fueraHorario = !$horaActual->between($horaInicio, $horaFin);
         } else {
             // No hay horario registrado, asumimos que está fuera de horario
             $fueraHorario = true;
-            $nulo = true;
         }
-        
+
 
         $horarios = $empresa->horarios;
         // Retornar la vista con los datos
@@ -396,7 +398,6 @@ class ControllerEmpresa extends Controller
             'horaApertura',
             'horaCierre',
             'dia',
-            'nulo',
             'horario',
             'horarios',
             'productos_con_promociones',
@@ -454,12 +455,12 @@ class ControllerEmpresa extends Controller
         $empresa = $usuario->empresas()->first();
         $repartidores = $empresa->usuarios()->with('persona')->where('tipo', 'repartidor')->get();
         $pagosdeldia = Pedido::with(['detalles', 'detalles.producto'])
-        ->where('empresa_id', $empresa->id)
-        ->where('pago', true)
-        ->whereDate('updated_at', Carbon::today('America/Lima'))
-        ->orderByDesc('id')
-        ->get();
-    
+            ->where('empresa_id', $empresa->id)
+            ->where('pago', true)
+            ->whereDate('updated_at', Carbon::today('America/Lima'))
+            ->orderByDesc('id')
+            ->get();
+
         // Filtrar y agrupar productos comercializables
         $productosVendidos = $pagosdeldia->flatMap(function ($pedido) {
             // Aplanar los detalles de los pedidos

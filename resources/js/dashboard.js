@@ -75,27 +75,9 @@ if (btnAcceder) {
     });
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-    const contenedor = document.getElementById("contenedor-total");
-
-    if (contenedor) {
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                if (!entry.isIntersecting) {
-                    contenedor.classList.add("pb-[30px]"); // Agregar padding si está pegado
-                } else {
-                    contenedor.classList.remove("pb-[30px]"); // Quitar padding si no está pegado
-                }
-            },
-            { root: null, threshold: 1.0 }
-        );
-        if (observer) {
-            observer.observe(contenedor);
-        }
-    }
 
 
-});
+
 
 
 

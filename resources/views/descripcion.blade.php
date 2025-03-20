@@ -33,11 +33,11 @@
                                 </td>
                                 <td class="text-center p-[15px] text-[14.4px] border border-gray-300">
 
-                                    {{ \Carbon\Carbon::parse($item->hora_inicio)->format('h:i A') }}
+                                    {{ $item->estado?\Carbon\Carbon::parse($item->hora_inicio)->format('h:i A') :'-'}}
 
                                 </td>
                                 <td class="text-center p-[15px] text-[14.4px] border border-gray-300">
-                                    {{ \Carbon\Carbon::parse($item->hora_fin)->format('h:i A') }}
+                                    {{ $item->estado?\Carbon\Carbon::parse($item->hora_fin)->format('h:i A') :'-'}}
                                 </td>
 
                             </tr>
@@ -87,7 +87,7 @@
                     <p class="text-color-titulos-entrega mt-2">
                         Actualmente estamos fuera de nuestro horario de atención.
 
-                        @if (!$nulo && $antes && $horaApertura && $horaCierre)
+                        @if ($antes && $horaApertura && $horaCierre)
                             Los pedidos realizados en este momento serán procesados el día de hoy
                             ({{ ucfirst($dia) }}) desde las {{ \Carbon\Carbon::parse($horaApertura)->format('h:i A') }}
                             hasta las {{ \Carbon\Carbon::parse($horaCierre)->format('h:i A') }}.
@@ -145,7 +145,7 @@
                                 }
                             @endphp
 
-                            Actualmente estamos fuera de nuestro horario de atención. Los pedidos realizados en este momento
+                            Los pedidos realizados en este momento
                             serán procesados el día
                             <strong>{{ $siguienteDia }}</strong> desde las
                             <strong>{{ $siguienteHoraApertura }}</strong> hasta las

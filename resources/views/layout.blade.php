@@ -115,7 +115,7 @@
 
 </head>
 
-<body class="font-sans overflow-x-hidden">
+<body class="font-sans overflow-x-hidden touch-none">
     @yield('cuerpo')
 
     <button id="installPWA" title="Instalar Aplicación." style="display:none;"
