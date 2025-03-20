@@ -8,7 +8,7 @@
     @include('descripcion')
     @include('footer')
 
-    <div>
+    <div class="overflow-x-hidden">
        
        
         <!-- Modal Crear Cliente -->
