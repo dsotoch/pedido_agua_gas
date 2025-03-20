@@ -379,12 +379,13 @@ class ControllerEmpresa extends Controller
                 $horaApertura = $horaInicio->format('H:i');
                 $horaCierre = $horaFin->format('H:i');
             } else {
+                $fueraHorario = !$horaActual->between($horaInicio, $horaFin);
+
                 if (!$horario->estado) {
                     $fueraHorario = true;
                 }
             }
 
-            $fueraHorario = !$horaActual->between($horaInicio, $horaFin);
         } else {
             // No hay horario registrado, asumimos que está fuera de horario
             $fueraHorario = true;

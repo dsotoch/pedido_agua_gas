@@ -124,7 +124,7 @@
                                                 <p>{{ $pedido->celular }}</p>
                                             </div>
                                         </div>
-                                        <div class="flex items-center ">
+                                        <div class="flex items-center mb-1">
                                             <div class="w-[17px] h-[17px] text-color-titulos-entrega opacity-80">
                                                 <img src="{{ asset('imagenes/cajas/direccion.svg') }}" alt="">
                                             </div>
@@ -413,7 +413,7 @@
                                                 <p>{{ $pedido->celular }}</p>
                                             </div>
                                         </div>
-                                        <div class="flex items-center ">
+                                        <div class="flex items-center mt-1">
                                             <div class="w-[17px] h-[17px] text-color-titulos-entrega opacity-80"><svg
                                                     class="e-font-icon-svg e-fas-map-marker-alt" aria-hidden="true"
                                                     viewBox="0 0 384 512" xmlns="http://www.w3.org/2000/svg">
