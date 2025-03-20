@@ -32,7 +32,7 @@
             </button>
             @guest
                 <div id="contenedor_login"
-                class="sticky translate-x-full  hidden text-wrap transform rigth-0 transition-transform duration-500 ease-in-out overflow-y-auto min-w-[360px] md:min-w-[600px] md:max-h-[80vh] max-h-[95vh] min-h-[250px] z-50   flex-col justify-start text-start  top-10   bg-white shadow-md">
+                class="fixed translate-x-full  hidden text-wrap transform rigth-0 transition-transform duration-500 ease-in-out overflow-y-auto min-w-[360px] md:min-w-[600px] md:max-h-[80vh] max-h-[95vh] min-h-[250px] z-50   flex-col justify-start text-start  top-10   bg-white shadow-md">
 
                     <!-- Formulario de inicio de sesión -->
                     <div class="bg-white w-full p-10" id="formLogindiv">
@@ -162,7 +162,7 @@
             @endguest
             @auth
                 <div id="contenedor_login"
-                class="sticky  translate-x-full hidden text-wrap transform  transition-transform duration-500 ease-in-out overflow-y-auto min-w-[360px] md:min-w-[600px] md:max-h-[80vh] max-h-[95vh] min-h-[250px] z-50   flex-col justify-start text-start  top-10  right-0 bg-white shadow-md">
+                class="fixed  translate-x-full hidden text-wrap transform  transition-transform duration-500 ease-in-out overflow-y-auto min-w-[360px] md:min-w-[600px] md:max-h-[80vh] max-h-[95vh] min-h-[250px] z-50   flex-col justify-start text-start  top-10  right-0 bg-white shadow-md">
 
                     <!--Usuario ya Autenticado--->
                     <div class="absolute w-full">
