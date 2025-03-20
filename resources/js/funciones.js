@@ -112,7 +112,7 @@ if (openModalUsuario) {
             // Mostrar el modal con animación
             modalUsuario.classList.remove('hidden');
             setTimeout(() => {
-                modalUsuario.classList.add('left-0');
+                modalUsuario.classList.add('rigth-0');
 
             }, 10); // Retraso para permitir que la animación se active correctamente
 
@@ -138,7 +138,7 @@ if (openModalUsuario) {
 
             setTimeout(() => {
                 modalUsuario.classList.add('hidden');
-                xIcon.classList.remove("opacity-100", "scale-100","left-0");
+                xIcon.classList.remove("opacity-100", "scale-100","rigth-0");
                 xIcon.classList.add("opacity-0", "scale-75");
             }, 500); // Debe coincidir con la duración de la animación en Tailwind
 
@@ -160,8 +160,6 @@ if (modalUsuario) {
 // Cerrar modal Usuario
 if (closeModalUsuario) {
     closeModalUsuario.addEventListener('click', () => {
-
-        modalUsuario.classList.add('translate-x-full');
         setTimeout(() => {
             modalUsuario.classList.add('hidden');
         }, 500); // Debe coincidir con la duración de la animación en Tailwind
