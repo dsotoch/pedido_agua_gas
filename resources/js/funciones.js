@@ -115,9 +115,6 @@ if (openModalUsuario) {
                 modalUsuario.classList.remove('translate-x-full');
             }, 10); // Retraso para permitir que la animación se active correctamente
 
-            spans[0].classList.add('hidden');
-            spans[1].classList.add('hidden');
-            spans[2].classList.add('hidden');
 
             const xIcon = document.querySelector('.x-icon');
             // Mostrar la "X" con animación
@@ -140,6 +137,58 @@ if (openModalUsuario) {
                 modalUsuario.classList.add('hidden');
                 xIcon.classList.remove("opacity-100", "scale-100");
                 xIcon.classList.add("opacity-0", "scale-75");
+            }, 500); // Debe coincidir con la duración de la animación en Tailwind
+
+        }
+
+
+    });
+}
+const openModalUsuario2 = document.getElementById('openModalUsuario2');
+if (openModalUsuario2) {
+    // Seleccionamos los tres spans dentro del botón
+    const firstSpan = openModalUsuario2.querySelector("span:first-child");
+    const middleSpan = openModalUsuario2.querySelector("span:nth-child(2)");
+    const lastSpan = openModalUsuario2.querySelector("span:nth-child(3)");
+
+    function toggleMenu() {
+        const isOpen = openModalUsuario2.classList.contains("active");
+
+        if (!isOpen) {
+            // Forma la "X"
+            firstSpan.style.transform = "rotate(45deg) translate(6px, 6px)";
+            firstSpan.style.transformOrigin = "center";
+
+            lastSpan.style.transform = "rotate(-45deg) translate(6px, -6px)";
+            lastSpan.style.transformOrigin = "center";
+
+            middleSpan.style.opacity = "0"; // Ocultar la línea del medio
+        } else {
+            // Vuelve al estado original
+            firstSpan.style.transform = "rotate(0) translate(0, 0)";
+            lastSpan.style.transform = "rotate(0) translate(0, 0)";
+            middleSpan.style.opacity = "1"; // Mostrar la línea del medio
+        }
+
+        openModalUsuario2.classList.toggle("active");
+    }
+
+    // Abrir modal Usuario
+    openModalUsuario2.addEventListener('click', () => {
+        toggleMenu();
+        if (modalUsuario.classList.contains('hidden')) {
+            // Mostrar el modal con animación
+            modalUsuario.classList.remove('hidden');
+            setTimeout(() => {
+                modalUsuario.classList.remove('translate-x-full');
+            }, 10); // Retraso para permitir que la animación se active correctamente
+
+        } else {
+
+            modalUsuario.classList.add('translate-x-full');
+            setTimeout(() => {
+                modalUsuario.classList.add('hidden');
+
             }, 500); // Debe coincidir con la duración de la animación en Tailwind
 
         }

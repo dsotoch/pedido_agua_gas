@@ -29,14 +29,14 @@
                     <button id="btn_acceder"
                         class="hidden md:block text-[16px] leading-9 -translate-x-36 z-50">Acceder&nbsp;&nbsp;<i
                             class="fa-solid fa-right-to-bracket"></i></button>
-                    <div id="openModalUsuario"
-                        class="md:hidden block cursor-pointer w-10 h-10 flex flex-col justify-center items-center relative">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                        <p
-                            class="x-icon  hidden opacity-0 scale-75 text-black text-3xl font-bold transition-all duration-500 ease-out">
-                            X</p>
+                    <div id="openModalUsuario2"
+                        class="md:hidden block cursor-pointer relative">
+                            
+                            
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                      
 
                     </div>
 

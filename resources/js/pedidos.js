@@ -120,7 +120,7 @@ if (contenedor_confeti) {
         angle: 90,
         spread: 70,
         origin: { x: 0.5, y: 0.5 },
-        colors: ['#FFFF00', '#FF0000', '#0000FF', '#FFFFFF']
+        colors: ['#00ADEF', '#0093E0', '#FF6600', '#FFCA08', '#186886']  // Colores Entrega.pe
     });
 }
 if (btn_regresar_a_productos) {

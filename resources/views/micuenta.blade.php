@@ -116,7 +116,7 @@
 
                                         </div>
 
-                                        <div class=" flex items-center">
+                                        <div class=" flex items-center mb-1">
                                             <div class="w-[17px] h-[17px] text-color-titulos-entrega opacity-80">
                                                 <img src="{{ asset('imagenes/cajas/celular.svg') }}" alt="">
                                             </div>
@@ -128,11 +128,11 @@
                                             <div class="w-[17px] h-[17px] text-color-titulos-entrega opacity-80">
                                                 <img src="{{ asset('imagenes/cajas/direccion.svg') }}" alt="">
                                             </div>
-                                            <div class="flex flex-col justify-end h-[35px] ml-2">
+                                            <div class="flex flex-col justify-end  ml-2">
                                                 <p>{{ $pedido->direccion }}</p>
                                             </div>
                                         </div>
-                                        <div class="flex items-center  min-h-[35px] mt-1 mb-1 gap-x-2">
+                                        <div class="flex items-center   mt-1 mb-1 gap-x-2">
                                             <div class=" h-[28px] flex-shrink-0 flex items-center">
                                                 <svg class="text-color-titulos-entrega text-left mt-1 opacity-80 w-full h-full"
                                                     aria-hidden="true" viewBox="0 0 288 512"
@@ -315,7 +315,7 @@
                                                         </div>
                                                     </div>
                                                     <img src="{{ asset('imagenes/cajas/cd.svg') }}" alt=""
-                                                        class="btn_cupon_aplicado cursor-pointer absolute top-[65px] md:left-[25px] -right-3  md:w-[40px] w-[35px] h-[45px]">
+                                                        class="btn_cupon_aplicado cursor-pointer absolute top-[65px] md:left-[25px] -right-3   w-[30px] h-[45px]">
 
                                                 </div>
                                             </div>
@@ -327,7 +327,7 @@
                                                         class="bg-transparent w-[150px]  h-[190px]  text-color-titulos-entrega group ">
 
                                                         <img src="{{ asset('imagenes/cajas/pg.svg') }}" alt=""
-                                                            class="absolute top-[120px] left-[104px]">
+                                                            class="absolute top-[108px] left-[104px]">
 
                                                     </div>
 
@@ -353,7 +353,8 @@
                                     class="flex-1 h-full flex flex-col justify-center items-center w-[95%] md:w-[333px] md:max-w-[333px]  p-[20px] bg-color-tarjetas rounded-3xl text-color-titulos-entrega font-sans text-base">
                                     <div class="space-y-0 relative w-full ">
 
-                                        <img class="absolute right-0 top-0 object-contain  h-10" src="{{ asset('storage/'.$pedido->empresa->logo) }}" alt=""> 
+                                        <img class="absolute right-0 top-0 object-contain w-[120px] h-10"
+                                            src="{{ asset('storage/' . $pedido->empresa->logo) }}" alt="">
 
                                         <div class="flex justify-between">
                                             <div class="flex">
@@ -383,7 +384,7 @@
                                             </div>
 
                                         </div>
-                                      
+
 
                                         <div class="flex items-center ">
                                             <div class="w-[17px] h-[17px] text-color-titulos-entrega opacity-80">
@@ -420,11 +421,11 @@
                                                         d="M172.268 501.67C26.97 291.031 0 269.413 0 192 0 85.961 85.961 0 192 0s192 85.961 192 192c0 77.413-26.97 99.031-172.268 309.67-9.535 13.774-29.93 13.773-39.464 0zM192 272c44.183 0 80-35.817 80-80s-35.817-80-80-80-80 35.817-80 80 35.817 80 80 80z">
                                                     </path>
                                                 </svg></div>
-                                            <div class="flex flex-col justify-end h-[35px] ml-2">
+                                            <div class="flex flex-col items-center  ml-2">
                                                 <p>{{ $pedido->direccion }}</p>
                                             </div>
                                         </div>
-                                        <div class="flex items-center  min-h-[35px] mt-1 mb-1 gap-x-2">
+                                        <div class="flex items-center   mt-2 mb-1 gap-x-2">
                                             <div class=" h-[28px] flex-shrink-0 flex items-center">
                                                 <svg class="text-color-titulos-entrega mt-1 text-left opacity-80 w-full h-full"
                                                     aria-hidden="true" viewBox="0 0 288 512"
@@ -651,7 +652,7 @@
                                                         class="bg-transparent w-[150px]  h-[190px]  text-color-titulos-entrega group ">
 
                                                         <img src="{{ asset('imagenes/cajas/pg.svg') }}" alt=""
-                                                            class="absolute top-[120px] left-[104px]">
+                                                            class="absolute top-[108px] left-[104px]">
 
                                                     </div>
 
@@ -677,9 +678,8 @@
 
                                                         </div>
                                                     </div>
-                                                  <img
-                                                            src="{{ asset('imagenes/cajas/cd.svg') }}" alt=""
-                                                            class="btn_cupon_aplicado cursor-pointer  absolute top-[55px] md:left-[25px]  -right-3  md:w-[40px] w-[35px] h-[50px]">
+                                                    <img src="{{ asset('imagenes/cajas/cd.svg') }}" alt=""
+                                                        class="btn_cupon_aplicado cursor-pointer  absolute top-[55px] md:left-[25px]  -right-3 object-contain w-[30px] h-[50px]">
 
                                                 </div>
                                             </div>
