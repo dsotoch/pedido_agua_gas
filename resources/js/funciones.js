@@ -107,13 +107,14 @@ const spans = openModalUsuario?.querySelectorAll("span");
 if (openModalUsuario) {
     // Abrir modal Usuario
     openModalUsuario.addEventListener('click', () => {
-        document.body.classList.add('overflow-hidden'); // Bloquea el scroll
-    
         if (modalUsuario.classList.contains('hidden')) {
-            // Mostrar el modal con animación
+            // 🔹 Bloqueamos el scroll del body al abrir
+            document.body.classList.add('overflow-hidden'); 
+    
+            // 🔹 Mostrar el modal con animación
             modalUsuario.classList.remove('hidden');
             setTimeout(() => {
-                modalUsuario.classList.add('right-0'); // ❌ Estaba mal escrito (rigth-0 ❌ -> right-0 ✅)
+                modalUsuario.classList.add('right-0'); 
             }, 10);
     
             spans[0].classList.add('hidden');
@@ -128,12 +129,14 @@ if (openModalUsuario) {
                 xIcon.classList.add("opacity-100", "scale-100");
             }, 10);
         } else {
-            // Cerrar el modal correctamente
+            // 🔹 Aseguramos que el scroll del body vuelva al cerrar
+            document.body.classList.remove('overflow-hidden');
+    
+            // 🔹 Ocultar el modal con animación
             modalUsuario.classList.remove('right-0');
             setTimeout(() => {
                 modalUsuario.classList.add('hidden');
-                document.body.classList.remove('overflow-hidden'); // ✅ Se elimina el bloqueo del scroll
-            }, 500); // Debe coincidir con la animación en Tailwind
+            }, 500); // Animación sincronizada con Tailwind
     
             spans[0].classList.remove('hidden');
             spans[1].classList.remove('hidden');
@@ -148,6 +151,7 @@ if (openModalUsuario) {
             }, 500);
         }
     });
+    
     
 }
 if (modalUsuario) {
