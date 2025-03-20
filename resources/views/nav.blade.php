@@ -1,4 +1,4 @@
-    <div class="relative flex bg-white  w-full">
+    <div class="relative flex bg-white  w-full overflow-x-hidden">
         <!-- Imagen al inicio -->
         <div class="grid justify-start md:pl-0 pl-1 w-1/2">
             <a href="{{ route('index.negocio', ['slug' => $empresa->dominio]) }}"> <img
