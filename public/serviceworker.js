@@ -55,3 +55,24 @@ self.addEventListener("fetch", event => {
             })
     )
 });
+
+
+self.addEventListener('push', function(event) {
+    const options = {
+        body: event.data ? event.data.text() : 'Tienes una nueva notificación',
+        icon: '/imagenes/noti.png',
+        badge: '/imagenes/noti-badge.png',
+        tag: 'notificacion-pwa'
+    };
+
+    event.waitUntil(
+        self.registration.showNotification('Nueva Notificación', options)
+    );
+});
+
+self.addEventListener('notificationclick', function(event) {
+    event.notification.close();
+    event.waitUntil(
+        clients.openWindow('/')
+    );
+});

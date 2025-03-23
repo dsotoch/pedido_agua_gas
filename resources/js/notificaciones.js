@@ -30,25 +30,18 @@ async function verificar_permisos() {
 
 export async function mostrarNotificacion(titulo, texto, tag) {
     const permiso = await verificar_permisos();
-    if (permiso) {
-        const notification = new Notification(titulo, {
-            body: texto,
-            icon: "/imagenes/noti.png",
-            tag: tag
+    if (permiso && 'serviceWorker' in navigator) {
+        navigator.serviceWorker.ready.then(reg => {
+            reg.showNotification(titulo, {
+                body: texto,
+                icon: "/imagenes/noti.png",
+                tag: tag
+            });
         });
-
-        // Cierra la notificación automáticamente después de 3 segundos
-        setTimeout(() => notification.close(), 5000);
-
-        // Cierra la notificación si el usuario hace clic en ella
-        notification.onclick = ()  =>{
-            window.focus();
-            notification.close();
-        }
     } else {
         Swal.fire({
             title: 'Error',
-            text: 'Las notificaciones están desactivadas. Puede que tengas nuevos pedidos pendientes.',
+            text: 'Las notificaciones están desactivadas. Activa los permisos en la configuración.',
             timerProgressBar: true,
             showConfirmButton: false,
             icon: 'error',
@@ -59,6 +52,7 @@ export async function mostrarNotificacion(titulo, texto, tag) {
         });
     }
 }
+
 
 
 
