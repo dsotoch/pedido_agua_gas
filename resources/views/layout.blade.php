@@ -51,13 +51,13 @@
     <!-- Agregar a la pantalla de inicio para Chrome en Android -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="application-name" content="PWA">
-    <link rel="icon" type="image/png" sizes="512x512" href="{{ asset('imagenes/images/icons/favicon-512x512.png') }}">
+    <link rel="icon" type="image/png" sizes="512x512" href="{{ asset('imagenes/images/icons/favicon1-512x512.png') }}">
 
     <!-- Agregar a la pantalla de inicio para Safari en iOS -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-title" content="PWA">
-    <link rel="apple-touch-icon" href="{{ asset('imagenes/images/icons/favicon-512x512.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('imagenes/images/icons/favicon1-512x512.png') }}">
 
     <!-- Imágenes de inicio para diferentes dispositivos iOS -->
     <link href="{{ asset('imagenes/images/icons/splash-640x1136.png')}}" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
@@ -73,7 +73,7 @@
 
     <!-- Configuración del mosaico para Windows 8 -->
     <meta name="msapplication-TileColor" content="#ffffff">
-    <meta name="msapplication-TileImage" content="{{ asset('imagenes/images/icons/favicon-512x512.png') }}">
+    <meta name="msapplication-TileImage" content="{{ asset('imagenes/images/icons/favicon1-512x512.png') }}">
 
     <script type="text/javascript">
         // Inicializar el Service Worker
