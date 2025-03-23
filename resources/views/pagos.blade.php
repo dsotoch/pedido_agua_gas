@@ -371,6 +371,13 @@
                                 <div class="text-wrap">
                                     <p>Actualizado por <span class="repartidor">{{ $pedido->actor }}</span></p>
                                 </div>
+                               
+                            </div>
+                            <div class="flex space-x-2">
+                                <i class="fas fa-calendar-check w-[17px] h-[17px]"></i> <!-- Calendario con check -->
+                                <div class="jet-listing-dynamic-field__content">
+                                Actualización: {{ \Carbon\Carbon::parse($pedido->update_at)->format('d/m/Y') }}
+                            </div>
                             </div>
                         </div>
                     </div>

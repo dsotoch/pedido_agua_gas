@@ -124,7 +124,7 @@
                                                 <p>{{ $pedido->celular }}</p>
                                             </div>
                                         </div>
-                                        <div class="flex items-center mb-1">
+                                        <div class="flex items-center mt-1">
                                             <div class="w-[17px] h-[17px] text-color-titulos-entrega opacity-80">
                                                 <img src="{{ asset('imagenes/cajas/direccion.svg') }}" alt="">
                                             </div>
@@ -133,7 +133,7 @@
                                             </div>
                                         </div>
                                         <div class="flex items-center   mt-1 mb-1 gap-x-2">
-                                            <div class=" h-[28px] flex-shrink-0 flex items-center">
+                                            <div class=" h-[28px] mt-2 flex-shrink-0 flex items-center">
                                                 <svg class="text-color-titulos-entrega text-left mt-1 opacity-80 w-full h-full"
                                                     aria-hidden="true" viewBox="0 0 288 512"
                                                     xmlns="http://www.w3.org/2000/svg">
@@ -145,7 +145,7 @@
                                             <p class="mt-1"> {{ $pedido->nota }}</p>
                                         </div>
 
-                                        <div class="flex items-center ">
+                                        <div class="flex items-center mt-1">
 
                                             <div class="flex space-x-2">
                                                 <div class="w-[17px] h-[17px] text-color-titulos-entrega opacity-80">
@@ -426,7 +426,7 @@
                                             </div>
                                         </div>
                                         <div class="flex items-center   mt-2 mb-1 gap-x-2">
-                                            <div class=" h-[28px] flex-shrink-0 flex items-center">
+                                            <div class=" h-[28px] mt-2 flex-shrink-0 flex items-center">
                                                 <svg class="text-color-titulos-entrega mt-1 text-left opacity-80 w-full h-full"
                                                     aria-hidden="true" viewBox="0 0 288 512"
                                                     xmlns="http://www.w3.org/2000/svg">
