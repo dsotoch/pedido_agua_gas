@@ -9,8 +9,8 @@ return [
         'background_color' => '#293242',
         'theme_color' => '#000000',
         'display' => 'standalone',
-        'orientation'=> 'portrait',
-        'status_bar'=> 'black',
+        'orientation' => 'portrait',
+        'status_bar' => 'black',
         'icons' => [
             '72x72' => [
                 'path' => '/imagenes/images/icons/favicon-72x72.png',
@@ -46,11 +46,14 @@ return [
             ],
         ],
         'splash' => [
-           
+            '640x1136' => '/imagenes/splash/splash-640x1136.png',
+            '750x1334' => '/imagenes/splash/splash-750x1334.png',
+            '828x1792' => '/imagenes/splash/splash-828x1792.png',
+            '1125x2436' => '/imagenes/splash/splash-1125x2436.png',
+            '1242x2208' => '/imagenes/splash/splash-1242x2208.png',
+            '1242x2688' => '/imagenes/splash/splash-1242x2688.png',
         ],
-        'shortcuts' => [
-            
-        ],
+        'shortcuts' => [],
         'custom' => []
     ]
 ];
