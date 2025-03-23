@@ -52,6 +52,11 @@ return [
             '1125x2436' => '/imagenes/splash/splash-1125x2436.png',
             '1242x2208' => '/imagenes/splash/splash-1242x2208.png',
             '1242x2688' => '/imagenes/splash/splash-1242x2688.png',
+            '1536x2048' => '/imagenes/splash/splash-1536x2048.png',
+            '1668x2224' => '/imagenes/splash/splash-1668x2224.png',
+            '1668x2388' => '/imagenes/splash/splash-1668x2388.png',
+            '2048x2732' => '/imagenes/splash/splash-2048x2732.png',
+
         ],
         'shortcuts' => [],
         'custom' => []
