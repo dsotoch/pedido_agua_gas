@@ -66,10 +66,7 @@
     <link href="{{ asset('imagenes/images/icons/splash-1125x2436.png')}}" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" rel="apple-touch-startup-image" />
     <link href="{{ asset('imagenes/images/icons/splash-828x1792.png')}}" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
     <link href="{{ asset('imagenes/images/icons/splash-1242x2688.png')}}" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" rel="apple-touch-startup-image" />
-    <link href="{{ asset('imagenes/images/icons/splash-1536x2048.png')}}" media="(device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
-    <link href="{{ asset('imagenes/images/icons/splash-1668x2224.png')}}" media="(device-width: 834px) and (device-height: 1112px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
-    <link href="{{ asset('imagenes/images/icons/splash-1668x2388.png')}}" media="(device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
-    <link href="{{ asset('imagenes/images/icons/splash-2048x2732.png')}}" media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
+    
 
     <!-- Configuración del mosaico para Windows 8 -->
     <meta name="msapplication-TileColor" content="#ffffff">
