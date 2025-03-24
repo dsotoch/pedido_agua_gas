@@ -1,5 +1,5 @@
 import Swal from "sweetalert2";
-
+mostrarNotificacion("PROBANDO EN ESCRITORIO","dadasdad","asdasda");
 async function verificar_permisos() {
     if (!("Notification" in window)) {
         Swal.fire({
