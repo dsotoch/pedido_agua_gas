@@ -342,15 +342,15 @@ if (radio_valvulas) {
         radio.addEventListener("change", function () {
             let itemId = this.dataset.id;
             let selectedValue = this.value;
-    
+
             // Buscar el producto en el array
             let index = window.idproductos.findIndex(item => item.id === itemId);
-    
+
             if (index !== -1) {
                 // Actualizar el tipo de válvula en el producto existente
                 window.idproductos[index].tipo = selectedValue;
             }
-    
+
 
         });
     });
@@ -507,27 +507,26 @@ function conectarWebSocket() {
                     actualizar_Estado_delivery_panel_cliente(e.message.pedido_id, e.message.estado);
                     break;
                 case 'confirmacion':
-                    mostrarNotificacion("Tu Pedido está en Camino",
-                        `¡Hola Estimado Usuario(a)! El repartidor ha tomado tu pedido #${e.message.pedido_id}, y está en camino para entregártelo. ¡Prepárate para recibirlo pronto!`,
+                    mostrarNotificacion(`Pedido #${e.message.pedido_id} está en Camino`,
+                        `Tu pedido ha sido recogido y está en ruta a tu dirección.`,
                         'Nuevo-Pedido-Camino'
                     );
                     actualizar_Estado_delivery_panel_cliente(e.message.pedido_id, e.message.estado);
                     break;
                 case 'asignacion':
-                    mostrarNotificacion("Nuevo Pedido Asignado",
-                        `¡Repartidor! La Distribuidora te ha asignado el Pedido #${e.message.pedido_id}, revísalo en este momento`,
+                    mostrarNotificacion(`Pedido Asignado #${e.message.pedido_id} `,
+                        `Revisa los detalles y procede con la entrega.`,
                         'Nuevo-Pedido-Asignado'
                     );
                     pedidoasignadoarepartidor(e.message.pedido_id, 'repartidor');
                     agregarPedido(e.message.pedido, "repartidor", e.message.tiempo);
                     break;
-                case 'finalizado':
                 case 'anulacion':
                     actualizarEstadoYPagoPanelAdministrador(e.message.pedido_id, e.message.estado);
                     break;
                 default:
-                    mostrarNotificacion("Nuevo Pedido",
-                        `¡Administrador! La Distribuidora tiene un nuevo Pedido #${e.message.pedido_id}, revísalo en este momento`,
+                    mostrarNotificacion(`Pedido #${e.message.pedido_id}`,
+                        `Revisa los detalles y gestiona la entrega ahora.`,
                         'Nuevo-Pedido'
                     );
                     agregarPedido(e.message.pedido, "admin", e.message.tiempo);

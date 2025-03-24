@@ -58,8 +58,13 @@ self.addEventListener("fetch", event => {
 
 
 self.addEventListener('push', function(event) {
+    if (!event.data) {
+        console.log('No hay datos en la notificación push');
+        return;
+    }
+
     const options = {
-        body: event.data ? event.data.text() : 'Tienes una nueva notificación',
+        body: event.data.text(),
         icon: '/imagenes/noti.png',
         badge: '/imagenes/noti-badge.png',
         tag: 'notificacion-pwa'
@@ -67,8 +72,10 @@ self.addEventListener('push', function(event) {
 
     event.waitUntil(
         self.registration.showNotification('Nueva Notificación', options)
+            .catch(err => console.error('Error al mostrar la notificación:', err))
     );
 });
+
 
 self.addEventListener('notificationclick', function(event) {
     event.notification.close();
