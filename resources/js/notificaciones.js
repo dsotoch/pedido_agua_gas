@@ -31,11 +31,25 @@ async function verificar_permisos() {
 export async function mostrarNotificacion(titulo, texto, tag) {
     const permiso = await verificar_permisos();
     if (permiso && 'serviceWorker' in navigator) {
+        // Verifica si el Service Worker está listo
         navigator.serviceWorker.ready.then(reg => {
             reg.showNotification(titulo, {
                 body: texto,
                 icon: "/imagenes/noti.png",
                 tag: tag
+            });
+        }).catch(error => {
+            console.error('Error al mostrar notificación:', error);
+            Swal.fire({
+                title: 'Error',
+                text: 'No se pudo mostrar la notificación.',
+                timerProgressBar: true,
+                showConfirmButton: false,
+                icon: 'error',
+                timer: 3000,
+                customClass: {
+                    timerProgressBar: 'bg-red-500 h-2 rounded-md'
+                }
             });
         });
     } else {
@@ -52,6 +66,7 @@ export async function mostrarNotificacion(titulo, texto, tag) {
         });
     }
 }
+
 
 
 
