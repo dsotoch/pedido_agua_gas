@@ -15,7 +15,7 @@ var filesToCache = [
 
 // Cache on install (con manejo individual de archivos)
 self.addEventListener("install", event => {
-    this.skipWaiting();
+    self.skipWaiting();
     event.waitUntil(
         caches.open(staticCacheName)
             .then(cache => {
