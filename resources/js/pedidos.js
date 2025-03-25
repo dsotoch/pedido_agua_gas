@@ -503,9 +503,9 @@ function conectarWebSocket() {
             }
 
             switch (e.message.operacion) {
-                case 'pedido_tomado':
-                    actualizar_Estado_delivery_panel_cliente(e.message.pedido_id, e.message.estado);
-                    break;
+                case 'finalizado':
+                    actualizarEstadoYPagoPanelAdministrador(e.message.pedido_id, e.message.estado);
+                break;
                 case 'confirmacion':
                     mostrarNotificacion(`Pedido #${e.message.pedido_id} está en Camino`,
                         `Tu pedido ha sido recogido y está en ruta a tu dirección.`,
@@ -513,6 +513,7 @@ function conectarWebSocket() {
                     );
                     actualizar_Estado_delivery_panel_cliente(e.message.pedido_id, e.message.estado);
                     break;
+                
                 case 'asignacion':
                     mostrarNotificacion(`Pedido Asignado #${e.message.pedido_id} `,
                         `Revisa los detalles y procede con la entrega.`,

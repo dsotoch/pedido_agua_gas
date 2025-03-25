@@ -1,4 +1,6 @@
 import Swal from "sweetalert2";
+
+verificar_permisos();
 async function verificar_permisos() {
     if (!("Notification" in window)) {
         Swal.fire({
