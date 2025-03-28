@@ -9,6 +9,7 @@ use App\Http\Controllers\ControllerSalidas;
 use App\Http\Controllers\ControllerUsuario;
 use App\Http\Controllers\CuponController;
 use App\Http\Controllers\HorarioController;
+use App\Http\Controllers\NotificacionFirebase;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -132,3 +133,5 @@ Route::get('/{slug}', [ControllerEmpresa::class, 'index_distribuidora'])->name('
 Route::get('/offline', function () {
     return view('offline');
 });
+Route::post('guardar-token', [NotificacionFirebase::class, 'store']);
+Route::get('act-estado/{estado}', [NotificacionFirebase::class, 'estado']);

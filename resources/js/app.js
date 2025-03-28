@@ -19,6 +19,9 @@ import './favoritas';
 import './websocket';
 import './conf';
 import './salidas';
+import './firebase';
+import './notif';
+
 
 
 

@@ -1,8 +1,6 @@
 var staticCacheName = "pwa-v" + new Date().getTime();
 var filesToCache = [
     '/offline',
-   '/public/css/app.css',
-    '/public/js/app.js',
     '/images/icons/favicon1-72x72.png',
     '/images/icons/favicon1-96x96.png',
     '/images/icons/favicon1-128x128.png',
@@ -56,30 +54,46 @@ self.addEventListener("fetch", event => {
     )
 });
 
+// 📩 Firebase Messaging
+importScripts("https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js");
+importScripts("https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js");
 
-self.addEventListener('push', function(event) {
-    if (!event.data) {
-        console.log('No hay datos en la notificación push');
-        return;
-    }
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyC8_mVc3OAr7oqeJk00LCh59cQNnnQEUIY",
+  authDomain: "entrega-3dfd0.firebaseapp.com",
+  projectId: "entrega-3dfd0",
+  storageBucket: "entrega-3dfd0.firebasestorage.app",
+  messagingSenderId: "34637998721",
+  appId: "1:34637998721:web:2059921cb527fff5493b80"
+};
 
-    const options = {
-        body: event.data.text(),
-        icon: '/imagenes/noti.png',
-        badge: '/imagenes/noti-badge.png',
-        tag: 'notificacion-pwa'
-    };
+firebase.initializeApp(firebaseConfig);
+const messaging = firebase.messaging();
 
-    event.waitUntil(
-        self.registration.showNotification('Nueva Notificación', options)
-            .catch(err => console.error('Error al mostrar la notificación:', err))
-    );
+
+// 📩 Maneja las notificaciones en segundo plano
+messaging.onBackgroundMessage((payload) => {
+
+  // 📌 Mostrar la notificación
+  self.registration.showNotification(payload.notification.title, {
+    body: payload.notification.body,
+    icon: "/icon.png",
+    badge: "/badge.png",
+    requireInteraction: false,
+    vibrate: [200, 100, 200],
+    data: { url: payload.notification.url },
+    tag: "pedido-123",
+    renotify: true,
+    silent: false,
+    timestamp: Date.now(),
+  });
+
+
 });
 
 
-self.addEventListener('notificationclick', function(event) {
-    event.notification.close();
-    event.waitUntil(
-        clients.openWindow('/')
-    );
-});
+
+
+
+

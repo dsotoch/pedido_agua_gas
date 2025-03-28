@@ -26,7 +26,8 @@ class User extends Authenticatable
         'tipo',
         'empresa_id',
         'predeterminada',
-        'favoritos'
+        'favoritos',
+        'estado'
     ];
 
     protected $hidden = [

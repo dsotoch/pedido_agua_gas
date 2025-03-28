@@ -116,10 +116,17 @@ class ControllerPedido extends Controller
             $pedido->update([
                 'repartidor_id' => $repartidor->id,
             ]);
-            $pedido_completo = Pedido::with('detalles', 'detalles.producto', 'entregaPromociones')->find($pedido->id);
-            $mensaje = ['operacion' => 'asignacion', 'mensaje' => 'Pedido Asignado.', 'pedido_id' => $validated['pedido_id'], 'pedido' => $pedido_completo, 'tiempo' => $empresa->tiempo];
 
-            SendMessage::dispatch($mensaje, $repartidor->id);
+            $pedido_completo = Pedido::with('detalles', 'detalles.producto', 'entregaPromociones')->find($pedido->id);
+
+            $notificacionFirebase = new NotificacionFirebase();
+            $notificacionFirebase->sendPushNotification($repartidor->id, "Pedido Asignado #$pedido->id", "Revisa los detalles y procede con la entrega.", "asignacion", $validated['pedido_id'], "pedido", $pedido_completo, $empresa->tiempo);
+
+            //   $mensaje = ['operacion' => 'asignacion', 'mensaje' => 'Pedido Asignado.', 'pedido_id' => $validated['pedido_id'], 'pedido' => $pedido_completo, 'tiempo' => $empresa->tiempo];
+
+            //SendMessage::dispatch($mensaje, $repartidor->id);
+
+
 
             // Respuesta exitosa
             return response()->json([
@@ -150,11 +157,16 @@ class ControllerPedido extends Controller
                 $mensaje2 = ['operacion' => 'pedido_tomado', 'mensaje' => '', 'pedido_id' => $pedido->id, 'estado' => $pedido->estado];
 
                 $cliente = $pedido->usuario->id;
+                $cliente_compra = User::findOrFail($cliente);
                 $admin = $pedido->empresa->usuarios()->where('tipo', 'admin')->first();
-                if ($admin) {
-                    SendMessage::dispatch($mensaje, $cliente);
-                    SendMessage::dispatch($mensaje2, $admin->id);
-                }
+                // SendMessage::dispatch($mensaje2, $admin->id);
+                
+                $notificacionFirebase = new NotificacionFirebase();
+                $notificacionFirebase->sendPushNotification($cliente_compra->id, "Pedido #$pedido->id  está en Camino", "Tu pedido ha sido recogido y está en ruta a tu dirección.", "pedido_tomado", $pedido->id, $pedido->estado,'','');
+
+                //SendMessage::dispatch($mensaje, $cliente);
+
+
 
 
                 return response()->json(["mensaje" => "Pedido Confirmado.", 'estado' => $pedido->estado], 200);
@@ -191,14 +203,14 @@ class ControllerPedido extends Controller
             foreach ($pedido->entregaPromociones as $promocion) {
                 array_push($array_productos, [
                     'cantidad' => $promocion->cantidad,
-                    'producto_id' => Producto::where('nombre',$promocion->producto)->value('id')
+                    'producto_id' => Producto::where('nombre', $promocion->producto)->value('id')
                 ]);
             }
 
 
             $mensaje = ['operacion' => 'anulacion', 'mensaje' => 'El pedido ha sido anulado.', 'pedido_id' => $pedido->id, 'estado' => $pedido->estado];
             $admin = $pedido->empresa->usuarios()->where('tipo', 'admin')->first();
-            $salida=new ControllerSalidas();
+            $salida = new ControllerSalidas();
             $salida->sumarStockActual_cuando_anula_pedido($user_actual->persona?->nombres, $array_productos);
             SendMessage::dispatch($mensaje, $admin->id);
             return response()->json(['mensaje' => 'El pedido #' . $request->id_pedido . ' se anulo Correctamente', 'pedido_id' => $pedido->id], 200);
@@ -581,9 +593,13 @@ class ControllerPedido extends Controller
                     })
                     ->first(); // Obtener el primer usuario que cumpla la condiciónner el primer usuario que cumpla la condición
                 // Llamar al método que necesitas
-
                 $pedido_completo = Pedido::with('detalles', 'detalles.producto', 'entregaPromociones')->find($pedido->id);
-                $controlador_mensaje->crearmensaje('Nuevo Pedido para la empresa.', $admin->id, $pedido->id, $pedido_completo, $empresa->tiempo);
+
+                $controlador_firebase = new NotificacionFirebase();
+                $controlador_firebase->sendPushNotification($admin->id, "Pedido #$pedido->id", 'Revisa los detalles y gestiona la entrega ahora.', "pedido", $pedido->id, "-", $pedido_completo, $empresa->tiempo);
+
+                //  $controlador_mensaje->crearmensaje('Nuevo Pedido para la empresa.', $admin->id, $pedido->id, $pedido_completo, $empresa->tiempo);
+
             }
             // Confirmar la transacción
             DB::commit();

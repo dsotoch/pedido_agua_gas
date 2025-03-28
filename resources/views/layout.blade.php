@@ -75,20 +75,6 @@
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="msapplication-TileImage" content="{{ asset('imagenes/images/icons/favicon1-512x512.png') }}">
 
-    <script type="text/javascript">
-        // Inicializar el Service Worker
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/serviceworker.js', {
-                scope: '.'
-            }).then(function(registration) {
-                // Registro exitoso
-                console.log('Laravel PWA: Registro de ServiceWorker exitoso con el alcance: ', registration.scope);
-            }, function(err) {
-                // Falló el registro
-                console.log('Laravel PWA: Falló el registro de ServiceWorker: ', err);
-            });
-        }
-    </script>
 
     @laravelPWA
 

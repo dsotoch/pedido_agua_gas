@@ -3,6 +3,7 @@ import Swal from "sweetalert2"
 import confetti from "canvas-confetti";
 import { agregarPedido } from "./nueva_tarjeta";
 import { mostrarNotificacion } from "./notificaciones";
+import { procesarNotificacion } from "./notif";
 const token = document.querySelector('meta[name="token"]').getAttribute('content');
 const btn_siguiente_pedido = document.querySelector('.btnproductoagregar');
 const contenedor_form_realizar_pedido = document.getElementById('contenedor_form_realizar_pedido');
@@ -493,6 +494,7 @@ if (user) {
     webSocketChannel = `App.Models.User.${user.textContent}`;
 }
 
+
 function conectarWebSocket() {
     window.Echo.private(webSocketChannel)
         .listen('MensajeEntendido', async (e) => {
@@ -501,16 +503,15 @@ function conectarWebSocket() {
                 console.error("⚠️ Error: Mensaje recibido sin datos.");
                 return;
             }
-
             switch (e.message.operacion) {
                 case 'pedido_tomado':
                     actualizar_Estado_delivery_panel_cliente(e.message.pedido_id, e.message.estado);
 
-                break;
+                    break;
                 case 'finalizado':
                     actualizarEstadoYPagoPanelAdministrador(e.message.pedido_id, e.message.estado);
-                break;
-               
+                    break;
+
                 case 'confirmacion':
                     mostrarNotificacion(`Pedido #${e.message.pedido_id} está en Camino`,
                         `Tu pedido ha sido recogido y está en ruta a tu dirección.`,
@@ -518,7 +519,7 @@ function conectarWebSocket() {
                     );
                     actualizar_Estado_delivery_panel_cliente(e.message.pedido_id, e.message.estado);
                     break;
-                
+
                 case 'asignacion':
                     mostrarNotificacion(`Pedido Asignado #${e.message.pedido_id} `,
                         `Revisa los detalles y procede con la entrega.`,
@@ -537,9 +538,9 @@ function conectarWebSocket() {
                     );
                     agregarPedido(e.message.pedido, "admin", e.message.tiempo);
                     break;
+
             }
-        })
-        .error((error) => {
+        }).error((error) => {
             console.error("🚨 Error en WebSocket:", error);
         });
 
@@ -667,7 +668,7 @@ document.getElementById('closeModalmensajes').addEventListener('click', closeMod
 
 const cantidad_pedidos = document.querySelector('.cantidad_pedidos');
 
-function actualizarEstadoYPagoPanelAdministrador(pedidoId, estado) {
+export function actualizarEstadoYPagoPanelAdministrador(pedidoId, estado) {
     // Seleccionar los elementos del DOM correspondientes al pedido
     const pedidoCaja = mi_cuenta_contenedor_pedidos.querySelector(`#caja-${pedidoId}`);
     if (!pedidoCaja) {
@@ -679,7 +680,7 @@ function actualizarEstadoYPagoPanelAdministrador(pedidoId, estado) {
 }
 
 
-function actualizar_Estado_delivery_panel_cliente($pedido_id, $estado) {
+export function actualizar_Estado_delivery_panel_cliente($pedido_id, $estado) {
     const estado_pedido_span = mi_cuenta_contenedor_pedidos.querySelector("#caja-" + $pedido_id).querySelector('.estado_pedido_span');
     const boton_asignar_repartidor = mi_cuenta_contenedor_pedidos.querySelector("#caja-" + $pedido_id).querySelector('.btnasignarrepartidor');
     estado_pedido_span.innerHTML = $estado == 'En Camino'
@@ -767,7 +768,7 @@ function getRepartidores() {
 
 
 
-function pedidoasignadoarepartidor(id, tipo) {
+export function pedidoasignadoarepartidor(id, tipo) {
     const url = "/mensajes/" + id;
     fetch(url, {
         method: 'GET',

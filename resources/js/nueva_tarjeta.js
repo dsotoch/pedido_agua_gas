@@ -1,4 +1,8 @@
 export function agregarPedido(pedido, usuario, tiempo) {
+
+    if (typeof pedido === "string") {
+        pedido = JSON.parse(pedido);
+    }
     const pedidos_vacio = document.querySelector('.pedidos_vacio');
     if (pedidos_vacio && !pedidos_vacio.classList.contains('hidden')) {
         pedidos_vacio.classList.add('hidden');
