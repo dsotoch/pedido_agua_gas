@@ -29,12 +29,14 @@ class NotificacionFirebase extends Controller
                 'user_id' => 'nullable|exists:users,id',
             ]);
         
+            // Si el usuario ya tiene otro token, eliminarlo antes de registrar el nuevo
             FcmToken::where('user_id', $request->user_id)->delete();
         
-            FcmToken::create([
-                'user_id' => $request->user_id,
-                'device_token' => $request->device_token
-            ]);
+            // Guardar el nuevo token
+            FcmToken::updateOrCreate(
+                ['device_token' => $request->device_token],  
+                ['user_id' => $request->user_id]            
+            );
         
             return response()->json(['message' => 'Token guardado con éxito']);
         
