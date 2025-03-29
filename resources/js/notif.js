@@ -19,6 +19,7 @@ const messaging = getMessaging(app);
 
 // 📌 Escuchar mensajes cuando la app está en PRIMER PLANO
 onMessage(messaging, (payload) => {
+    console.log("HOLA LLEGO UN MENSAJE");
 
     const notificationOptions = {
         body: payload.notification.body,
