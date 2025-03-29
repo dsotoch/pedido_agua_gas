@@ -28,28 +28,23 @@ class NotificacionFirebase extends Controller
                 'device_token' => 'required|string',
                 'user_id' => 'nullable|exists:users,id',
             ]);
-
-            // Buscar si ya existe el token
-            $token = FcmToken::where('device_token', $request->device_token)->first();
-
-            if ($token) {
-                // Si el token ya existe, actualizar el usuario asociado
-                $token->update(['user_id' => $request->user_id]);
-            } else {
-                // Si no existe, crear un nuevo registro
-                FcmToken::create([
-                    'user_id' => $request->user_id,
-                    'device_token' => $request->device_token
-                ]);
-            }
-
-            return response()->json(['message' => 'Token guardado o actualizado con éxito']);
+        
+            FcmToken::where('user_id', $request->user_id)->delete();
+        
+            FcmToken::create([
+                'user_id' => $request->user_id,
+                'device_token' => $request->device_token
+            ]);
+        
+            return response()->json(['message' => 'Token guardado con éxito']);
+        
         } catch (\Exception $e) {
             return response()->json([
                 'error' => 'Error interno en el servidor',
                 'message' => $e->getMessage()
             ], 500);
         }
+        
     }
 
 }
