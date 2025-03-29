@@ -76,21 +76,59 @@ const messaging = firebase.messaging();
 messaging.onBackgroundMessage((payload) => {
 
   // 📌 Mostrar la notificación
+
   self.registration.showNotification(payload.notification.title, {
-    body: payload.notification.body,
-    icon: "/icon.png",
-    badge: "/badge.png",
-    requireInteraction: false,
-    vibrate: [200, 100, 200],
-    data: { url: payload.notification.url },
-    tag: "pedido-123",
-    renotify: true,
-    silent: false,
-    timestamp: Date.now(),
+      body: payload.notification.body,
+      icon:  "https://entrega.pe/imagenes/Ola-64x64-Orange.png",
+      badge:  "https://entrega.pe/imagenes/Ola-64x64-Orange.png",
+      requireInteraction: true,
+      vibrate: [200, 100, 200],
+      data: { url: payload.notification.url },
+      tag: "pedido-123",
+      renotify: true,
+      silent: false,
+      actions: [
+        {
+            action: "ver-detalles",
+            title: "📍 Ver Detalles"
+        },
+        {
+            action: "cerrar",
+            title: "❌ Cerrar"
+        }
+    ]
   });
+  
 
 
 });
+
+self.addEventListener("notificationclick", function(event) {
+    event.notification.close(); // Cierra la notificación
+
+    event.waitUntil(
+        clients.matchAll({ type: "window", includeUncontrolled: true }).then(clientList => {
+            for (let client of clientList) {
+                if (client.url.includes("/mi-cuenta") && "focus" in client) {
+                    return client.focus(); // Si la pestaña ya está abierta, la enfoca
+                }
+            }
+
+            if (event.action === "ver-detalles") {
+                return clients.openWindow(event.notification.data?.url || "https://entrega.pe/mi-cuenta");
+            } else if (event.action === "cerrar") {
+                console.log("❌ Usuario seleccionó 'Cerrar'. No se abrirá ninguna ventana.");
+                return;
+            } else {
+                return clients.openWindow(event.notification.data?.url || "https://entrega.pe/mi-cuenta");
+            }
+        })
+    );
+});
+
+
+
+
 
 
 

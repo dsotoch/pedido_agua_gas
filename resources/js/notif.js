@@ -22,14 +22,14 @@ onMessage(messaging, (payload) => {
 
     const notificationOptions = {
         body: payload.notification.body,
-        icon: "/icon.png",
-        badge: "/badge.png",
+        icon: "/imagenes/Ola-64x64-Orange.png",
+        badge: "/imagenes/Ola-64x64-Orange.png",
+        requireInteraction: true,
         vibrate: [200, 100, 200],
         data: { url: payload.data?.url ?? "/" }, // Evita errores si URL no está definida
         tag: "pedido-123",
         renotify: true,
         silent: false,
-        timestamp: Date.now(),
     };
 
     if (Notification.permission === "granted") {
