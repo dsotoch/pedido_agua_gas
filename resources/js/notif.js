@@ -19,8 +19,7 @@ const messaging = getMessaging(app);
 
 // 📌 Escuchar mensajes cuando la app está en PRIMER PLANO
 onMessage(messaging, (payload) => {
-    console.log("HOLA LLEGO UN MENSAJE");
-
+    let mostrar = procesarNotificacion(payload);
     const notificationOptions = {
         body: payload.notification.body,
         icon: "/imagenes/Ola-64x64-Orange.png",
@@ -34,37 +33,43 @@ onMessage(messaging, (payload) => {
     };
 
     if (Notification.permission === "granted") {
-        new Notification(payload.notification.title, notificationOptions);
+        if (mostrar) {
+            new Notification(payload.notification.title, notificationOptions);
+
+        }
     } else {
         console.warn("⚠️ Permiso de notificación no concedido.");
     }
 
-    procesarNotificacion(payload);
 });
 
 // 📌 Función para procesar las notificaciones
 export function procesarNotificacion(payload) {
-
     if (!payload.data?.operacion) {
         console.error("⚠️ Payload sin operación válida:", payload);
-        return;
+        return false;
     }
 
     switch (payload.data.operacion) {
         case 'pedido_tomado':
             actualizar_Estado_delivery_panel_cliente(payload.data.pedido_id, payload.data.estado);
-            break;
+            return true;
+        case 'aceptacion':
+            actualizar_Estado_delivery_panel_cliente(payload.data.pedido_id, payload.data.estado);
+            return false;
+
         case 'finalizado':
-            actualizarEstadoYPagoPanelAdministrador(payload.data.pedido_id, payload.data.estado);
-            break;
-        case 'asignacion':
-            agregarPedido(payload.data.pedido, "repartidor", payload.data.tiempo);
-            break;
         case 'anulacion':
             actualizarEstadoYPagoPanelAdministrador(payload.data.pedido_id, payload.data.estado);
-            break;
+            return true;
+
+        case 'asignacion':
+            agregarPedido(payload.data.pedido, "repartidor", payload.data.tiempo);
+            return true;
+
         default:
             agregarPedido(payload.data.pedido, "admin", payload.data.tiempo);
-            break;
+            return true;
     }
 }
+

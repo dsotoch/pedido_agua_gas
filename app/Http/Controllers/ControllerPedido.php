@@ -163,6 +163,7 @@ class ControllerPedido extends Controller
                 
                 $notificacionFirebase = new NotificacionFirebase();
                 $notificacionFirebase->sendPushNotification($cliente_compra->id, "Pedido #$pedido->id  está en Camino", "Tu pedido ha sido recogido y está en ruta a tu dirección.", "pedido_tomado", $pedido->id, $pedido->estado,'','');
+                $notificacionFirebase->sendPushNotification($admin->id, "Pedido #$pedido->id  está en Camino", "Tu pedido ha sido recogido y está en ruta a tu dirección.", "aceptacion", $pedido->id, $pedido->estado,'','');
 
                 //SendMessage::dispatch($mensaje, $cliente);
 
