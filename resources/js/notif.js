@@ -31,7 +31,7 @@ onMessage(messaging, (payload) => {
                 }
             }).catch(error => {
                 console.error("Error al mostrar notificación:", error);
-            });d
+            });
         }
 
        
