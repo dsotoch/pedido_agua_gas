@@ -74,34 +74,30 @@ const messaging = firebase.messaging();
 
 // 📩 Maneja las notificaciones en segundo plano
 messaging.onBackgroundMessage((payload) => {
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then(clients => {
+        let algunaVisible = clients.some(client => client.visibilityState === "visible");
 
-  // 📌 Mostrar la notificación
-
-  self.registration.showNotification(payload.notification.title, {
-      body: payload.notification.body,
-      icon:  "https://entrega.pe/imagenes/Ola-64x64-Orange.png",
-      badge:  "https://entrega.pe/imagenes/Ola-64x64-Orange.png",
-      requireInteraction: true,
-      vibrate: [200, 100, 200],
-      data: { url: payload.notification.url },
-      tag: "pedido-123",
-      renotify: true,
-      silent: false,
-      actions: [
-        {
-            action: "ver-detalles",
-            title: "📍 Ver Detalles"
-        },
-        {
-            action: "cerrar",
-            title: "❌ Cerrar"
+        if (!algunaVisible) {
+            // Solo mostramos la notificación si NO hay clientes visibles
+            self.registration.showNotification(payload.notification.title, {
+                body: payload.notification.body,
+                icon: "https://entrega.pe/imagenes/Ola-64x64-Orange.png",
+                badge: "https://entrega.pe/imagenes/Ola-64x64-Orange.png",
+                requireInteraction: true,
+                vibrate: [200, 100, 200],
+                data: { url: payload.notification.url },
+                tag: "pedido-123",
+                renotify: true,
+                silent: false,
+                actions: [
+                    { action: "ver-detalles", title: "📍 Ver Detalles" },
+                    { action: "cerrar", title: "❌ Cerrar" }
+                ]
+            });
         }
-    ]
-  });
-  
-
-
+    });
 });
+
 
 
 
