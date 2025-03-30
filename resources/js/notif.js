@@ -17,32 +17,25 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const messaging = getMessaging(app);
 
-// 📌 Escuchar mensajes cuando la app está en PRIMER PLANO
 onMessage(messaging, (payload) => {
-    let mostrar = procesarNotificacion(payload);
-    const notificationOptions = {
-        body: payload.notification.body,
-        icon: "/imagenes/Ola-64x64-Orange.png",
-        badge: "/imagenes/Ola-64x64-Orange.png",
-        requireInteraction: true,
-        vibrate: [200, 100, 200],
-        data: { url: payload.data?.url ?? "/" }, // Evita errores si URL no está definida
-        tag: "pedido-123",
-        renotify: true,
-        silent: false,
-    };
-
-    if (Notification.permission === "granted") {
-           
-        if (document.visibilityState === "visible" && mostrar) {
-            new Notification(payload.notification.title, notificationOptions);
-
-        }
+    if (document.visibilityState === "visible") {
+        // La app está en primer plano, podemos manejarlo sin notificación
+        procesarNotificacion(payload);
     } else {
-        console.warn("⚠️ Permiso de notificación no concedido.");
+        // La app está en segundo plano, mostrar notificación con SW
+        navigator.serviceWorker.getRegistration().then(registration => {
+            if (registration) {
+                registration.showNotification(payload.notification.title, {
+                    body: payload.notification.body,
+                    icon: "/imagenes/Ola-64x64-Orange.png",
+                    badge: "/imagenes/Ola-64x64-Orange.png",
+                    data: { url: payload.data?.url ?? "/" }
+                });
+            }
+        });
     }
-
 });
+
 
 // 📌 Función para procesar las notificaciones
 export function procesarNotificacion(payload) {
