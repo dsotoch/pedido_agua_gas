@@ -56,9 +56,11 @@ export function procesarNotificacion(payload) {
             return false;
 
         case 'finalizado':
-        case 'anulacion':
             actualizarEstadoYPagoPanelAdministrador(payload.data.pedido_id, payload.data.estado);
             return true;
+        case 'anulacion':
+            actualizarEstadoYPagoPanelAdministrador(payload.data.pedido_id, payload.data.estado);
+            return false;
 
         case 'asignacion':
             agregarPedido(payload.data.pedido, "repartidor", payload.data.tiempo);
