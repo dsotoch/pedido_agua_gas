@@ -18,23 +18,24 @@ const app = initializeApp(firebaseConfig);
 const messaging = getMessaging(app);
 
 onMessage(messaging, (payload) => {
-        // La app está en primer plano, procesamos la notificación
-        if(procesarNotificacion(payload)){
-            navigator.serviceWorker.getRegistration().then(registration => {
-                if (registration) {
-                    registration.showNotification(payload.notification.title, {
-                        body: payload.notification.body,
-                        icon: "/imagenes/Ola-64x64-Orange.png",
-                        badge: "/imagenes/Ola-64x64-Orange.png",
-                        data: { url: payload.data?.url ?? "/" }
-                    });
-                }
-            }).catch(error => {
-                console.error("Error al mostrar notificación:", error);
-            });
-        }
-
-       
+    if (document.visibilityState === "visible") {
+        // La app está en primer plano → Solo procesamos la notificación, sin mostrarla
+        procesarNotificacion(payload);
+    } else {
+        // La app está en segundo plano → Mostramos la notificación con SW
+        navigator.serviceWorker.getRegistration().then(registration => {
+            if (registration) {
+                registration.showNotification(payload.notification.title, {
+                    body: payload.notification.body,
+                    icon: "/imagenes/Ola-64x64-Orange.png",
+                    badge: "/imagenes/Ola-64x64-Orange.png",
+                    data: { url: payload.data?.url ?? "/" }
+                });
+            }
+        }).catch(error => {
+            console.error("Error al mostrar notificación:", error);
+        });
+    }
 });
 
 
