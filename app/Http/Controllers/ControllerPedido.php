@@ -268,7 +268,11 @@ class ControllerPedido extends Controller
                 if ($user_actual->tipo != 'admin') {
                     SendMessage::dispatch($mensaje, $admin->id);
                 }
-
+                $notificacionFirebase = new NotificacionFirebase();
+                try {
+                    $notificacionFirebase->sendPushNotification($pedido->user_id, "¡Pedido Entregado!", "Tu Pedido #$pedido->id ha sido entregado. ¡Agradecemos tu preferencia y confianza!", "finalizado", $pedido->id, $pedido->estado, '', '');
+                } catch (\Throwable $th) {
+                }
                 return response()->json([
                     "mensaje" => "El pedido ha sido modificado correctamente.",
                     'pedido_id' => $pedido->id,
