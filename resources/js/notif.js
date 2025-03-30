@@ -19,10 +19,23 @@ const messaging = getMessaging(app);
 
 onMessage(messaging, (payload) => {
     if (document.visibilityState === "visible") {
-        // La app está en primer plano → Solo procesamos la notificación, sin mostrarla
-        procesarNotificacion(payload);
+        // 📌 Si la app está en primer plano en escritorio, mostramos la notificación
+        if (window.matchMedia("(min-width: 768px)").matches) { 
+            if(procesarNotificacion(payload)){
+                new Notification(payload.notification.title, {
+                    body: payload.notification.body,
+                    icon: "/imagenes/Ola-64x64-Orange.png",
+                    badge: "/imagenes/Ola-64x64-Orange.png",
+                    data: { url: payload.data?.url ?? "/" }
+                });
+            }
+           
+        } else {
+            // En móvil solo procesamos la notificación sin mostrarla
+            procesarNotificacion(payload);
+        }
     } else {
-        // La app está en segundo plano → Mostramos la notificación con SW
+        // 📌 Si la app está en segundo plano, usamos el Service Worker para mostrarla
         navigator.serviceWorker.getRegistration().then(registration => {
             if (registration) {
                 registration.showNotification(payload.notification.title, {
@@ -37,6 +50,7 @@ onMessage(messaging, (payload) => {
         });
     }
 });
+
 
 
 
