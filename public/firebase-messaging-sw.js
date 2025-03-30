@@ -103,6 +103,8 @@ messaging.onBackgroundMessage((payload) => {
 
 });
 
+
+
 self.addEventListener("notificationclick", function(event) {
     event.notification.close(); // Cierra la notificación
 

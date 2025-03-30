@@ -33,7 +33,8 @@ onMessage(messaging, (payload) => {
     };
 
     if (Notification.permission === "granted") {
-        if (mostrar) {
+           
+        if (document.visibilityState === "visible" && mostrar) {
             new Notification(payload.notification.title, notificationOptions);
 
         }
