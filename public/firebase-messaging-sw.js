@@ -127,6 +127,18 @@ self.addEventListener("notificationclick", function(event) {
 });
 
 
+self.addEventListener('push', function(event) {
+    const data = event.data.json();
+
+    self.registration.showNotification(data.notification.title, {
+        body: data.notification.body,
+        icon: "/imagenes/Ola-64x64-Orange.png",
+        data: { url: data.data?.url ?? "/mi-cuenta" }
+    });
+});
+
+
+
 
 
 

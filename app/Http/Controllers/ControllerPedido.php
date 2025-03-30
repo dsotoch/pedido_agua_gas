@@ -160,10 +160,13 @@ class ControllerPedido extends Controller
                 $cliente_compra = User::findOrFail($cliente);
                 $admin = $pedido->empresa->usuarios()->where('tipo', 'admin')->first();
                 // SendMessage::dispatch($mensaje2, $admin->id);
-                
+
                 $notificacionFirebase = new NotificacionFirebase();
-                $notificacionFirebase->sendPushNotification($cliente_compra->id, "Pedido #$pedido->id  está en Camino", "Tu pedido ha sido recogido y está en ruta a tu dirección.", "pedido_tomado", $pedido->id, $pedido->estado,'','');
-                $notificacionFirebase->sendPushNotification($admin->id, "Pedido #$pedido->id  está en Camino", "Tu pedido ha sido recogido y está en ruta a tu dirección.", "aceptacion", $pedido->id, $pedido->estado,'','');
+                $notificacionFirebase->sendPushNotification($admin->id, "Pedido #$pedido->id  está en Camino", "Tu pedido ha sido recogido y está en ruta a tu dirección.", "aceptacion", $pedido->id, $pedido->estado, '', '');
+                try {
+                    $notificacionFirebase->sendPushNotification($cliente_compra->id, "Pedido #$pedido->id  está en Camino", "Tu pedido ha sido recogido y está en ruta a tu dirección.", "pedido_tomado", $pedido->id, $pedido->estado, '', '');
+                } catch (\Throwable $th) {
+                }
 
                 //SendMessage::dispatch($mensaje, $cliente);
 
