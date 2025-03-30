@@ -19,10 +19,20 @@ const messaging = getMessaging(app);
 
 onMessage(messaging, (payload) => {
     if (document.visibilityState === "visible") {
-        // La app está en primer plano, podemos manejarlo sin notificación
+        // La app está en primer plano, procesamos la notificación
         procesarNotificacion(payload);
+
+        // Mostrar notificación en primer plano también
+        if (Notification.permission === "granted") {
+            new Notification(payload.notification.title, {
+                body: payload.notification.body,
+                icon: "/imagenes/Ola-64x64-Orange.png",
+                badge: "/imagenes/Ola-64x64-Orange.png",
+                data: { url: payload.data?.url ?? "/" }
+            });
+        }
     } else {
-        // La app está en segundo plano, mostrar notificación con SW
+        // La app está en segundo plano, usar Service Worker
         navigator.serviceWorker.getRegistration().then(registration => {
             if (registration) {
                 registration.showNotification(payload.notification.title, {
@@ -35,6 +45,7 @@ onMessage(messaging, (payload) => {
         });
     }
 });
+
 
 
 // 📌 Función para procesar las notificaciones
