@@ -552,6 +552,7 @@ class ControllerPedido extends Controller
                                 $entregaPromocion = EntregaPromociones::firstOrNew([
                                     'user_id' => $usuario->id,
                                     'producto_id' => $producto->id,
+                                    'estado'=>false
                                 ]);
 
                                 if (!$entregaPromocion->exists) {
