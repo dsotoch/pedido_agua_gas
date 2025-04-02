@@ -553,8 +553,17 @@ class ControllerPedido extends Controller
 
                                 // Restar la cantidad utilizada en la promoción
                                 $cantidadRestante = max(0, ($nuevaCantidad - $promocionUnitaria->cantidad) - 1);
-                                $detalle_pedido = Detalles::where('producto_id', $producto->id)->where('pedido_id', $pedido->id)->first();
-                                $detalle_pedido->decrement('cantidad');
+                                $detalle_pedido = Detalles::where('producto_id', $producto->id)
+                                    ->where('pedido_id', $pedido->id)
+                                    ->first();
+
+                                if ($detalle_pedido) {
+                                    if ($detalle_pedido->cantidad > 1) {
+                                        $detalle_pedido->decrement('cantidad');
+                                    } else {
+                                        $detalle_pedido->delete(); // Elimina el registro si la cantidad llega a 0
+                                    }
+                                }
                             } elseif ($nuevaCantidad == $promocionUnitaria->cantidad) {
                                 // Crear una promoción pero con estado false
                                 $entregaPromocion = EntregaPromociones::firstOrNew([
