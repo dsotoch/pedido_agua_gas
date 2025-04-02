@@ -383,7 +383,6 @@ class ControllerPedido extends Controller
     {
         DB::beginTransaction();
         try {
-
             $usuario = Auth::user();
             // Validar el usuario                
             if (User::findOrFail($usuario->id)->tipo == "cliente") {
@@ -428,6 +427,8 @@ class ControllerPedido extends Controller
                     throw new \Exception("Producto inválido o cantidad incorrecta.");
                 }
 
+                
+                
                 // Calcular precios y procesar productos
                 $preciosYDetalles = $productos->map(function ($productoData) use ($pedido, &$totalPedido) {
                     $producto = Producto::find($productoData['id']);
@@ -546,7 +547,7 @@ class ControllerPedido extends Controller
                                 }
 
                                 // Restar la cantidad utilizada en la promoción
-                                $cantidadRestante = max(0, $nuevaCantidad - $promocionUnitaria->cantidad);
+                                $cantidadRestante = max(0, ($nuevaCantidad - $promocionUnitaria->cantidad)-1);
                             } elseif ($nuevaCantidad == $promocionUnitaria->cantidad) {
                                 // Crear una promoción pero con estado false
                                 $entregaPromocion = EntregaPromociones::firstOrNew([
@@ -589,7 +590,7 @@ class ControllerPedido extends Controller
                     ]);
                 } else {
                     // Actualizar el total del pedido
-                    $pedido->update(['total' => $totalPedido]);
+                    $pedido->update(['total' => $request->total]);
                 }
 
 

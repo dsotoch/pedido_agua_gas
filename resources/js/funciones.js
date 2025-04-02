@@ -23,12 +23,8 @@ const cliente_nologin = document.getElementById('cliente-nologin');
 const btnregresar = document.getElementById('btnregresar');
 const dominio = window.location.pathname;
 const btn_cupon_aplicado = document.querySelectorAll('.btn_cupon_aplicado');
-const span_producto_gratis = document.querySelector(".span_producto_gratis");
-const btnproductoagregar=document.querySelector(".btnproductoagregar");
 
-if(span_producto_gratis){
-    btnproductoagregar.disabled=false;
-}
+
 
 if (btn_cupon_aplicado) {
     btn_cupon_aplicado.forEach((button) => {

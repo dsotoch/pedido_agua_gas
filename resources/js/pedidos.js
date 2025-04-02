@@ -213,7 +213,8 @@ if (input_celular) {
 // Agregar eventos a todos los botones de di[16px]inución
 document.querySelectorAll('.btn-producto-menos').forEach((boton) => {
     boton.addEventListener('click', () => {
-        calcularTotalEnProducto(boton, 'resta');
+        const span_producto_gratis = boton.closest('.padre_productos').querySelector('.span_producto_gratis');
+        calcularTotalEnProducto(boton, 'resta', span_producto_gratis);
 
 
     });
@@ -222,7 +223,8 @@ document.querySelectorAll('.btn-producto-menos').forEach((boton) => {
 // Agregar eventos a todos los botones de aumento
 document.querySelectorAll('.btn-producto-mas').forEach((boton) => {
     boton.addEventListener('click', () => {
-        calcularTotalEnProducto(boton, 'suma');
+        const span_producto_gratis = boton.closest('.padre_productos').querySelector('.span_producto_gratis');
+        calcularTotalEnProducto(boton, 'suma', span_producto_gratis);
 
     });
 });
@@ -234,9 +236,13 @@ if (!window.cantidadesAnteriores) {
 if (!window.idproductos) {
     window.idproductos = [];
 }
+if (!window.cantidadDescuento) {
+    window.cantidadDescuento = 0.00;
+}
 
 
-function calcularTotalEnProducto(boton, operacion) {
+
+function calcularTotalEnProducto(boton, operacion, span_producto_gratis) {
     const contenedor = boton.closest('.item-container');
     const cantidadInput = contenedor.querySelector('.cantidad');
     const precioElement = contenedor.parentElement.querySelector('.precioprincipal');
@@ -249,7 +255,7 @@ function calcularTotalEnProducto(boton, operacion) {
 
     // Determinar la cantidad anterior del producto
     const productoId = contenedor.getAttribute('data-producto-id');
-    const cantidadAnterior = window.cantidadesAnteriores[productoId] || 0;
+    let cantidadAnterior = window.cantidadesAnteriores[productoId] || 0;
 
     // Obtener promociones
     const promociones = contenedor.querySelector(".promociones").textContent;
@@ -261,6 +267,7 @@ function calcularTotalEnProducto(boton, operacion) {
 
     // Determinar el precio anterior basado en la cantidad anterior
     let precioAnteriorAplicado = precioNormal;
+
     objeto.forEach((element) => {
         if (cantidadAnterior >= element.cantidad) {
             precioAnteriorAplicado = parseFloat(element.precio_promocional);
@@ -288,20 +295,34 @@ function calcularTotalEnProducto(boton, operacion) {
     // Actualizar el precio mostrado
     precioElement.textContent = 'S/' + precioActualAplicado.toFixed(2);
 
-    // Calcular la diferencia
+    // Calcular la diferencia correctamente
     let diferencia = (cantidad * precioActualAplicado) - (cantidadAnterior * precioAnteriorAplicado);
 
-    // Actualizar el total acumulado
+    // Inicializar el total acumulado si no existe
     if (typeof window.totalPedidoAcumulado === 'undefined') {
         window.totalPedidoAcumulado = 0.00;
     }
+
     window.totalPedidoAcumulado += diferencia;
+
 
     // Almacena la nueva cantidad
     window.cantidadesAnteriores[productoId] = cantidad;
+   
+    if (span_producto_gratis) {
+        window.cantidadDescuento = Math.max(0, window.totalPedidoAcumulado - precioActualAplicado);
+       
 
-    // Actualiza el total en el contenedor
-    contenedorTotal.value = `Total: S/${window.totalPedidoAcumulado.toFixed(2)}`;
+    } else {
+        window.cantidadDescuento += diferencia;
+
+    }
+
+    
+
+    
+    // Actualizar el total mostrado
+    contenedorTotal.value = `Total: S/${window.cantidadDescuento.toFixed(2)}`;
 
     // Manejo del tipo seleccionado
     let tipoSeleccionado = valvulas?.querySelector('input[type="radio"]:checked');
@@ -328,7 +349,6 @@ function calcularTotalEnProducto(boton, operacion) {
             // Si el producto ya existe, actualizar la cantidad
             window.idproductos[index].cantidad = cantidad;
             window.idproductos[index].tipo = tipoValor;
-
         }
     }
 
@@ -337,6 +357,7 @@ function calcularTotalEnProducto(boton, operacion) {
 
     logica_boton_siguiente();
 }
+
 
 if (radio_valvulas) {
     radio_valvulas.forEach(function (radio) {
@@ -427,6 +448,7 @@ if (form_realizar_pedido) {
         // Agregar los productos al objeto de datos
         data['productos'] = window.idproductos || [];
         data['cupon'] = span_cupon.value.replace('#', '');
+        data['total']= window.cantidadDescuento;
         try {
             // Realizar la solicitud Fetch
             const response = await fetch(form_realizar_pedido.getAttribute('action'), {

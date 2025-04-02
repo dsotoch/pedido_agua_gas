@@ -69,6 +69,7 @@ class ControllerProducto extends Controller
                         'producto_id' => $producto->id,
                         'cantidad' => $productos_por_cada,
                         'producto_gratis' => $productos_gratis == 'mismo' ?  $producto->nombre : $productos_gratis,
+                        'mismo' => $productos_gratis == 'mismo' ?  true : false
                     ]);
                 }
 
@@ -135,24 +136,28 @@ class ControllerProducto extends Controller
                     'mensaje' => 'El campo "productos_gratis" es obligatorio cuando "productos_por_cada" tiene un valor.'
                 ], 400);
             }
-            
+
             if (!empty($productos_gratis) && empty($productos_por_cada)) {
                 return response()->json([
                     'mensaje' => 'El campo "productos_por_cada" es obligatorio cuando "productos_gratis" tiene un valor.'
                 ], 400);
             }
-            
+
             if (!empty($productos_por_cada) && !empty($productos_gratis)) {
                 if ($promocionUnitario) {
                     $promocionUnitario->update([
                         'cantidad' => $productos_por_cada,
                         'producto_gratis' => $productos_gratis == 'mismo' ? $producto->nombre  : $productos_gratis,
+                        'mismo' => $productos_gratis == 'mismo' ?  true : false
+
                     ]);
                 } else {
                     PromocionesUnitario::create([
                         'producto_id' => $producto->id,
                         'cantidad' => $productos_por_cada,
                         'producto_gratis' => $productos_gratis == 'mismo' ?  $producto->nombre  : $productos_gratis,
+                        'mismo' => $productos_gratis == 'mismo' ?  true : false
+
                     ]);
                 }
             } else {

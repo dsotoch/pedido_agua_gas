@@ -84,6 +84,10 @@
                                                 $productos_con_promociones->firstWhere('producto_id', $item->id)
                                                     ->producto_gratis ?? '';
 
+                                            $producto_tipo =
+                                                $productos_con_promociones->firstWhere('producto_id', $item->id)
+                                                    ->mismo ?? '';
+
                                         @endphp
 
                                         @if ($usuario->tipo == 'cliente')
@@ -163,6 +167,9 @@
             </div>
             <div id="contenedor-total"
                 class="mt-[40px]  sticky bottom-0 contenedor-total grid  w-full bg-color-fondo-productos justify-items-center ">
+
+            
+
                 <div id="contenedor_cupones" class="hidden  flex-col w-full text-center items-center justify-center">
                     <center>
                         <div class="w-full">
@@ -189,14 +196,13 @@
                     class="btnproductoagregar mb-[10px] disabled:opacity-50 opacity-100  font-normal text-[18px]  w-[328px] h-[55px] rounded-md custom-bg-button  text-white ">
                     Siguiente
                     <i class=" fas fa-arrow-right-long text-2xl ml-2 "></i></button>
-               
+
                 @auth
                     @if ($usuario->tipo != 'cliente' && $empresa->id == $usuario->empresas()->first()->id)
                         <button type="button" disabled
                             class="btn_venta_rapida mb-[10px] transition-all duration-300 disabled:opacity-50  opacity-100  font-normal text-[18px]  w-[328px] h-[55px] rounded-md custom-bg-button  text-white ">
                             Venta Rapida
                             <i class=" fas fa-arrow-right-long text-2xl ml-2 "></i></button>
-                        
                     @endif
                 @endauth
 

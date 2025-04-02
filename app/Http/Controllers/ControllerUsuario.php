@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\RequestPersona;
 use App\Models\Direcciones;
 use App\Models\Empresa;
+use App\Models\FcmToken;
 use App\Models\Pedido;
 use App\Models\Persona;
 use App\Models\Producto;
@@ -420,6 +421,7 @@ class ControllerUsuario extends Controller
 
     public function logout(Request $request)
     {
+        FcmToken::where('user_id', auth()->id())->delete();
         Auth::logout();
         // Invalida la sesión y regenera el token CSRF
         $request->session()->invalidate();

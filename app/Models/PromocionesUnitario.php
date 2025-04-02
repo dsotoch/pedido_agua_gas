@@ -11,7 +11,7 @@ class PromocionesUnitario extends Model
 
     protected $table = 'unitarios';
 
-    protected $fillable = ['producto_id', 'cantidad', 'producto_gratis'];
+    protected $fillable = ['producto_id', 'cantidad', 'producto_gratis','mismo'];
 
     public function producto()
     {
