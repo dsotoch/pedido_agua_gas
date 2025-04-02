@@ -120,8 +120,11 @@ class ControllerPedido extends Controller
             $pedido_completo = Pedido::with('detalles', 'detalles.producto', 'entregaPromociones')->find($pedido->id);
 
             $notificacionFirebase = new NotificacionFirebase();
-            $notificacionFirebase->sendPushNotification($repartidor->id, "Pedido Asignado #$pedido->id", "Revisa los detalles y procede con la entrega.", "asignacion", $validated['pedido_id'], "pedido", $pedido_completo, $empresa->tiempo);
-
+            try {
+                $notificacionFirebase->sendPushNotification($repartidor->id, "Pedido Asignado #$pedido->id", "Revisa los detalles y procede con la entrega.", "asignacion", $validated['pedido_id'], "pedido", $pedido_completo, $empresa->tiempo);
+            } catch (\Throwable $th) {
+                //throw $th;
+            }
             //   $mensaje = ['operacion' => 'asignacion', 'mensaje' => 'Pedido Asignado.', 'pedido_id' => $validated['pedido_id'], 'pedido' => $pedido_completo, 'tiempo' => $empresa->tiempo];
 
             //SendMessage::dispatch($mensaje, $repartidor->id);
@@ -162,8 +165,9 @@ class ControllerPedido extends Controller
                 // SendMessage::dispatch($mensaje2, $admin->id);
 
                 $notificacionFirebase = new NotificacionFirebase();
-                $notificacionFirebase->sendPushNotification($admin->id, "Pedido #$pedido->id  está en Camino", "Tu pedido ha sido recogido y está en ruta a tu dirección.", "aceptacion", $pedido->id, $pedido->estado, '', '');
                 try {
+                    $notificacionFirebase->sendPushNotification($admin->id, "Pedido #$pedido->id  está en Camino", "Tu pedido ha sido recogido y está en ruta a tu dirección.", "aceptacion", $pedido->id, $pedido->estado, '', '');
+
                     $notificacionFirebase->sendPushNotification($cliente_compra->id, "Pedido #$pedido->id  está en Camino", "Tu pedido ha sido recogido y está en ruta a tu dirección.", "pedido_tomado", $pedido->id, $pedido->estado, '', '');
                 } catch (\Throwable $th) {
                 }
@@ -427,8 +431,8 @@ class ControllerPedido extends Controller
                     throw new \Exception("Producto inválido o cantidad incorrecta.");
                 }
 
-                
-                
+
+
                 // Calcular precios y procesar productos
                 $preciosYDetalles = $productos->map(function ($productoData) use ($pedido, &$totalPedido) {
                     $producto = Producto::find($productoData['id']);
@@ -547,13 +551,13 @@ class ControllerPedido extends Controller
                                 }
 
                                 // Restar la cantidad utilizada en la promoción
-                                $cantidadRestante = max(0, ($nuevaCantidad - $promocionUnitaria->cantidad)-1);
+                                $cantidadRestante = max(0, ($nuevaCantidad - $promocionUnitaria->cantidad) - 1);
                             } elseif ($nuevaCantidad == $promocionUnitaria->cantidad) {
                                 // Crear una promoción pero con estado false
                                 $entregaPromocion = EntregaPromociones::firstOrNew([
                                     'user_id' => $usuario->id,
                                     'producto_id' => $producto->id,
-                                    'estado'=>false
+                                    'estado' => false
                                 ]);
 
                                 if (!$entregaPromocion->exists) {
@@ -607,8 +611,11 @@ class ControllerPedido extends Controller
                 $pedido_completo = Pedido::with('detalles', 'detalles.producto', 'entregaPromociones')->find($pedido->id);
 
                 $controlador_firebase = new NotificacionFirebase();
-                $controlador_firebase->sendPushNotification($admin->id, "Pedido #$pedido->id", 'Revisa los detalles y gestiona la entrega ahora.', "pedido", $pedido->id, "-", $pedido_completo, $empresa->tiempo);
-
+                try {
+                    $controlador_firebase->sendPushNotification($admin->id, "Pedido #$pedido->id", 'Revisa los detalles y gestiona la entrega ahora.', "pedido", $pedido->id, "-", $pedido_completo, $empresa->tiempo);
+                } catch (\Throwable $th) {
+                    //throw $th;
+                }
                 //  $controlador_mensaje->crearmensaje('Nuevo Pedido para la empresa.', $admin->id, $pedido->id, $pedido_completo, $empresa->tiempo);
 
             }
