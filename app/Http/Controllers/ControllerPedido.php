@@ -398,6 +398,7 @@ class ControllerPedido extends Controller
             $totalPedido = 0.00;
             $pedido = null;
             $empresa = collect();
+            $detalles = null;
             // Validar y procesar productos o promociones
             $productos = $request->productos ?? [];
             if (empty($productos)) {
@@ -452,7 +453,7 @@ class ControllerPedido extends Controller
                     $totalPedido += $totalProducto;
 
                     // Registrar detalles del pedido
-                    Detalles::create([
+                    $detalles = Detalles::create([
                         'pedido_id' => $pedido->id,
                         'producto_id' => $producto->id,
                         'tipo' => $productoData['tipo'],
@@ -552,6 +553,8 @@ class ControllerPedido extends Controller
 
                                 // Restar la cantidad utilizada en la promoción
                                 $cantidadRestante = max(0, ($nuevaCantidad - $promocionUnitaria->cantidad) - 1);
+                                $detalle_pedido = Detalles::where('producto_id', $producto->id)->where('pedido_id', $pedido->id)->first();
+                                $detalle_pedido->decrement('cantidad');
                             } elseif ($nuevaCantidad == $promocionUnitaria->cantidad) {
                                 // Crear una promoción pero con estado false
                                 $entregaPromocion = EntregaPromociones::firstOrNew([
