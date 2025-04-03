@@ -214,8 +214,10 @@ if (input_celular) {
 document.querySelectorAll('.btn-producto-menos').forEach((boton) => {
     boton.addEventListener('click', () => {
         const span_producto_gratis = boton.closest('.padre_productos').querySelector('.span_producto_gratis');
-        calcularTotalEnProducto(boton, 'resta', span_producto_gratis);
+        const resaltar_numero = boton.closest('.padre_productos')?.querySelector('.resaltar-numero');
+        const numero_resaltado = resaltar_numero ? resaltar_numero.textContent.trim() || '0' : '0';
 
+        calcularTotalEnProducto(boton, 'resta', span_producto_gratis, numero_resaltado);
 
     });
 });
@@ -224,7 +226,11 @@ document.querySelectorAll('.btn-producto-menos').forEach((boton) => {
 document.querySelectorAll('.btn-producto-mas').forEach((boton) => {
     boton.addEventListener('click', () => {
         const span_producto_gratis = boton.closest('.padre_productos').querySelector('.span_producto_gratis');
-        calcularTotalEnProducto(boton, 'suma', span_producto_gratis);
+        const resaltar_numero = boton.closest('.padre_productos')?.querySelector('.resaltar-numero');
+        const numero_resaltado = resaltar_numero ? resaltar_numero.textContent.trim() || '0' : '0';
+
+        calcularTotalEnProducto(boton, 'suma', span_producto_gratis, numero_resaltado);
+
 
     });
 });
@@ -242,7 +248,7 @@ if (!window.cantidadDescuento) {
 
 
 
-function calcularTotalEnProducto(boton, operacion, span_producto_gratis) {
+function calcularTotalEnProducto(boton, operacion, span_producto_gratis, faltantes) {
     const contenedor = boton.closest('.item-container');
     const cantidadInput = contenedor.querySelector('.cantidad');
     const precioElement = contenedor.parentElement.querySelector('.precioprincipal');
@@ -308,19 +314,36 @@ function calcularTotalEnProducto(boton, operacion, span_producto_gratis) {
 
     // Almacena la nueva cantidad
     window.cantidadesAnteriores[productoId] = cantidad;
-   
-    if (span_producto_gratis) {
-        window.cantidadDescuento = Math.max(0, window.totalPedidoAcumulado - precioActualAplicado);
-       
 
-    } else {
-        window.cantidadDescuento += diferencia;
+    if (operacion === "suma") {
+        if (
+            faltantes != 0 &&
+            (cantidad > faltantes || span_producto_gratis)
+        ) {
+            window.cantidadDescuento = Math.max(0, window.totalPedidoAcumulado - precioActualAplicado);
 
+        } else {
+
+            window.cantidadDescuento = Math.max(0, window.cantidadDescuento + diferencia);
+
+        }
+        
+    }else{
+        if(cantidad <= faltantes){
+            window.cantidadDescuento = Math.max(0, window.totalPedidoAcumulado);
+
+        }else{
+            window.cantidadDescuento = Math.max(0, window.cantidadDescuento + diferencia);
+        }
+      
     }
 
-    
 
-    
+
+
+
+
+
     // Actualizar el total mostrado
     contenedorTotal.value = `Total: S/${window.cantidadDescuento.toFixed(2)}`;
 
@@ -448,7 +471,7 @@ if (form_realizar_pedido) {
         // Agregar los productos al objeto de datos
         data['productos'] = window.idproductos || [];
         data['cupon'] = span_cupon.value.replace('#', '');
-        data['total']= window.cantidadDescuento;
+        data['total'] = window.cantidadDescuento;
         try {
             // Realizar la solicitud Fetch
             const response = await fetch(form_realizar_pedido.getAttribute('action'), {

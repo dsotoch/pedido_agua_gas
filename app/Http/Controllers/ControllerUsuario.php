@@ -244,14 +244,7 @@ class ControllerUsuario extends Controller
                 ->get()
             : Pedido::with('detalles', 'empresa', 'usuario', 'entregaPromociones')
                 ->where('cliente_id', $usuario->id)
-                ->orderByRaw("
-                    CASE 
-                        WHEN estado = 'Pendiente' THEN 1
-                        WHEN estado = 'En Camino' THEN 2
-                        ELSE 3
-                    END
-                ")
-                ->orderByDesc('fecha')
+                ->orderByDesc('id')
                 ->get()
         );
     
