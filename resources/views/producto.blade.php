@@ -112,6 +112,7 @@
                                                             {{ $producto_gratis }}.
                                                         </p>
                                                         <span class="span_producto_gratis"></span>
+                                                        
                                                     @endif
                                                 @endif
 

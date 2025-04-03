@@ -315,11 +315,15 @@ function calcularTotalEnProducto(boton, operacion, span_producto_gratis, faltant
     // Almacena la nueva cantidad
     window.cantidadesAnteriores[productoId] = cantidad;
 
+    if (span_producto_gratis) {
+        window.cantidadDescuento = Math.max(0, window.totalPedidoAcumulado - precioActualAplicado);
+       
+    }else{
+
     if (operacion === "suma") {
-        if (
-            faltantes != 0 &&
-            (cantidad > faltantes || span_producto_gratis)
-        ) {
+
+
+        if (faltantes != 0 && (cantidad > faltantes)) {
             window.cantidadDescuento = Math.max(0, window.totalPedidoAcumulado - precioActualAplicado);
 
         } else {
@@ -327,9 +331,13 @@ function calcularTotalEnProducto(boton, operacion, span_producto_gratis, faltant
             window.cantidadDescuento = Math.max(0, window.cantidadDescuento + diferencia);
 
         }
+        if(span_producto_gratis){
+            window.cantidadDescuento = Math.max(0, window.totalPedidoAcumulado - precioActualAplicado);
+
+        }
         
     }else{
-        if(cantidad <= faltantes){
+        if(faltantes!=0 && cantidad <= faltantes){
             window.cantidadDescuento = Math.max(0, window.totalPedidoAcumulado);
 
         }else{
@@ -337,6 +345,7 @@ function calcularTotalEnProducto(boton, operacion, span_producto_gratis, faltant
         }
       
     }
+}
 
 
 

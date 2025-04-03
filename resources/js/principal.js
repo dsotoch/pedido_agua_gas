@@ -17,7 +17,12 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('beforeinstallprompt', (event) => {
         deferredPrompt = event;
         if (btninstallPwa) {
-            btninstallPwa.style.display = 'block';
+            if (window.matchMedia("(max-width: 768px)").matches) { 
+                btninstallPwa.style.display = 'block';
+            } else {
+                btninstallPwa.style.display = 'none';
+            }
+            
         }
     });
     
