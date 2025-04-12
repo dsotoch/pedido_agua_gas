@@ -8,14 +8,11 @@ use App\Models\Empresa;
 use App\Models\FcmToken;
 use App\Models\Pedido;
 use App\Models\Persona;
-use App\Models\Producto;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use PhpParser\Node\Stmt\TryCatch;
 
 class ControllerUsuario extends Controller
 {
@@ -173,9 +170,8 @@ class ControllerUsuario extends Controller
     {
         try {
             $usuario_actual = Auth::user();
-            $user = User::findOr($usuario_actual->id);
-            $user->predeterminada = null;
-            $user->save();
+            $usuario_actual->predeterminada = null;
+            $usuario_actual->save();
             return response()->json(['mensaje' => 'Empresa predeterminada eliminada']);
         } catch (\Throwable $th) {
             return response()->json(['mensaje' => 'Error al obtener predeterminado']);

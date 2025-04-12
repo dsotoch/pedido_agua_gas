@@ -148,43 +148,43 @@ if (openModalUsuario) {
     });
 }
 const openModalUsuario2 = document.getElementById('openModalUsuario2');
+ // Seleccionamos los tres spans dentro del botón
+ const firstSpan = openModalUsuario2?.querySelector("span:first-child");
+ const middleSpan = openModalUsuario2?.querySelector("span:nth-child(2)");
+ const lastSpan = openModalUsuario2?.querySelector("span:nth-child(3)");
+
+ function toggleMenu() {
+     const isOpen = openModalUsuario2?.classList.contains("active");
+
+     if (!isOpen) {
+         // Forma la "X"
+         firstSpan.style.transform = "rotate(45deg) translate(6px, 6px)";
+         firstSpan.style.transformOrigin = "center";
+
+         lastSpan.style.transform = "rotate(-45deg) translate(6px, -6px)";
+         lastSpan.style.transformOrigin = "center";
+
+         middleSpan.style.opacity = "0"; // Ocultar la línea del medio
+     } else {
+         // Vuelve al estado original
+         firstSpan.style.transform = "rotate(0) translate(0, 0)";
+         lastSpan.style.transform = "rotate(0) translate(0, 0)";
+         middleSpan.style.opacity = "1"; // Mostrar la línea del medio
+     }
+
+     openModalUsuario2?.classList.toggle("active");
+ }
 if (openModalUsuario2) {
-    // Seleccionamos los tres spans dentro del botón
-    const firstSpan = openModalUsuario2.querySelector("span:first-child");
-    const middleSpan = openModalUsuario2.querySelector("span:nth-child(2)");
-    const lastSpan = openModalUsuario2.querySelector("span:nth-child(3)");
-
-    function toggleMenu() {
-        const isOpen = openModalUsuario2.classList.contains("active");
-
-        if (!isOpen) {
-            // Forma la "X"
-            firstSpan.style.transform = "rotate(45deg) translate(6px, 6px)";
-            firstSpan.style.transformOrigin = "center";
-
-            lastSpan.style.transform = "rotate(-45deg) translate(6px, -6px)";
-            lastSpan.style.transformOrigin = "center";
-
-            middleSpan.style.opacity = "0"; // Ocultar la línea del medio
-        } else {
-            // Vuelve al estado original
-            firstSpan.style.transform = "rotate(0) translate(0, 0)";
-            lastSpan.style.transform = "rotate(0) translate(0, 0)";
-            middleSpan.style.opacity = "1"; // Mostrar la línea del medio
-        }
-
-        openModalUsuario2.classList.toggle("active");
-    }
+   
 
     // Abrir modal Usuario
     openModalUsuario2.addEventListener('click', () => {
-        toggleMenu();
         if (modalUsuario.classList.contains('hidden')) {
             // Mostrar el modal con animación
             modalUsuario.classList.remove('hidden');
             setTimeout(() => {
                 modalUsuario.classList.remove('translate-x-full');
-            }, 10); // Retraso para permitir que la animación se active correctamente
+            }, 5); // Retraso para permitir que la animación se active correctamente
 
         } else {
 
@@ -195,10 +195,23 @@ if (openModalUsuario2) {
             }, 500); // Debe coincidir con la duración de la animación en Tailwind
 
         }
-
-
+        toggleMenu();
     });
 }
+document.addEventListener("click", function (event) {
+    // Si el clic no fue dentro del contenedorLogin ni del botón de acceso
+    if (!openModalUsuario2?.contains(event.target)) {
+        if (!modalUsuario?.contains(event.target)) {
+            if (modalUsuario?.classList.contains('active')) {
+                toggleMenu();
+
+            } 
+        }
+    }else{
+
+    }
+
+});
 if (modalUsuario) {
     modalUsuario.addEventListener('mouseleave', () => {
         // Solo cambiar si el modal está cerrado, de lo contrario, no lo hacemos

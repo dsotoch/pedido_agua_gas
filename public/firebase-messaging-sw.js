@@ -60,12 +60,12 @@ importScripts("https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-comp
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyC8_mVc3OAr7oqeJk00LCh59cQNnnQEUIY",
-  authDomain: "entrega-3dfd0.firebaseapp.com",
-  projectId: "entrega-3dfd0",
-  storageBucket: "entrega-3dfd0.firebasestorage.app",
-  messagingSenderId: "34637998721",
-  appId: "1:34637998721:web:2059921cb527fff5493b80"
+    apiKey: "AIzaSyC8_mVc3OAr7oqeJk00LCh59cQNnnQEUIY",
+    authDomain: "entrega-3dfd0.firebaseapp.com",
+    projectId: "entrega-3dfd0",
+    storageBucket: "entrega-3dfd0.firebasestorage.app",
+    messagingSenderId: "34637998721",
+    appId: "1:34637998721:web:2059921cb527fff5493b80"
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -91,7 +91,6 @@ messaging.onBackgroundMessage((payload) => {
                 silent: false,
                 actions: [
                     { action: "ver-detalles", title: "📍 Ver Detalles" },
-                    { action: "cerrar", title: "❌ Cerrar" }
                 ]
             });
         }
@@ -101,7 +100,7 @@ messaging.onBackgroundMessage((payload) => {
 
 
 
-self.addEventListener("notificationclick", function(event) {
+self.addEventListener("notificationclick", function (event) {
     event.notification.close(); // Cierra la notificación
 
     event.waitUntil(
@@ -114,10 +113,7 @@ self.addEventListener("notificationclick", function(event) {
 
             if (event.action === "ver-detalles") {
                 return clients.openWindow(event.notification.data?.url || "https://entrega.pe/mi-cuenta");
-            } else if (event.action === "cerrar") {
-                console.log("❌ Usuario seleccionó 'Cerrar'. No se abrirá ninguna ventana.");
-                return;
-            } else {
+            }else {
                 return clients.openWindow(event.notification.data?.url || "https://entrega.pe/mi-cuenta");
             }
         })

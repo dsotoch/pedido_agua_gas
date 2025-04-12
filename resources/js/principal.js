@@ -241,7 +241,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (id_usuario_autenticado.textContent.trim() == '') {
                         Swal.fire({
                             title: 'Requerimiento faltante!',
-                            text: "Inicia sesion para realizar esta operacion.",
+                            text: "Inicia sesión para realizar esta operacion.",
                             icon: 'warning',
                             showConfirmButton: false,
                             timer: 2000,
@@ -290,6 +290,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     btnPredeterminado.classList.add('text-green-500'); // Activa este
                 } else {
                     btnPredeterminado.classList.remove('text-green-500');
+                    btnPredeterminado.classList.add('text-gray-400');
 
                 }
             });

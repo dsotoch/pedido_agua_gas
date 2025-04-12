@@ -106,7 +106,7 @@ export async function guardarFavorito(usuarioId, dominio) {
     } else {
         Swal.fire({
             title: 'Requerimiento faltante!',
-            text: "Inicia sesion para realizar esta operacion.",
+            text: "Inicia sesión para realizar esta operacion.",
             icon: 'warning',
             showConfirmButton: false,
             timer: 2000,
@@ -265,8 +265,8 @@ if (!id_usuario_autenticado || !id_usuario_autenticado.textContent) {
     habilitarClienteID();
 }
 
-export function deshabilitarClienteID() {
-    sessionStorage.setItem("ignorar_cliente_id", "true");
+export async function deshabilitarClienteID() {
+   await  borrarPaginaPredeterminada(false);
 }
 
 export function habilitarClienteID() {
@@ -277,7 +277,7 @@ export async function guardarPaginaPredeterminada(url, empresa, procedencia) {
     if (id_usuario_autenticado.textContent == '') {
         Swal.fire({
             title: 'Requerimiento faltante',
-            text: `Inicia Sesion para realizar esta operacion.`,
+            text: `Inicia sesión para realizar esta operacion.`,
             icon: 'warning',
             showConfirmButton: false,
             timer: 2000,
@@ -288,10 +288,10 @@ export async function guardarPaginaPredeterminada(url, empresa, procedencia) {
         });
         return false;
     }
-    const esPrincipal = procedencia === 'principal' ? esPaginaPredeterminada_Principal(empresa.trim()) : esPaginaPredeterminada();
+    const esPrincipal = procedencia === 'principal' ?  esPaginaPredeterminada_Principal(empresa.trim()) : esPaginaPredeterminada();
 
     if (esPrincipal) {
-        borrarPaginaPredeterminada();
+       await  borrarPaginaPredeterminada(true);
         return false;
     }
 
@@ -342,7 +342,7 @@ export function paginaPredeterminada() {
     let paginaPredeterminada = localStorage.getItem(`${clienteID}_paginaPredeterminada`) || obtenerCookie(clienteID);
     return paginaPredeterminada;
 }
-export function esPaginaPredeterminada_Principal(dominio) {
+export  function esPaginaPredeterminada_Principal(dominio) {
     let clienteID = obtenerClienteID();
     let paginaPredeterminada = localStorage.getItem(`${clienteID}_paginaPredeterminada`) || obtenerCookie(clienteID);
     return paginaPredeterminada === window.location.origin + '/' + dominio;
@@ -376,23 +376,23 @@ export function ir_pagina_predeterminada() {
     }
 }
 
-function borrarPaginaPredeterminada() {
+async function borrarPaginaPredeterminada(estado) {
+    await eliminarPredeterminadaBD();
     let clienteID = obtenerClienteID();
     localStorage.removeItem(`${clienteID}_paginaPredeterminada`);
     document.cookie = `${clienteID}=; path=/; max-age=0;`;
-    eliminarPredeterminadaBD();
-    Swal.fire({
-        title: 'Eliminado',
-        text: "La distribuidora predeterminada se eliminó correctamente.",
-        icon: 'success',
-        showConfirmButton: false,
-        timer: 2000,
-        timerProgressBar: true,
-        customClass: {
-            timerProgressBar: 'bg-red-500 h2 rounded',
-        }
-    });
+    if(estado){
+        Swal.fire({
+            title: 'Eliminado',
+            text: "La distribuidora predeterminada se eliminó correctamente.",
+            icon: 'success',
+            showConfirmButton: false,
+            timer: 2000,
+            timerProgressBar: true,
+            customClass: {
+                timerProgressBar: 'bg-red-500 h2 rounded',
+            }
+        });
+    }
 }
 
-// Ejecutar la función al cargar la página
-ir_pagina_predeterminada();

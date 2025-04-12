@@ -23,7 +23,7 @@ if (btnAcceder) {
         contenedorLogin.classList.remove("hidden");
         setTimeout(() => {
             contenedorLogin.classList.remove('translate-x-full');
-        }, 10);
+        }, 5);
         if (esMovil()) {
             btnAcceder.innerHTML = ` <p
                             class="x-icon2 opacity-0 scale-75 text-black text-3xl font-bold transition-all duration-500 ease-out">
@@ -34,7 +34,7 @@ if (btnAcceder) {
             setTimeout(() => {
                 xIcon.classList.remove("opacity-0", "scale-75");
                 xIcon.classList.add("opacity-100", "scale-100");
-            }, 10); // 
+            }, 5); // 
         }
     }
 
@@ -54,6 +54,8 @@ if (btnAcceder) {
         return window.innerWidth <= 768; // Ajusta este valor según sea necesario
     }
 
+    
+    
     // Evento para mostrar en desktop (sin cambiar la "X")
     btnAcceder.addEventListener("mouseenter", function () {
         if (!esMovil()) {
@@ -136,7 +138,7 @@ if (btn_predeterminado) {
         if (id_usuario_autenticado.textContent.trim() == '') {
             Swal.fire({
                 title: 'Requerimiento faltante!',
-                text: "Inicia sesion para realizar esta operacion.",
+                text: "Inicia sesión para realizar esta operacion.",
                 icon: 'warning',
                 showConfirmButton: false,
                 timer: 2000,
@@ -165,7 +167,7 @@ if (btn_favorito) {
         if (id_usuario_autenticado.textContent.trim() == '') {
             Swal.fire({
                 title: 'Requerimiento faltante!',
-                text: "Inicia sesion para realizar esta operacion.",
+                text: "Inicia sesión para realizar esta operacion.",
                 icon: 'warning',
                 showConfirmButton: false,
                 timer: 2000,
@@ -221,8 +223,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 
 if (btn_distribuidoras_cliente) {
-    btn_distribuidoras_cliente.addEventListener('click', () => {
-        deshabilitarClienteID();
+    btn_distribuidoras_cliente.addEventListener('click', async() => {
+        await deshabilitarClienteID();
         window.location.href = '/';
     })
 }

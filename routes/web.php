@@ -10,6 +10,8 @@ use App\Http\Controllers\ControllerUsuario;
 use App\Http\Controllers\CuponController;
 use App\Http\Controllers\HorarioController;
 use App\Http\Controllers\NotificacionFirebase;
+use App\Models\Empresa;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -26,8 +28,14 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     $usuario = Auth::user();
-    return view('principal', compact('usuario'));
+    $predeterminada = Empresa::find($usuario?->predeterminada);
+    if ($predeterminada) {
+        return redirect()->route('index.negocio', ['slug' => $predeterminada->dominio]);
+    } else {
+        return view('principal', compact('usuario'));
+    }
 })->name('index');
+
 
 Route::controller(ControllerCliente::class)->group(function () {
     Route::get('/clientes', 'index')->name('empresa.clientes2');

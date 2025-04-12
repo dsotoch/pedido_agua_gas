@@ -24,6 +24,7 @@ onMessage(messaging, (payload) => {
             if(procesarNotificacion(payload)){
                 new Notification(payload.notification.title, {
                     body: payload.notification.body,
+                    requireInteraction:true,
                     icon: "/imagenes/Ola-64x64-Orange.png",
                     badge: "/imagenes/Ola-64x64-Orange.png",
                     data: { url: payload.data?.url ?? "/" }
@@ -40,6 +41,7 @@ onMessage(messaging, (payload) => {
             if (registration) {
                 registration.showNotification(payload.notification.title, {
                     body: payload.notification.body,
+                    requireInteraction:true,
                     icon: "/imagenes/Ola-64x64-Orange.png",
                     badge: "/imagenes/Ola-64x64-Orange.png",
                     data: { url: payload.data?.url ?? "/" }
